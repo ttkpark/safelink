@@ -1,0 +1,58 @@
+[1/10] Performing build step for 'bootloader'
+[1/1] C:\Windows\system32\cmd.exe /C "cd /D C:\Users\ttkpa\Desktop\safelink\test_gpio_blink\build\bootloader\esp-idf\esptool_py && C:\Users\ttkpa\.espressif\python_env\idf5.4_py3.11_env\Scripts\python.exe C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/Users/ttkpa/Desktop/safelink/test_gpio_blink/build/bootloader/bootloader.bin"
+Bootloader binary size 0x55f0 bytes. 0x2a10 bytes (33%) free.
+[2/10] No install step for 'bootloader'
+[3/10] Completed 'bootloader'
+[4/10] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj
+[5/10] Linking C static library esp-idf\main\libmain.a
+[6/10] Generating ld/sections.ld
+[7/10] Linking CXX executable gpio_blink_test.elf
+[8/10] Generating binary image from built executable
+esptool.py v4.8.1
+Creating esp32c6 image...
+Merged 1 ELF section
+Successfully created esp32c6 image.
+Generated C:/Users/ttkpa/Desktop/safelink/test_gpio_blink/build/gpio_blink_test.bin
+[9/10] C:\Windows\system32\cmd.exe /C "cd /D C:\Users\ttkpa\Desktop\safelink\test_gpio_blink\build\esp-idf\esptool_py && C:\Users\ttkpa\.espressif\python_env\idf5.4_py3.11_env\Scripts\python.exe C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/Users/ttkpa/Desktop/safelink/test_gpio_blink/build/partition_table/partition-table.bin C:/Users/ttkpa/Desktop/safelink/test_gpio_blink/build/gpio_blink_test.bin"
+gpio_blink_test.bin binary size 0x299b0 bytes. Smallest app partition is 0x100000 bytes. 0xd6650 bytes (84%) free.
+[9/10] C:\Windows\system32\cmd.exe /C "cd /D C:\Users\ttkpa\esp\v5.4.1\esp-idf\components\esptool_py && C:\Users\ttkpa\.espressif\tools\cmake\3.30.2\bin\cmake.exe -D IDF_PATH=C:/Users/ttkpa/esp/v5.4.1/esp-idf -D SERIAL_TOOL=C:/Users/ttkpa/.espressif/python_env/idf5.4_py3.11_env/Scripts/python.exe;;C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esptool_py/esptool/esptool.py;--chip;esp32c6 -D SERIAL_TOOL_ARGS=--before=default_reset;--after=hard_reset;write_flash;@flash_args -D WORKING_DIRECTORY=C:/Users/ttkpa/Desktop/safelink/test_gpio_blink/build -P C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esptool_py/run_serial_tool.cmake"
+esptool.py --chip esp32c6 -p COM8 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 80m --flash_size 4MB 0x0 bootloader/bootloader.bin 0x10000 gpio_blink_test.bin 0x8000 partition_table/partition-table.bin
+esptool.py v4.8.1
+Serial port COM8
+Connecting.....
+Chip is ESP32-C6FH4 (QFN32) (revision v0.1)
+Features: WiFi 6, BT 5, IEEE802.15.4
+Crystal is 40MHz
+MAC: e4:b3:23:ff:fe:89:52:c4
+BASE MAC: e4:b3:23:89:52:c4
+MAC_EXT: ff:fe
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00000000 to 0x00005fff...
+Flash will be erased from 0x00010000 to 0x00039fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+SHA digest in image updated
+Compressed 22000 bytes to 13588...
+Writing at 0x00000000... (100 %)
+Wrote 22000 bytes (13588 compressed) at 0x00000000 in 0.7 seconds (effective 268.3 kbit/s)...
+Hash of data verified.
+Compressed 170416 bytes to 86683...
+Writing at 0x00010000... (16 %)
+Writing at 0x0001a7ee... (33 %)
+Writing at 0x00021153... (50 %)
+Writing at 0x00028612... (66 %)
+Writing at 0x000304ff... (83 %)
+Writing at 0x000370ab... (100 %)
+Wrote 170416 bytes (86683 compressed) at 0x00010000 in 2.6 seconds (effective 521.0 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 103...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (103 compressed) at 0x00008000 in 0.0 seconds (effective 497.4 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...

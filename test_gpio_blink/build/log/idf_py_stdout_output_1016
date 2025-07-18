@@ -1,0 +1,2617 @@
+ESP-ROM:esp32c6-20220919
+Build:Sep 19 2022
+rst:0x1 (POWERON),boot:0x2f (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:2
+load:0x40875720,len:0x16b8
+load:0x4086c110,len:0xe84
+load:0x4086e610,len:0x3054
+entry 0x4086c11a
+[0;32mI (23) boot: ESP-IDF v5.4.1 2nd stage bootloader[0m
+[0;32mI (24) boot: compile time Jul  2 2025 00:50:20[0m
+[0;32mI (24) boot: chip revision: v0.1[0m
+[0;32mI (24) boot: efuse block revision: v0.3[0m
+[0;32mI (27) boot.esp32c6: SPI Speed      : 80MHz[0m
+[0;32mI (31) boot.esp32c6: SPI Mode       : DIO[0m
+[0;32mI (35) boot.esp32c6: SPI Flash Size : 4MB[0m
+[0;32mI (39) boot: Enabling RNG early entropy source...[0m
+[0;32mI (43) boot: Partition Table:[0m
+[0;32mI (46) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (52) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (58) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (65) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (72) boot: End of partition table[0m
+[0;32mI (75) esp_image: segment 0: paddr=00010020 vaddr=42020020 size=09a1ch ( 39452) map[0m
+[0;32mI (90) esp_image: segment 1: paddr=00019a44 vaddr=40800000 size=065d4h ( 26068) load[0m
+[0;32mI (96) esp_image: segment 2: paddr=00020020 vaddr=42000020 size=135a4h ( 79268) map[0m
+[0;32mI (112) esp_image: segment 3: paddr=000335cc vaddr=408065d4 size=04b54h ( 19284) load[0m
+[0;32mI (116) esp_image: segment 4: paddr=00038128 vaddr=4080b130 size=0183ch (  6204) load[0m
+[0;32mI (121) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (121) boot: Disabling RNG early entropy source...[0m
+[0;32mI (137) cpu_start: Unicore app[0m
+[0;32mI (145) cpu_start: Pro cpu start user code[0m
+[0;32mI (146) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (146) app_init: Application information:[0m
+[0;32mI (146) app_init: Project name:     gpio_blink_test[0m
+[0;32mI (150) app_init: App version:      1[0m
+[0;32mI (154) app_init: Compile time:     Jul  2 2025 00:48:45[0m
+[0;32mI (159) app_init: ELF file SHA256:  8abdb4189...[0m
+[0;32mI (163) app_init: ESP-IDF:          v5.4.1[0m
+[0;32mI (167) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (171) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (175) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (178) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (185) heap_init: At 4080D8E0 len 0006ED30 (443 KiB): RAM[0m
+[0;32mI (190) heap_init: At 4087C610 len 00002F54 (11 KiB): RAM[0m
+[0;32mI (195) heap_init: At 50000000 len 00003FE8 (15 KiB): RTCRAM[0m
+[0;32mI (201) spi_flash: detected chip: generic[0m
+[0;32mI (204) spi_flash: flash io: dio[0m
+[0;32mI (207) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (213) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (220) coexist: coex firmware version: e727207[0m
+[0;32mI (251) coexist: coexist rom version 5b8dcfa[0m
+[0;32mI (251) main_task: Started on CPU0[0m
+[0;32mI (251) main_task: Calling app_main()[0m
+[0;32mI (251) SAFE_GPIO_BLINK_TEST: ESP32-C6 Safe GPIO Blink Test Starting...[0m
+[0;32mI (256) SAFE_GPIO_BLINK_TEST: ESP-IDF Version: v5.4.1[0m
+[0;32mI (261) SAFE_GPIO_BLINK_TEST: Safe GPIO pins to test: 20[0m
+[0;32mI (266) SAFE_GPIO_BLINK_TEST: Safe GPIO pins: GPIO_0, GPIO_1, GPIO_2, GPIO_3[0m
+[0;32mI (272) SAFE_GPIO_BLINK_TEST: Initializing safe GPIO pins as outputs...[0m
+[0;32mI (279) gpio: GPIO[0]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (287) gpio: GPIO[1]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (295) gpio: GPIO[2]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (304) gpio: GPIO[3]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (312) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (320) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (328) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (336) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (345) gpio: GPIO[8]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (353) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (361) gpio: GPIO[12]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (370) gpio: GPIO[13]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (428) gpio: GPIO[14]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (428) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (434) gpio: GPIO[18]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (442) gpio: GPIO[19]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (450) gpio: GPIO[20]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (459) gpio: GPIO[21]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (467) gpio: GPIO[22]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (475) gpio: GPIO[23]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (484) SAFE_GPIO_BLINK_TEST: Safe GPIO initialization completed successfully[0m
+[0;32mI (1490) SAFE_GPIO_BLINK_TEST: All safe GPIO pins set to LOW (initial state)[0m
+
+=== ESP32-C6 Safe GPIO Blink Test ===
+사용 가능한 명령어:
+1 - 모든 안전한 GPIO 동시에 blink
+2 - 순차적으로 blink
+3 - 파도 패턴 blink
+4 - 랜덤 blink
++ - 속도 증가 (100ms씩)
+- - 속도 감소 (100ms씩)
+q - 종료
+현재 모드: 0, 지연시간: 500ms
+안전한 GPIO 핀: GPIO_0, GPIO_1, GPIO_2, GPIO_3
+=====================================
+
+[0;32mI (1519) SAFE_GPIO_BLINK_TEST: GPIO test task started[0m
+[0;32mI (1524) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (2028) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (2528) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (3028) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (3528) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (4028) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (4528) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (5028) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (5528) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (6028) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[1;31mE (6488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (6488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (6488) task_wdt: Tasks currently running:[0m
+[1;31mE (6488) task_wdt: CPU 0: main[0m
+[1;31mE (6488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x408077c4  RA      : 0x40801ba4  SP      : 0x40810950  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x00000004  A0      : 0x4081098c  A1      : 0x00000004  
+A2      : 0x00000004  A3      : 0x00000008  A4      : 0x00000001  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000e  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (6620) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (7125) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (7625) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (8125) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (8625) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (9125) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (9625) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (10125) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (10625) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (11125) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[1;31mE (11488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (11488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (11488) task_wdt: Tasks currently running:[0m
+[1;31mE (11488) task_wdt: CPU 0: main[0m
+[1;31mE (11488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4200b3d6  RA      : 0x4200b3b6  SP      : 0x408109a0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x00000006  S1      : 0x408125b4  A0      : 0x00000000  A1      : 0x00000006  
+A2      : 0x408125b4  A3      : 0x00000012  A4      : 0x4080b3ba  A5      : 0x4080e07c  
+A6      : 0x4200ab7c  A7      : 0x0000000e  S2      : 0x00000080  S3      : 0x40810b10  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (11625) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (12125) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (12625) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (13125) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (13625) SAFE_GPIO_BLINK_TEST: All Safe GPIO: HIGH[0m
+[0;32mI (14125) SAFE_GPIO_BLINK_TEST: All Safe GPIO: LOW[0m
+[0;32mI (14616) SAFE_GPIO_BLINK_TEST: Mode changed to: Sequential[0m
+[0;32mI (14625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (15125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (15625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (16125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (16488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (16488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (16488) task_wdt: Tasks currently running:[0m
+[1;31mE (16488) task_wdt: CPU 0: main[0m
+[1;31mE (16488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x420128c6  RA      : 0x420131ec  SP      : 0x408109d0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x40810b10  A0      : 0x00000000  A1      : 0x4080e300  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000009  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0xffffffff  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (16625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (17125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (17625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (18125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (18625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (19125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (19625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (20125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (20625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (21125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (21488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (21488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (21488) task_wdt: Tasks currently running:[0m
+[1;31mE (21488) task_wdt: CPU 0: main[0m
+[1;31mE (21488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4003077a  RA      : 0x420128ee  SP      : 0x408109b0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e298  S1      : 0x40810b10  A0      : 0x00000001  A1      : 0x408109bc  
+A2      : 0x4080b538  A3      : 0x00000004  A4      : 0x00000009  A5      : 0x00000889  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (21625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (22125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (22625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (23125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (23625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (24125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (24625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (25125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (25625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (26125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (26488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (26488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (26488) task_wdt: Tasks currently running:[0m
+[1;31mE (26488) task_wdt: CPU 0: main[0m
+[1;31mE (26488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4200b07e  RA      : 0x4200b3b6  SP      : 0x408109c0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x00000002  S1      : 0x408125b4  A0      : 0x00000002  A1      : 0x00000002  
+A2      : 0x408125b4  A3      : 0x00000080  A4      : 0x00000009  A5      : 0x420129bc  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x40810b10  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (26625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (27125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (27625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (28125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (28625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (29125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (29625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (30125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (30625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (31125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (31488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (31488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (31488) task_wdt: Tasks currently running:[0m
+[1;31mE (31488) task_wdt: CPU 0: main[0m
+[1;31mE (31488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801d58  RA      : 0x4002814c  SP      : 0x40810980  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e298  S1      : 0x40810b10  A0      : 0x4080e42c  A1      : 0x408109bc  
+A2      : 0x4080b538  A3      : 0x00000004  A4      : 0x00000009  A5      : 0x40801d50  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (31625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (32125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (32625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (33125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (33625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (34125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (34625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (35125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (35625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (36125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (36488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (36488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (36488) task_wdt: Tasks currently running:[0m
+[1;31mE (36488) task_wdt: CPU 0: main[0m
+[1;31mE (36488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4200b3e4  RA      : 0x4200b3b6  SP      : 0x408109d0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x00000002  S1      : 0x408125b4  A0      : 0x00000000  A1      : 0x00000002  
+A2      : 0x408125b4  A3      : 0x00000006  A4      : 0x00000000  A5      : 0x4080e0f4  
+A6      : 0x4200ab7c  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x40810b10  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (36625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (37125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (37625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (38125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (38625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (39125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (39625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (40125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (40625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (41125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (41488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (41488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (41488) task_wdt: Tasks currently running:[0m
+[1;31mE (41488) task_wdt: CPU 0: main[0m
+[1;31mE (41488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x408077ca  RA      : 0x40801ae0  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4081098c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (41625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (42125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (42625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (43125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (43625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (44125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (44625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (45125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (45625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (46125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (46488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (46488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (46488) task_wdt: Tasks currently running:[0m
+[1;31mE (46488) task_wdt: CPU 0: main[0m
+[1;31mE (46488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x420129bc  RA      : 0x42013210  SP      : 0x40810a00  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x40810b10  A0      : 0x40810b10  A1      : 0x4080e230  
+A2      : 0x408125b4  A3      : 0x00000080  A4      : 0x00000009  A5      : 0x420129bc  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000001  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (46625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (47125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (47625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (48125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (48625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (49125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (49625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (50125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (50625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (51125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (51488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (51488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (51488) task_wdt: Tasks currently running:[0m
+[1;31mE (51488) task_wdt: CPU 0: main[0m
+[1;31mE (51488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40805f1a  RA      : 0x408060b8  SP      : 0x40810900  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0xffffffff  A0      : 0x4080e42c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000001  A5      : 0x4080d000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (51625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (52125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (52625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (53125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (53625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (54125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (54625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (55125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (55625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (56125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (56488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (56488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (56488) task_wdt: Tasks currently running:[0m
+[1;31mE (56488) task_wdt: CPU 0: main[0m
+[1;31mE (56488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4200b07e  RA      : 0x4200b3b6  SP      : 0x408109c0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x00000002  S1      : 0x408125b4  A0      : 0x00000002  A1      : 0x00000002  
+A2      : 0x408125b4  A3      : 0x00000080  A4      : 0x00000009  A5      : 0x420129bc  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x40810b10  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (56625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (57125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (57625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (58125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (58625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (59125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (59625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (60125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (60625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (61125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (61488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (61488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (61488) task_wdt: Tasks currently running:[0m
+[1;31mE (61488) task_wdt: CPU 0: main[0m
+[1;31mE (61488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801d58  RA      : 0x4002814c  SP      : 0x40810980  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e298  S1      : 0x40810b10  A0      : 0x4080e42c  A1      : 0x408109bc  
+A2      : 0x4080b538  A3      : 0x00000004  A4      : 0x00000009  A5      : 0x40801d50  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (61625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (62125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (62625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (63125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (63625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (64125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (64625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (65125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (65625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (66125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (66488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (66488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (66488) task_wdt: Tasks currently running:[0m
+[1;31mE (66488) task_wdt: CPU 0: main[0m
+[1;31mE (66488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4200b3e4  RA      : 0x4200b3b6  SP      : 0x408109d0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x00000002  S1      : 0x408125b4  A0      : 0x00000000  A1      : 0x00000002  
+A2      : 0x408125b4  A3      : 0x00000006  A4      : 0x00000000  A5      : 0x4080e0f4  
+A6      : 0x4200ab7c  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x40810b10  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (66625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (67125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (67625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (68125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (68625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (69125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (69625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (70125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (70625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (71125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (71488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (71488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (71488) task_wdt: Tasks currently running:[0m
+[1;31mE (71488) task_wdt: CPU 0: main[0m
+[1;31mE (71488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x408077ca  RA      : 0x40801ae0  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4081098c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (71625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (72125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (72625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (73125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (73625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (74125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (74625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (75125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (75625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (76125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (76488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (76488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (76488) task_wdt: Tasks currently running:[0m
+[1;31mE (76488) task_wdt: CPU 0: main[0m
+[1;31mE (76488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x420128c6  RA      : 0x420131ec  SP      : 0x408109d0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x40810b10  A0      : 0x00000000  A1      : 0x4080e300  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000009  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0xffffffff  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (76625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (77125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (77625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (78125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (78625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (79125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (79625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (80125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (80625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (81125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (81488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (81488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (81488) task_wdt: Tasks currently running:[0m
+[1;31mE (81488) task_wdt: CPU 0: main[0m
+[1;31mE (81488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806098  RA      : 0x40801b84  SP      : 0x40810930  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4080e42c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000001  A5      : 0x00000004  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (81625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (82125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (82625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (83125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (83625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (84125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (84625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (85125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (85625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (86125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (86488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (86488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (86488) task_wdt: Tasks currently running:[0m
+[1;31mE (86488) task_wdt: CPU 0: main[0m
+[1;31mE (86488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4200b07e  RA      : 0x4200b3b6  SP      : 0x408109c0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x00000002  S1      : 0x408125b4  A0      : 0x00000002  A1      : 0x00000002  
+A2      : 0x408125b4  A3      : 0x00000080  A4      : 0x00000009  A5      : 0x420129bc  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x40810b10  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (86625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (87125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (87625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (88125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (88625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (89125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (89625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (90125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (90625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (91125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (91488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (91488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (91488) task_wdt: Tasks currently running:[0m
+[1;31mE (91488) task_wdt: CPU 0: main[0m
+[1;31mE (91488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801d58  RA      : 0x4002814c  SP      : 0x40810980  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e298  S1      : 0x40810b10  A0      : 0x4080e42c  A1      : 0x408109bc  
+A2      : 0x4080b538  A3      : 0x00000004  A4      : 0x00000009  A5      : 0x40801d50  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (91625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (92125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (92625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (93125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (93625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (94125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (94625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (95125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (95625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (96125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (96488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (96488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (96488) task_wdt: Tasks currently running:[0m
+[1;31mE (96488) task_wdt: CPU 0: main[0m
+[1;31mE (96488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4200b3e4  RA      : 0x4200b3b6  SP      : 0x408109d0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x00000002  S1      : 0x408125b4  A0      : 0x00000000  A1      : 0x00000002  
+A2      : 0x408125b4  A3      : 0x00000006  A4      : 0x00000000  A5      : 0x4080e0f4  
+A6      : 0x4200ab7c  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x40810b10  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (96625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (97125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (97625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (98125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (98625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (99125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (99625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (100125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (100625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (101125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (101488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (101488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (101488) task_wdt: Tasks currently running:[0m
+[1;31mE (101488) task_wdt: CPU 0: main[0m
+[1;31mE (101488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x42008352  RA      : 0x42009314  SP      : 0x40810970  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080b2f8  S1      : 0x00000080  A0      : 0x00000000  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x42028000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x00000000  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (101625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (102125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (102625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (103125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (103625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (104125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (104625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (105125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (105625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (106125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (106488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (106488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (106488) task_wdt: Tasks currently running:[0m
+[1;31mE (106488) task_wdt: CPU 0: main[0m
+[1;31mE (106488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40805f16  RA      : 0x408060b8  SP      : 0x40810900  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0xffffffff  A0      : 0x40812638  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000001  A5      : 0x4080d000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (106625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (107125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (107625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (108125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (108625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (109125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (109625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (110125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (110625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (111125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (111488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (111488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (111488) task_wdt: Tasks currently running:[0m
+[1;31mE (111488) task_wdt: CPU 0: main[0m
+[1;31mE (111488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x42012900  RA      : 0x4200c61a  SP      : 0x40810a20  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x42023000  S1      : 0x00000100  A0      : 0x000000ff  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (111625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (112125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (112625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (113125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (113625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (114125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (114625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (115125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (115625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (116125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (116488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (116488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (116488) task_wdt: Tasks currently running:[0m
+[1;31mE (116488) task_wdt: CPU 0: main[0m
+[1;31mE (116488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801ba4  RA      : 0x40801ba4  SP      : 0x408109d0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40810a0c  S1      : 0x00000004  A0      : 0x00000002  A1      : 0x00000004  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0xffffefff  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (116625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (117125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (117625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (118125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (118625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (119125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (119625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (120125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (120625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (121125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (121488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (121488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (121488) task_wdt: Tasks currently running:[0m
+[1;31mE (121488) task_wdt: CPU 0: main[0m
+[1;31mE (121488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x408064d2  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (121625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (122125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (122625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (123125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (123625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (124125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (124625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (125125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (125625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (126125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (126488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (126488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (126488) task_wdt: Tasks currently running:[0m
+[1;31mE (126488) task_wdt: CPU 0: main[0m
+[1;31mE (126488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x408077ca  RA      : 0x40801ae0  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4081098c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (126625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (127125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (127625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (128125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (128625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (129125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (129625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (130125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (130625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (131125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (131488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (131488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (131488) task_wdt: Tasks currently running:[0m
+[1;31mE (131488) task_wdt: CPU 0: main[0m
+[1;31mE (131488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (131625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (132125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (132625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (133125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (133625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (134125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (134625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (135125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (135625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (136125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (136488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (136488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (136488) task_wdt: Tasks currently running:[0m
+[1;31mE (136488) task_wdt: CPU 0: main[0m
+[1;31mE (136488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40805f16  RA      : 0x408060b8  SP      : 0x40810900  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0xffffffff  A0      : 0x40812638  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000001  A5      : 0x4080d000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (136625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (137125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (137625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (138125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (138625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (139125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (139625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (140125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (140625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (141125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (141488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (141488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (141488) task_wdt: Tasks currently running:[0m
+[1;31mE (141488) task_wdt: CPU 0: main[0m
+[1;31mE (141488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801bd2  RA      : 0x40801cd4  SP      : 0x408109d0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x00000004  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (141625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (142125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (142625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (143125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (143625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (144125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (144625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (145125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (145625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (146125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (146488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (146488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (146488) task_wdt: Tasks currently running:[0m
+[1;31mE (146488) task_wdt: CPU 0: main[0m
+[1;31mE (146488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4201326e  RA      : 0x4201326e  SP      : 0x40810a10  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x40810b10  A0      : 0xffffffff  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0xffffefff  A5      : 0x000008c5  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (146625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (147125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (147625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (148125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (148625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (149125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (149625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (150125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (150625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (151125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (151488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (151488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (151488) task_wdt: Tasks currently running:[0m
+[1;31mE (151488) task_wdt: CPU 0: main[0m
+[1;31mE (151488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801b1e  RA      : 0x40801c98  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0x4080e42c  A0      : 0x00000000  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (151625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (152125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (152625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (153125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (153625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (154125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (154625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (155125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (155625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (156125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (156488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (156488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (156488) task_wdt: Tasks currently running:[0m
+[1;31mE (156488) task_wdt: CPU 0: main[0m
+[1;31mE (156488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806098  RA      : 0x40801b84  SP      : 0x40810930  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4080e42c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000001  A5      : 0x00000004  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (156625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (157125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (157625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (158125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (158625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (159125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (159625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (160125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (160625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (161125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (161488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (161488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (161488) task_wdt: Tasks currently running:[0m
+[1;31mE (161488) task_wdt: CPU 0: main[0m
+[1;31mE (161488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (161625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (162125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (162625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (163125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (163625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (164125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (164625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (165125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (165625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (166125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (166488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (166488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (166488) task_wdt: Tasks currently running:[0m
+[1;31mE (166488) task_wdt: CPU 0: main[0m
+[1;31mE (166488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40805f16  RA      : 0x408060b8  SP      : 0x40810900  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0xffffffff  A0      : 0x40812638  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000001  A5      : 0x4080d000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (166625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (167125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (167625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (168125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (168625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (169125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (169625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (170125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (170625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (171125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (171488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (171488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (171488) task_wdt: Tasks currently running:[0m
+[1;31mE (171488) task_wdt: CPU 0: main[0m
+[1;31mE (171488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801bd2  RA      : 0x40801cd4  SP      : 0x408109d0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x00000004  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (171625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (172125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (172625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (173125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (173625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (174125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (174625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (175125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (175625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (176125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (176488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (176488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (176488) task_wdt: Tasks currently running:[0m
+[1;31mE (176488) task_wdt: CPU 0: main[0m
+[1;31mE (176488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801dfe  RA      : 0x4201307e  SP      : 0x40810a20  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0xffffffff  A0      : 0x4080e3d4  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0xffffefff  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (176625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (177125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (177625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (178125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (178625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (179125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (179625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (180125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (180625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (181125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (181488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (181488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (181488) task_wdt: Tasks currently running:[0m
+[1;31mE (181488) task_wdt: CPU 0: main[0m
+[1;31mE (181488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4002f476  RA      : 0x40030794  SP      : 0x408109a0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e298  S1      : 0x40810b10  A0      : 0x00000000  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (181625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (182125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (182625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (183125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (183625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (184125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (184625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (185125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (185625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (186125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (186488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (186488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (186488) task_wdt: Tasks currently running:[0m
+[1;31mE (186488) task_wdt: CPU 0: main[0m
+[1;31mE (186488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806098  RA      : 0x40801b84  SP      : 0x40810930  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4080e42c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000001  A5      : 0x00000004  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (186625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (187125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (187625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (188125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (188625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (189125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (189625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (190125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (190625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (191125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (191488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (191488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (191488) task_wdt: Tasks currently running:[0m
+[1;31mE (191488) task_wdt: CPU 0: main[0m
+[1;31mE (191488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (191625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (192125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (192625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (193125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (193625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (194125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (194625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (195125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (195625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (196125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (196488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (196488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (196488) task_wdt: Tasks currently running:[0m
+[1;31mE (196488) task_wdt: CPU 0: main[0m
+[1;31mE (196488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40805f16  RA      : 0x408060b8  SP      : 0x40810900  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0xffffffff  A0      : 0x40812638  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000001  A5      : 0x4080d000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (196625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (197125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (197625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (198125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (198625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (199125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (199625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (200125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (200625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (201125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (201488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (201488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (201488) task_wdt: Tasks currently running:[0m
+[1;31mE (201488) task_wdt: CPU 0: main[0m
+[1;31mE (201488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801bd2  RA      : 0x40801cd4  SP      : 0x408109d0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x00000004  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (201625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (202125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (202625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (203125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (203625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (204125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (204625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (205125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (205625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (206125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (206488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (206488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (206488) task_wdt: Tasks currently running:[0m
+[1;31mE (206488) task_wdt: CPU 0: main[0m
+[1;31mE (206488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801dfe  RA      : 0x4201307e  SP      : 0x40810a20  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0xffffffff  A0      : 0x4080e3d4  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0xffffefff  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (206625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (207125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (207625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (208125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (208625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (209125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (209625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (210125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (210625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (211125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (211488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (211488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (211488) task_wdt: Tasks currently running:[0m
+[1;31mE (211488) task_wdt: CPU 0: main[0m
+[1;31mE (211488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4002f476  RA      : 0x40030794  SP      : 0x408109a0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e298  S1      : 0x40810b10  A0      : 0x00000000  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (211625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (212125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (212625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (213125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (213625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (214125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (214625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (215125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (215625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (216125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (216488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (216488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (216488) task_wdt: Tasks currently running:[0m
+[1;31mE (216488) task_wdt: CPU 0: main[0m
+[1;31mE (216488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40805f1a  RA      : 0x408060b8  SP      : 0x40810900  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0xffffffff  A0      : 0x4080e42c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000001  A5      : 0x4080d000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (216625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (217125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (217625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (218125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (218625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (219125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (219625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (220125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (220625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (221125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (221488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (221488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (221488) task_wdt: Tasks currently running:[0m
+[1;31mE (221488) task_wdt: CPU 0: main[0m
+[1;31mE (221488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (221625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (222125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (222625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (223125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (223625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (224125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (224625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (225125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (225625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (226125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (226488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (226488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (226488) task_wdt: Tasks currently running:[0m
+[1;31mE (226488) task_wdt: CPU 0: main[0m
+[1;31mE (226488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801c96  RA      : 0x42009298  SP      : 0x40810970  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080b2f8  S1      : 0x00000080  A0      : 0x4080b300  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000000  A5      : 0x420284ac  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x00000000  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (226625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (227125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (227625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (228125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (228625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (229125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (229625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (230125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (230625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (231125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (231488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (231488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (231488) task_wdt: Tasks currently running:[0m
+[1;31mE (231488) task_wdt: CPU 0: main[0m
+[1;31mE (231488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x40810970  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e3d4  S1      : 0x00000000  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (231625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (232125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (232625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (233125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (233625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (234125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (234625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (235125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (235625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (236125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (236488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (236488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (236488) task_wdt: Tasks currently running:[0m
+[1;31mE (236488) task_wdt: CPU 0: main[0m
+[1;31mE (236488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4201326e  RA      : 0x4201326e  SP      : 0x40810a10  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x40810b10  A0      : 0xffffffff  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0xffffefff  A5      : 0x000008c5  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (236625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (237125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (237625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (238125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (238625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (239125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (239625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (240125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (240625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (241125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (241488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (241488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (241488) task_wdt: Tasks currently running:[0m
+[1;31mE (241488) task_wdt: CPU 0: main[0m
+[1;31mE (241488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801b1e  RA      : 0x40801c98  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0x4080e42c  A0      : 0x00000000  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (241625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (242125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (242625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (243125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (243625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (244125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (244625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (245125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (245625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (246125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (246488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (246488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (246488) task_wdt: Tasks currently running:[0m
+[1;31mE (246488) task_wdt: CPU 0: main[0m
+[1;31mE (246488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x408077ca  RA      : 0x40801ae0  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4081098c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (246625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (247125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (247625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (248125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (248625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (249125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (249625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (250125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (250625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (251125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (251488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (251488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (251488) task_wdt: Tasks currently running:[0m
+[1;31mE (251488) task_wdt: CPU 0: main[0m
+[1;31mE (251488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (251625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (252125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (252625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (253125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (253625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (254125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (254625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (255125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (255625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (256125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (256488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (256488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (256488) task_wdt: Tasks currently running:[0m
+[1;31mE (256488) task_wdt: CPU 0: main[0m
+[1;31mE (256488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806094  RA      : 0x40801b84  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080b300  S1      : 0x40812638  A0      : 0x40812638  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000001  A5      : 0x00000004  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (256625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (257125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (257625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (258125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (258625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (259125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (259625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (260125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (260625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (261125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (261488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (261488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (261488) task_wdt: Tasks currently running:[0m
+[1;31mE (261488) task_wdt: CPU 0: main[0m
+[1;31mE (261488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x408064a2  RA      : 0x40805c0a  SP      : 0x40810970  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e3d4  S1      : 0x00000000  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (261625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (262125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (262625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (263125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (263625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (264125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (264625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (265125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (265625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (266125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (266488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (266488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (266488) task_wdt: Tasks currently running:[0m
+[1;31mE (266488) task_wdt: CPU 0: main[0m
+[1;31mE (266488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4201326e  RA      : 0x4201326e  SP      : 0x40810a10  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x40810b10  A0      : 0xffffffff  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0xffffefff  A5      : 0x000008c5  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (266625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (267125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (267625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (268125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (268625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (269125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (269625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (270125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (270625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (271125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (271488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (271488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (271488) task_wdt: Tasks currently running:[0m
+[1;31mE (271488) task_wdt: CPU 0: main[0m
+[1;31mE (271488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801b1e  RA      : 0x40801c98  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0x4080e42c  A0      : 0x00000000  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (271625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (272125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (272625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (273125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (273625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (274125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (274625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (275125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (275625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (276125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (276488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (276488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (276488) task_wdt: Tasks currently running:[0m
+[1;31mE (276488) task_wdt: CPU 0: main[0m
+[1;31mE (276488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806098  RA      : 0x40801b84  SP      : 0x40810930  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4080e42c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000001  A5      : 0x00000004  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (276625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (277125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (277625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (278125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (278625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (279125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (279625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (280125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (280625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (281125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (281488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (281488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (281488) task_wdt: Tasks currently running:[0m
+[1;31mE (281488) task_wdt: CPU 0: main[0m
+[1;31mE (281488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (281625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (282125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (282625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (283125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (283625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (284125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (284625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (285125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (285625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (286125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (286488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (286488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (286488) task_wdt: Tasks currently running:[0m
+[1;31mE (286488) task_wdt: CPU 0: main[0m
+[1;31mE (286488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x42009268  RA      : 0x4200b41e  SP      : 0x40810980  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x00000006  S1      : 0x408125b4  A0      : 0x00000000  A1      : 0x408125b4  
+A2      : 0x00000080  A3      : 0x00000012  A4      : 0x00000000  A5      : 0x4080e07c  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x40810b10  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (286625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (287125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (287625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (288125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (288625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (289125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (289625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (290125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (290625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (291125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (291488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (291488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (291488) task_wdt: Tasks currently running:[0m
+[1;31mE (291488) task_wdt: CPU 0: main[0m
+[1;31mE (291488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x40810970  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e3d4  S1      : 0x00000000  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+I (291625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH
+[0;32mI (292125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (292625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (293125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (293625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (294125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (294625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (295125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (295625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (296125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (296488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (296488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (296488) task_wdt: Tasks currently running:[0m
+[1;31mE (296488) task_wdt: CPU 0: main[0m
+[1;31mE (296488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x420093f8  RA      : 0x420093f8  SP      : 0x40810980  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0xffffffff  S1      : 0x00000080  A0      : 0x40810b10  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x4080d000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (296625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (297125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (297625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (298125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (298625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (299125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (299625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (300125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (300625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (301125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (301488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (301488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (301488) task_wdt: Tasks currently running:[0m
+[1;31mE (301488) task_wdt: CPU 0: main[0m
+[1;31mE (301488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (301625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (302125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (302625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (303125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (303625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (304125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (304625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (305125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (305625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (306125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (306488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (306488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (306488) task_wdt: Tasks currently running:[0m
+[1;31mE (306488) task_wdt: CPU 0: main[0m
+[1;31mE (306488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4002813c  RA      : 0x40030794  SP      : 0x408109b0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e298  S1      : 0x40810b10  A0      : 0x4080e42c  A1      : 0x408109bc  
+A2      : 0x4080b538  A3      : 0x00000004  A4      : 0x00000009  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (306625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (307125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (307625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (308125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (308625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (309125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (309625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (310125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (310625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (311125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (311488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (311488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (311488) task_wdt: Tasks currently running:[0m
+[1;31mE (311488) task_wdt: CPU 0: main[0m
+[1;31mE (311488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (311625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (312125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (312625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (313125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (313625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (314125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (314625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (315125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (315625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (316125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (316488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (316488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (316488) task_wdt: Tasks currently running:[0m
+[1;31mE (316488) task_wdt: CPU 0: main[0m
+[1;31mE (316488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801ae2  RA      : 0x40801ae0  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080b300  S1      : 0x40812638  A0      : 0x00000002  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (316625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (317125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (317625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (318125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (318625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (319125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (319625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (320125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (320625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (321125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (321488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (321488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (321488) task_wdt: Tasks currently running:[0m
+[1;31mE (321488) task_wdt: CPU 0: main[0m
+[1;31mE (321488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40805c12  RA      : 0x40805dcc  SP      : 0x40810980  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e3d4  S1      : 0x40810ab8  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (321625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (322125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (322625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (323125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (323625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (324125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (324625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (325125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (325625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (326125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (326488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (326488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (326488) task_wdt: Tasks currently running:[0m
+[1;31mE (326488) task_wdt: CPU 0: main[0m
+[1;31mE (326488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4201326e  RA      : 0x4201326e  SP      : 0x40810a10  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x40810b10  A0      : 0xffffffff  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0xffffefff  A5      : 0x000008c5  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (326625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (327125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (327625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (328125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (328625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (329125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (329625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (330125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (330625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (331125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (331488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (331488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (331488) task_wdt: Tasks currently running:[0m
+[1;31mE (331488) task_wdt: CPU 0: main[0m
+[1;31mE (331488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801b1e  RA      : 0x40801c98  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0x4080e42c  A0      : 0x00000000  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (331625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (332125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (332625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (333125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (333625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (334125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (334625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (335125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (335625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (336125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (336488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (336488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (336488) task_wdt: Tasks currently running:[0m
+[1;31mE (336488) task_wdt: CPU 0: main[0m
+[1;31mE (336488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806098  RA      : 0x40801b84  SP      : 0x40810930  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4080e42c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000001  A5      : 0x00000004  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (336625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (337125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (337625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (338125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (338625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (339125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (339625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (340125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (340625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (341125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (341488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (341488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (341488) task_wdt: Tasks currently running:[0m
+[1;31mE (341488) task_wdt: CPU 0: main[0m
+[1;31mE (341488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (341625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (342125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (342625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (343125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (343625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (344125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (344625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (345125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (345625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (346125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (346488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (346488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (346488) task_wdt: Tasks currently running:[0m
+[1;31mE (346488) task_wdt: CPU 0: main[0m
+[1;31mE (346488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4200b3d6  RA      : 0x4200b3b6  SP      : 0x408109a0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x00000006  S1      : 0x408125b4  A0      : 0x00000000  A1      : 0x00000006  
+A2      : 0x408125b4  A3      : 0x00000012  A4      : 0x4080b3ba  A5      : 0x4080e07c  
+A6      : 0x4200ab7c  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x40810b10  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (346625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (347125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (347625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (348125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (348625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (349125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (349625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (350125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (350625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (351125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (351488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (351488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (351488) task_wdt: Tasks currently running:[0m
+[1;31mE (351488) task_wdt: CPU 0: main[0m
+[1;31mE (351488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x40810970  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e3d4  S1      : 0x00000000  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (351625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (352125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (352625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (353125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (353625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (354125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (354625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (355125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (355625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (356125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (356488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (356488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (356488) task_wdt: Tasks currently running:[0m
+[1;31mE (356488) task_wdt: CPU 0: main[0m
+[1;31mE (356488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x420093f8  RA      : 0x420093f8  SP      : 0x40810980  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0xffffffff  S1      : 0x00000080  A0      : 0x40810b10  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x4080d000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (356625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (357125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (357625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (358125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (358625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (359125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (359625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (360125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (360625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (361125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (361488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (361488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (361488) task_wdt: Tasks currently running:[0m
+[1;31mE (361488) task_wdt: CPU 0: main[0m
+[1;31mE (361488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (361625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (362125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (362625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (363125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (363625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (364125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (364625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (365125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (365625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (366125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (366488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (366488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (366488) task_wdt: Tasks currently running:[0m
+[1;31mE (366488) task_wdt: CPU 0: main[0m
+[1;31mE (366488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40030780  RA      : 0x4003077e  SP      : 0x408109b0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e298  S1      : 0x40810b10  A0      : 0x00000000  A1      : 0x408109bc  
+A2      : 0x4080b538  A3      : 0x00000004  A4      : 0x00000009  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (366625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (367125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (367625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (368125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (368625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (369125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (369625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (370125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (370625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (371125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (371488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (371488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (371488) task_wdt: Tasks currently running:[0m
+[1;31mE (371488) task_wdt: CPU 0: main[0m
+[1;31mE (371488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40805f28  RA      : 0x40805f28  SP      : 0x40810900  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0xffffffff  A0      : 0x00000002  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000001  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (371625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (372125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (372625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (373125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (373625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (374125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (374625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (375125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (375625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (376125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (376488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (376488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (376488) task_wdt: Tasks currently running:[0m
+[1;31mE (376488) task_wdt: CPU 0: main[0m
+[1;31mE (376488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801c96  RA      : 0x42009298  SP      : 0x40810970  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080b2f8  S1      : 0x00000080  A0      : 0x4080b300  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000000  A5      : 0x420284ac  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x00000000  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (376625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (377125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (377625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (378125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (378625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (379125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (379625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (380125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (380625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (381125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (381488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (381488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (381488) task_wdt: Tasks currently running:[0m
+[1;31mE (381488) task_wdt: CPU 0: main[0m
+[1;31mE (381488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x40810970  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e3d4  S1      : 0x00000000  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (381625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (382125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (382625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (383125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (383625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (384125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (384625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (385125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (385625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (386125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (386488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (386488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (386488) task_wdt: Tasks currently running:[0m
+[1;31mE (386488) task_wdt: CPU 0: main[0m
+[1;31mE (386488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x420129dc  RA      : 0x42013210  SP      : 0x40810a00  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x40810b10  A0      : 0xffffffff  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0xffffefff  A5      : 0x000008c5  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000001  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (386625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (387125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (387625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (388125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (388625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (389125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (389625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (390125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (390625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (391125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (391488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (391488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (391488) task_wdt: Tasks currently running:[0m
+[1;31mE (391488) task_wdt: CPU 0: main[0m
+[1;31mE (391488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x408060b8  RA      : 0x408060b8  SP      : 0x40810930  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0xffffffff  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (391625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (392125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (392625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (393125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (393625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (394125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (394625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (395125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (395625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (396125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (396488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (396488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (396488) task_wdt: Tasks currently running:[0m
+[1;31mE (396488) task_wdt: CPU 0: main[0m
+[1;31mE (396488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801ad6  RA      : 0x40801c98  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x40810b10  A0      : 0x4081098c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0xbb10c433  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (396625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (397125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (397625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (398125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (398625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (399125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (399625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (400125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (400625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (401125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (401488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (401488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (401488) task_wdt: Tasks currently running:[0m
+[1;31mE (401488) task_wdt: CPU 0: main[0m
+[1;31mE (401488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (401625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (402125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (402625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (403125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (403625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (404125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (404625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (405125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (405625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (406125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (406488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (406488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (406488) task_wdt: Tasks currently running:[0m
+[1;31mE (406488) task_wdt: CPU 0: main[0m
+[1;31mE (406488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801ae2  RA      : 0x40801ae0  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080b300  S1      : 0x40812638  A0      : 0x00000002  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (406625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (407125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (407625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (408125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (408625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (409125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (409625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (410125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (410625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (411125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (411488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (411488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (411488) task_wdt: Tasks currently running:[0m
+[1;31mE (411488) task_wdt: CPU 0: main[0m
+[1;31mE (411488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x408064a2  RA      : 0x40805c0a  SP      : 0x40810970  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e3d4  S1      : 0x00000000  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (411625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (412125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (412625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (413125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (413625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (414125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (414625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (415125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (415625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (416125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (416488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (416488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (416488) task_wdt: Tasks currently running:[0m
+[1;31mE (416488) task_wdt: CPU 0: main[0m
+[1;31mE (416488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4201326e  RA      : 0x4201326e  SP      : 0x40810a10  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x40810b10  A0      : 0xffffffff  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0xffffefff  A5      : 0x000008c5  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (416625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (417125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (417625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (418125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (418625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (419125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (419625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (420125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (420625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (421125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (421488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (421488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (421488) task_wdt: Tasks currently running:[0m
+[1;31mE (421488) task_wdt: CPU 0: main[0m
+[1;31mE (421488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801b1e  RA      : 0x40801c98  SP      : 0x40810940  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e42c  S1      : 0x4080e42c  A0      : 0x00000000  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (421625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (422125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (422625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (423125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (423625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (424125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (424625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (425125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (425625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (426125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (426488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (426488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (426488) task_wdt: Tasks currently running:[0m
+[1;31mE (426488) task_wdt: CPU 0: main[0m
+[1;31mE (426488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806098  RA      : 0x40801b84  SP      : 0x40810930  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4080e42c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000001  A5      : 0x00000004  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (426625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (427125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (427625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (428125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (428625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (429125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (429625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (430125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (430625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (431125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (431488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (431488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (431488) task_wdt: Tasks currently running:[0m
+[1;31mE (431488) task_wdt: CPU 0: main[0m
+[1;31mE (431488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (431625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (432125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (432625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (433125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (433625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (434125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (434625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (435125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (435625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (436125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (436488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (436488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (436488) task_wdt: Tasks currently running:[0m
+[1;31mE (436488) task_wdt: CPU 0: main[0m
+[1;31mE (436488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40805f16  RA      : 0x408060b8  SP      : 0x40810900  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0xffffffff  A0      : 0x40812638  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000012  A4      : 0x00000001  A5      : 0x4080d000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (436625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (437125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (437625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (438125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (438625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (439125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (439625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (440125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (440625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (441125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (441488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (441488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (441488) task_wdt: Tasks currently running:[0m
+[1;31mE (441488) task_wdt: CPU 0: main[0m
+[1;31mE (441488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801bd2  RA      : 0x40801cd4  SP      : 0x408109d0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0x00000004  A0      : 0x00000001  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (441625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (442125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (442625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (443125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (443625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (444125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (444625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (445125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (445625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (446125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (446488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (446488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (446488) task_wdt: Tasks currently running:[0m
+[1;31mE (446488) task_wdt: CPU 0: main[0m
+[1;31mE (446488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40801dfe  RA      : 0x4201307e  SP      : 0x40810a20  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e230  S1      : 0xffffffff  A0      : 0x4080e3d4  A1      : 0x00000000  
+A2      : 0x00000000  A3      : 0x00000001  A4      : 0xffffefff  A5      : 0x00000000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x00000000  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (446625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (447125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (447625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (448125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (448625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (449125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (449625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (450125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (450625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (451125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (451488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (451488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (451488) task_wdt: Tasks currently running:[0m
+[1;31mE (451488) task_wdt: CPU 0: main[0m
+[1;31mE (451488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4002f476  RA      : 0x40030794  SP      : 0x408109a0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4080e298  S1      : 0x40810b10  A0      : 0x00000000  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x00000001  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0x4080b544  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (451625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (452125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (452625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (453125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (453625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (454125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (454625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (455125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (455625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (456125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (456488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (456488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (456488) task_wdt: Tasks currently running:[0m
+[1;31mE (456488) task_wdt: CPU 0: main[0m
+[1;31mE (456488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806098  RA      : 0x40801b84  SP      : 0x40810930  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028140  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x4081098c  S1      : 0x4080e42c  A0      : 0x4080e42c  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000001  A5      : 0x00000004  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000004  S3      : 0xffffffff  
+S4      : 0x42013116  S5      : 0x00000002  S6      : 0x00000001  S7      : 0xffffffff  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (456625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (457125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (457625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (458125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (458625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (459125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (459625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (460125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (460625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m
+[0;32mI (461125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_15 HIGH[0m
+[1;31mE (461488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (461488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (461488) task_wdt: Tasks currently running:[0m
+[1;31mE (461488) task_wdt: CPU 0: main[0m
+[1;31mE (461488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x40806440  RA      : 0x408064d2  SP      : 0x408108f0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x40812638  S1      : 0x00000000  A0      : 0x00000001  A1      : 0xffffffff  
+A2      : 0x00000004  A3      : 0x00000004  A4      : 0x00000000  A5      : 0x20001000  
+A6      : 0x42009262  A7      : 0x0000000a  S2      : 0x00000000  S3      : 0xffffffff  
+S4      : 0x408125b4  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (461625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_18 HIGH[0m
+[0;32mI (462125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_19 HIGH[0m
+[0;32mI (462625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_20 HIGH[0m
+[0;32mI (463125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_21 HIGH[0m
+[0;32mI (463625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_22 HIGH[0m
+[0;32mI (464125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_23 HIGH[0m
+[0;32mI (464625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_0 HIGH[0m
+[0;32mI (465125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_1 HIGH[0m
+[0;32mI (465625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_2 HIGH[0m
+[0;32mI (466125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_3 HIGH[0m
+[1;31mE (466488) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:[0m
+[1;31mE (466488) task_wdt:  - IDLE (CPU 0)[0m
+[1;31mE (466488) task_wdt: Tasks currently running:[0m
+[1;31mE (466488) task_wdt: CPU 0: main[0m
+[1;31mE (466488) task_wdt: Print CPU 0 (current core) backtrace[0m
+esp_backtrace_print: Print CPU 0 (current core) registers
+Core  0 register dump:
+MEPC    : 0x4200b3d6  RA      : 0x4200b3b6  SP      : 0x408109a0  GP      : 0x4080b934  
+TP      : 0x40810ab0  T0      : 0x40028192  T1      : 0x40000136  T2      : 0x00000000  
+S0/FP   : 0x00000006  S1      : 0x408125b4  A0      : 0x00000000  A1      : 0x00000006  
+A2      : 0x408125b4  A3      : 0x00000012  A4      : 0x4080b3ba  A5      : 0x4080e07c  
+A6      : 0x4200ab7c  A7      : 0x0000000a  S2      : 0x00000080  S3      : 0x40810b10  
+S4      : 0x00000000  S5      : 0x00000000  S6      : 0x00000000  S7      : 0x00000000  
+S8      : 0x00000000  S9      : 0x00000000  S10     : 0x00000000  S11     : 0x00000000  
+T3      : 0x00000000  T4      : 0x00000000  T5      : 0x00000000  T6      : 0x00000000  
+MSTATUS : 0x00001889  MTVEC   : 0x40800001  MCAUSE  : 0xdeadc0de  MTVAL   : 0xdeadc0de  
+MHARTID : 0x00000000  
+[0;32mI (466625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_4 HIGH[0m
+[0;32mI (467125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_5 HIGH[0m
+[0;32mI (467625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_6 HIGH[0m
+[0;32mI (468125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_7 HIGH[0m
+[0;32mI (468625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_8 HIGH[0m
+[0;32mI (469125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_9 HIGH[0m
+[0;32mI (469625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_12 HIGH[0m
+[0;32mI (470125) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_13 HIGH[0m
+[0;32mI (470625) SAFE_GPIO_BLINK_TEST: Sequential: GPIO_14 HIGH[0m

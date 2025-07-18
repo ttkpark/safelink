@@ -1,0 +1,1020 @@
+[0;33m--- Warning: GDB cannot open serial ports accessed as COMx[0m
+[0;33m--- Using \\.\COM8 instead...[0m
+[0;33m--- esp-idf-monitor 1.6.2 on \\.\COM8 115200[0m
+[0;33m--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H[0m
+[0;33m--- Stack dump detected[0m
+[0;33m--- 0x408077c4: xTaskGetSchedulerState at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:5018
+--- 0x40801ba4: lock_release_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:180 (discriminator 1)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4200b3d6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:971
+--- 0x4200b3b6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:964
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x4200ab7c: console_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_vfs_console/vfs_console.c:94
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x420128c6: _fwalk_sglue at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/fwalk.c:52
+--- 0x420131ec: __srefill_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:110
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4003077a: _fflush_r in ROM
+--- 0x420128ee: _fwalk_sglue at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/fwalk.c:47 (discriminator 1)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4200b07e: get_vfs_for_fd at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:744 (discriminator 1)
+--- 0x4200b3b6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:964
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x420129bc: __sread at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/stdio.c:37
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801d58: __retarget_lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:319
+--- 0x4002814c: __retarget_lock_acquire_recursive in ROM
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x40801d50: __retarget_lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:318
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4200b3e4: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:971 (discriminator 2)
+--- 0x4200b3b6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:964
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x4200ab7c: console_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_vfs_console/vfs_console.c:94
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x408077ca: xTaskGetSchedulerState at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:5020
+--- 0x40801ae0: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:126 (discriminator 1)
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x420129bc: __sread at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/stdio.c:37
+--- 0x42013210: __srefill_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:115 (discriminator 1)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x420129bc: __sread at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/stdio.c:37
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40805f1a: xQueueSemaphoreTake at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1699
+--- 0x408060b8: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:840
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4200b07e: get_vfs_for_fd at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:744 (discriminator 1)
+--- 0x4200b3b6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:964
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x420129bc: __sread at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/stdio.c:37
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801d58: __retarget_lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:319
+--- 0x4002814c: __retarget_lock_acquire_recursive in ROM
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x40801d50: __retarget_lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:318
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4200b3e4: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:971 (discriminator 2)
+--- 0x4200b3b6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:964
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x4200ab7c: console_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_vfs_console/vfs_console.c:94
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x408077ca: xTaskGetSchedulerState at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:5020
+--- 0x40801ae0: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:126 (discriminator 1)
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x420128c6: _fwalk_sglue at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/fwalk.c:52
+--- 0x420131ec: __srefill_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:110
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806098: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:817
+--- 0x40801b84: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:146
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4200b07e: get_vfs_for_fd at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:744 (discriminator 1)
+--- 0x4200b3b6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:964
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x420129bc: __sread at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/stdio.c:37
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801d58: __retarget_lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:319
+--- 0x4002814c: __retarget_lock_acquire_recursive in ROM
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x40801d50: __retarget_lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:318
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4200b3e4: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:971 (discriminator 2)
+--- 0x4200b3b6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:964
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x4200ab7c: console_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_vfs_console/vfs_console.c:94
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x42008352: uart_read_char at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:256
+--- 0x42009314: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:281
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40805f16: xQueueSemaphoreTake at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1699
+--- 0x408060b8: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:840
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x42012900: getchar at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/getchar.c:86
+--- 0x4200c61a: handle_user_input at C:/Users/ttkpa/Desktop/safelink/test_gpio_blink/main/main.c:273
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801ba4: lock_release_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:180 (discriminator 1)
+--- 0x40801ba4: lock_release_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:180 (discriminator 1)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x408077ca: xTaskGetSchedulerState at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:5020
+--- 0x40801ae0: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:126 (discriminator 1)
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40805f16: xQueueSemaphoreTake at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1699
+--- 0x408060b8: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:840
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801bd2: lock_release_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:202
+--- 0x40801cd4: _lock_release_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:212
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4201326e: __srget_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/rget.c:47
+--- 0x4201326e: __srget_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/rget.c:47
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801b1e: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:153
+--- 0x40801c98: _lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:163
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806098: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:817
+--- 0x40801b84: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:146
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40805f16: xQueueSemaphoreTake at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1699
+--- 0x408060b8: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:840
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801bd2: lock_release_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:202
+--- 0x40801cd4: _lock_release_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:212
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801dfe: __retarget_lock_release_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:345
+--- 0x4201307e: _getc_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/getc.c:88
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4002f476: __riscv_restore_1 in ROM
+--- 0x40030794: _fflush_r in ROM
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806098: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:817
+--- 0x40801b84: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:146
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40805f16: xQueueSemaphoreTake at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1699
+--- 0x408060b8: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:840
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801bd2: lock_release_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:202
+--- 0x40801cd4: _lock_release_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:212
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801dfe: __retarget_lock_release_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:345
+--- 0x4201307e: _getc_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/getc.c:88
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4002f476: __riscv_restore_1 in ROM
+--- 0x40030794: _fflush_r in ROM
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40805f1a: xQueueSemaphoreTake at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1699
+--- 0x408060b8: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:840
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801c96: _lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:162
+--- 0x42009298: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:280
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4201326e: __srget_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/rget.c:47
+--- 0x4201326e: __srget_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/rget.c:47
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801b1e: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:153
+--- 0x40801c98: _lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:163
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x408077ca: xTaskGetSchedulerState at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:5020
+--- 0x40801ae0: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:126 (discriminator 1)
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806094: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:817
+--- 0x40801b84: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:146
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x408064a2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+--- 0x40805c0a: xQueueGenericSend at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1057
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4201326e: __srget_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/rget.c:47
+--- 0x4201326e: __srget_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/rget.c:47
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801b1e: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:153
+--- 0x40801c98: _lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:163
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806098: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:817
+--- 0x40801b84: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:146
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x42009268: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+--- 0x4200b41e: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:971 (discriminator 4)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x420093f8: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:340 (discriminator 1)
+--- 0x420093f8: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:340 (discriminator 1)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4002813c: __retarget_lock_acquire_recursive in ROM
+--- 0x40030794: _fflush_r in ROM
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801ae2: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:126 (discriminator 1)
+--- 0x40801ae0: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:126 (discriminator 1)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40805c12: xQueueGenericSend at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1168
+--- 0x40805dcc: xQueueGiveMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:796
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4201326e: __srget_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/rget.c:47
+--- 0x4201326e: __srget_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/rget.c:47
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801b1e: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:153
+--- 0x40801c98: _lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:163
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806098: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:817
+--- 0x40801b84: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:146
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4200b3d6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:971
+--- 0x4200b3b6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:964
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x4200ab7c: console_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_vfs_console/vfs_console.c:94
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x420093f8: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:340 (discriminator 1)
+--- 0x420093f8: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:340 (discriminator 1)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40030780: _fflush_r in ROM
+--- 0x4003077e: _fflush_r in ROM
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40805f28: xQueueSemaphoreTake at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1718 (discriminator 1)
+--- 0x40805f28: xQueueSemaphoreTake at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1718 (discriminator 1)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801c96: _lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:162
+--- 0x42009298: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:280
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x420129dc: __sread at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/stdio.c:61
+--- 0x42013210: __srefill_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:115 (discriminator 1)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x408060b8: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:840
+--- 0x408060b8: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:840
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801ad6: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:114
+--- 0x40801c98: _lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:163
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801ae2: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:126 (discriminator 1)
+--- 0x40801ae0: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:126 (discriminator 1)
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x408064a2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+--- 0x40805c0a: xQueueGenericSend at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1057
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4201326e: __srget_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/rget.c:47
+--- 0x4201326e: __srget_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/rget.c:47
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801b1e: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:153
+--- 0x40801c98: _lock_acquire_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:163
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806098: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:817
+--- 0x40801b84: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:146
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40805f16: xQueueSemaphoreTake at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:1699
+--- 0x408060b8: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:840
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801bd2: lock_release_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:202
+--- 0x40801cd4: _lock_release_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:212
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40801dfe: __retarget_lock_release_recursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:345
+--- 0x4201307e: _getc_r at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/getc.c:88
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4002f476: __riscv_restore_1 in ROM
+--- 0x40030794: _fflush_r in ROM
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806098: xQueueTakeMutexRecursive at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/queue.c:817
+--- 0x40801b84: lock_acquire_generic at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/newlib/locks.c:146
+[0m
+[0;33m--- 0x40028140: __retarget_lock_acquire_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x42013116: lflush at /builds/idf/crosstool-NG/.build/riscv32-esp-elf/src/newlib/newlib/libc/stdio/refill.c:28
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x40806440: vPortClearInterruptMaskFromISR at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:510
+--- 0x408064d2: vPortExitCritical at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/freertos/FreeRTOS-Kernel/portable/riscv/port.c:623
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x42009262: uart_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_driver_uart/src/uart_vfs.c:272
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0;33m--- 0x4200b3d6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:971
+--- 0x4200b3b6: esp_vfs_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/vfs/vfs.c:964
+[0m
+[0;33m--- 0x40028192: __retarget_lock_release_recursive in ROM
+--- 0x40000136: __call__esp_rom_spiflash_read in ROM
+[0m
+[0;33m--- 0x4200ab7c: console_read at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/esp_vfs_console/vfs_console.c:94
+[0m
+[0;33m--- 0x40800001: _vector_table at C:/Users/ttkpa/esp/v5.4.1/esp-idf/components/riscv/vectors_intc.S:54
+[0m
+[0m
