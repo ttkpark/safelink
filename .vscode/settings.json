@@ -1,6 +1,14 @@
 {
-    "idf.portWin": "COM8",
+    "idf.portWin": "COM14",
     "idf.openOcdConfigs": [
         "board/esp32c6-ftdi.cfg"
-    ]
+    ],
+    "idf.espIdfPathWin": "C:/Espressif/frameworks/esp-idf-v5.5/",
+    "idf.toolsPathWin": "C:\\Espressif",
+    "idf.pythonInstallPath": "C:\\Espressif\\tools\\idf-python\\3.11.2\\python.exe",
+    "files.associations": {
+        "sensor_manager.h": "c",
+        "i2c.h": "c"
+    },
+    "cmake.sourceDirectory": "C:/Users/ttkpa/Desktop/safelink/test_bluetooth_sensor"
 }
