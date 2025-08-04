@@ -101,7 +101,7 @@ const char* get_health_status_string(health_status_t status)
 static int ble_gap_event_cb(struct ble_gap_event *event, void *arg)
 {
     switch (event->type) {
-        case BLE_GAP_EVENT_SCAN_COMPLETE:
+        case BLE_GAP_EVENT_DISC_COMPLETE:
             ESP_LOGI(TAG, "Scan complete");
             if (!hub_found) {
                 ESP_LOGI(TAG, "No hub found, restarting scan");
@@ -345,7 +345,7 @@ esp_err_t bluetooth_start_scanning(void)
     ESP_LOGI(TAG, "Starting BLE scan for hubs...");
     current_state = BLUETOOTH_STATE_SCANNING;
     
-    struct ble_gap_scan_params scan_params = {
+    struct ble_gap_disc_params disc_params = {
         .filter_duplicates = 1,
         .passive = 0,
         .itvl = BLE_GAP_SCAN_ITVL_MS(BLE_SCAN_INTERVAL_MIN),
@@ -354,7 +354,7 @@ esp_err_t bluetooth_start_scanning(void)
         .limited = 0,
     };
     
-    int rc = ble_gap_scan(own_addr_type, BLE_HS_FOREVER, &scan_params, ble_gap_event_cb, NULL);
+    int rc = ble_gap_disc(own_addr_type, BLE_HS_FOREVER, &disc_params, ble_gap_event_cb, NULL);
     if (rc != 0) {
         ESP_LOGE(TAG, "Start scanning failed; rc=%d", rc);
         return ESP_FAIL;
@@ -367,7 +367,7 @@ esp_err_t bluetooth_start_scanning(void)
 esp_err_t bluetooth_stop_scanning(void)
 {
     ESP_LOGI(TAG, "Stopping BLE scan...");
-    int rc = ble_gap_scan_stop();
+    int rc = ble_gap_disc_cancel();
     if (rc != 0) {
         ESP_LOGE(TAG, "Stop scanning failed; rc=%d", rc);
         return ESP_FAIL;

@@ -4,9 +4,9 @@
 #include "esp_err.h"
 #include "driver/i2c.h"
 
-// I2C 설정 (ESP32-C3용)
-#define I2C_MASTER_SCL_IO           5       // SCL 핀 (ESP32-C3 GPIO5)
-#define I2C_MASTER_SDA_IO           4       // SDA 핀 (ESP32-C3 GPIO4)
+// I2C 설정 (ESP32-C6용)
+#define I2C_MASTER_SCL_IO           5       // SCL 핀 (ESP32-C6 GPIO5)
+#define I2C_MASTER_SDA_IO           6       // SDA 핀 (ESP32-C6 GPIO6)
 #define I2C_MASTER_NUM              I2C_NUM_0
 #define I2C_MASTER_FREQ_HZ          100000 // 100kHz
 #define I2C_MASTER_TX_BUF_DISABLE   0

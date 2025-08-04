@@ -1,12 +1,6 @@
 #include "bluetooth.h"
 #include "esp_log.h"
-#include "nimble/nimble_port.h"
-#include "nimble/nimble_port_freertos.h"
-#include "host/ble_hs.h"
-#include "host/ble_uuid.h"
-#include "host/util/util.h"
-#include "services/gap/ble_svc_gap.h"
-#include "services/gatt/ble_svc_gatt.h"
+#include "esp_timer.h"
 #include <string.h>
 
 static const char *TAG = "NIMBLE_BLE";

@@ -10,9 +10,9 @@
 #include "esp_adc/adc_cali.h"
 #include "esp_adc/adc_cali_scheme.h"
 
-// 심박 센서 설정 (ESP32-C3용)
-#define HEART_RATE_SENSOR_GPIO ADC_CHANNEL_0  // GPIO0 (ESP32-C3 ADC1_CH0)
-#define HEART_RATE_SENSOR_CHANNEL ADC_CHANNEL_0
+// 심박 센서 설정 (ESP32-C6용)
+#define HEART_RATE_SENSOR_GPIO 4           // GPIO4 (ESP32-C6)
+#define HEART_RATE_SENSOR_CHANNEL ADC_CHANNEL_4  // ADC1_CH4
 #define HEART_RATE_SENSOR_UNIT ADC_UNIT_1
 
 // 아날로그 샘플링 설정

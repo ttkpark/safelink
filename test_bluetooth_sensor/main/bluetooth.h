@@ -12,7 +12,7 @@
 #include "esp_timer.h"
 #include "nvs_flash.h"
 
-// NimBLE includes for ESP-IDF 5.5 (공식 예제 참고)
+// NimBLE includes for ESP-IDF 5.4.2
 #include "nimble/nimble_port.h"
 #include "nimble/nimble_port_freertos.h"
 #include "host/ble_hs.h"
