@@ -1,6 +1,14 @@
-# SafeLink Wearable Hub - ESP32-C3
+# SafeLink Wearable Hub - Audio Test System
 
-ESP32-C3 기반 웨어러블 허브 프로젝트입니다. 심박수, 온도, 습도 센서 데이터를 수집하고 Bluetooth Low Energy를 통해 전송합니다.
+ESP32-C6 기반 오디오 테스트 시스템입니다. DFP Player와 INMP441 마이크 모듈을 테스트하는 프로그램입니다.
+
+## 기능
+
+- **DFP Player 테스트**: I2S를 통한 오디오 재생 테스트
+- **INMP441 마이크 테스트**: 실시간 오디오 입력 및 음량 분석
+- **시리얼 통신**: UART를 통한 명령어 기반 제어
+- **실시간 음량 계산**: RMS 기반 음량 측정 및 dB 변환
+- **다중 태스크**: FreeRTOS 기반 병렬 처리
 
 ## 기능
 
@@ -12,50 +20,59 @@ ESP32-C3 기반 웨어러블 허브 프로젝트입니다. 심박수, 온도, �
 
 ## 하드웨어 연결
 
-### ESP32-C3 핀 할당
+### ESP32-C6 핀 할당
 
 | 기능 | 핀 | 설명 |
 |------|----|----|
-| I2C SDA | GPIO4 | AM2320 센서 데이터 라인 |
-| I2C SCL | GPIO5 | AM2320 센서 클럭 라인 |
-| 심박수 센서 | GPIO0 (ADC1_CH0) | 아날로그 심박수 신호 입력 |
+| I2S BCK | GPIO16 | I2S 비트 클럭 (DFP Player + INMP441 공유) |
+| I2S WS | GPIO17 | I2S 워드 셀렉트 (DFP Player + INMP441 공유) |
+| I2S DO | GPIO21 | I2S 데이터 출력 (DFP Player) |
+| I2S DI | GPIO20 | I2S 데이터 입력 (INMP441) |
+| UART TX | GPIO43 | 시리얼 통신 TX |
+| UART RX | GPIO44 | 시리얼 통신 RX |
+| I2C SCL | GPIO8 | I2C 클럭 (DFP Player 제어용) |
+| I2C SDA | GPIO10 | I2C 데이터 (DFP Player 제어용) |
 
-### 센서 연결
+### 오디오 모듈 연결
 
-#### AM2320 온습도 센서
+#### DFP Player (I2S Audio Output)
 - VCC → 3.3V
 - GND → GND
-- SDA → GPIO4
-- SCL → GPIO5
+- BCK → GPIO16 (I2S Bit Clock)
+- WS → GPIO17 (I2S Word Select)
+- DO → GPIO21 (I2S Data Out)
+- SCL → GPIO8 (I2C Clock, 제어용)
+- SDA → GPIO10 (I2C Data, 제어용)
 
-#### 심박수 센서
+#### INMP441 마이크 모듈 (I2S Audio Input)
 - VCC → 3.3V
 - GND → GND
-- Signal → GPIO0 (ADC 입력)
+- BCK → GPIO16 (I2S Bit Clock, DFP Player와 공유)
+- WS → GPIO17 (I2S Word Select, DFP Player와 공유)
+- SD → GPIO20 (I2S Data In)
+- SEL → GND (Left Channel 선택)
 
-## BLE 서비스
+## 시리얼 명령어
 
-### 표준 BLE 서비스
-- **Heart Rate Service** (0x180D)
-  - Heart Rate Measurement (0x2A37)
-- **Health Thermometer Service** (0x1809)
-  - Temperature Measurement (0x2A6E)
-  - Temperature Type (0x2A1D)
-- **Environmental Sensing Service** (0x181A)
-  - Humidity (0x2A6F)
-  - Pressure (0x2A6D)
+### 사용 가능한 명령어
+- **play**: DFP Player 오디오 재생 테스트 시작
+- **mic**: INMP441 마이크 테스트 시작
+- **stop**: 현재 테스트 중지
+- **status**: 시스템 상태 확인
+- **help**: 도움말 메뉴 표시
 
-### 커스텀 서비스
-- **Custom Sensor Service** (0x1810)
-  - Sensor Data (0x2A6F)
-  - Health Status (0x2A70)
+### 오디오 설정
+- **샘플링 레이트**: 16kHz
+- **비트 깊이**: 16-bit
+- **채널**: 모노 (1채널)
+- **버퍼 크기**: 1024 샘플
 
 ## 빌드 및 플래시
 
 ### 환경 설정
 ```bash
-# ESP-IDF 환경 설정
-C:\Espressif\frameworks\esp-idf-v5.5\export.ps1
+# ESP-IDF 환경 설정 (ESP-IDF v5.4.2)
+C:\Users\parkg\esp\v5.4.2\esp-idf\install.ps1
 ```
 
 ### 빌드
@@ -91,13 +108,18 @@ CONFIG_LOG_DEFAULT_LEVEL_INFO=y
 
 ## 테스트
 
-### BLE 연결 테스트
-1. nRF Connect 앱 설치
-2. "ESP32C3_Sensor" 디바이스 스캔
-3. 연결 후 서비스 및 특성 확인
-4. 실시간 데이터 모니터링
+### 오디오 재생 테스트
+1. 시리얼 모니터 연결 (115200 baud)
+2. 'play' 명령어 입력
+3. DFP Player에서 1kHz 테스트 톤 재생 확인
+4. 로그에서 오디오 데이터 전송 상태 확인
 
-### 센서 테스트
+### 마이크 테스트
+1. 시리얼 모니터 연결 (115200 baud)
+2. 'mic' 명령어 입력
+3. INMP441 마이크로 소리 입력
+4. 실시간 음량(dB) 및 평균 음량 확인
+5. 'status' 명령어로 현재 상태 확인
 - 심박수: GPIO0에 아날로그 신호 연결
 - 온습도: AM2320 센서 I2C 연결 확인
 
