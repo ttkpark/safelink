@@ -1,5 +1,5 @@
 idf_component_register(
-    SRCS "safelink_band.c" "bluetooth.c" "i2c.c" "analog.c"
+    SRCS "safelink_band.c" "bluetooth.c" "i2c.c" "analog.c" "sensor.c"
     INCLUDE_DIRS "."
     REQUIRES bt nvs_flash esp_adc driver
 )

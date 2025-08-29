@@ -53,6 +53,30 @@ typedef enum {
     HEALTH_STATUS_CRITICAL
 } health_status_t;
 
+// MIT App Inventor 경보 상태 정의
+typedef enum {
+    WBGT_NORMAL = 0,
+    WBGT_CAUTION = 1,
+    WBGT_WARNING = 2,
+    WBGT_DANGER = 3,
+    WBGT_EXTREME = 4
+} wbgt_warning_t;
+
+typedef enum {
+    TEMP_NORMAL = 0,
+    TEMP_LOW = 1,
+    TEMP_HIGH = 2,
+    TEMP_DANGER = 3,
+    TEMP_EXTREME = 4
+} temp_warning_t;
+
+typedef enum {
+    HR_NORMAL = 0,
+    HR_BRADYCARDIA = 1,
+    HR_TACHYCARDIA = 2,
+    HR_DANGER = 3
+} hr_warning_t;
+
 // Sensor data structure
 typedef struct {
     uint16_t heart_rate;
@@ -80,6 +104,12 @@ esp_err_t bluetooth_deinit(void);
 esp_err_t bluetooth_start_advertising(void);
 esp_err_t bluetooth_stop_advertising(void);
 esp_err_t bluetooth_send_sensor_data(const sensor_data_t *data);
+esp_err_t bluetooth_set_custom_advertising_data(void);  // Custom advertising data 설정
+esp_err_t bluetooth_update_advertising_with_sensor_data(uint16_t temperature, uint16_t humidity, uint16_t heart_rate, uint8_t battery_level);  // 기본 센서 데이터 업데이트
+esp_err_t bluetooth_set_extended_advertising_data(uint16_t temperature, uint16_t humidity, uint16_t heart_rate, uint8_t battery_level, uint16_t noise_level, uint16_t spo2, uint16_t body_temp);  // 확장 센서 데이터 설정
+esp_err_t bluetooth_update_mit_app_inventor_data(float skin_temp, uint16_t heart_rate, float spo2, float noise_level, wbgt_warning_t wbgt_warning, temp_warning_t temp_warning, hr_warning_t hr_warning);  // MIT App Inventor 데이터 업데이트
+esp_err_t bluetooth_set_mit_app_inventor_advertising(void);  // MIT App Inventor 전용 Advertising 설정
+esp_err_t bluetooth_start_advertising_update(void);  // Advertising 업데이트 태스크 시작
 bluetooth_state_t bluetooth_get_state(void);
 uint16_t bluetooth_get_connected_device(uint8_t *addr);
 

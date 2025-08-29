@@ -152,10 +152,19 @@ static void bluetooth_task(void *arg)
         return;
     }
     
+    // MIT App Inventor 전용 Advertising 설정
+    ret = bluetooth_set_mit_app_inventor_advertising();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set MIT App Inventor advertising");
+    } else {
+        ESP_LOGI(TAG, "MIT App Inventor advertising configured successfully");
+    }
+    
     // Bluetooth 준비 완료 이벤트 설정
     xEventGroupSetBits(sensor_event_group, BLUETOOTH_READY_BIT);
     
     ESP_LOGI(TAG, "Bluetooth initialized successfully - Device: %s", BLE_DEVICE_NAME);
+    ESP_LOGI(TAG, "MIT App Inventor compatible: 11-byte manufacturer data");
     
     while(1) {
         bluetooth_state_t state = bluetooth_get_state();
@@ -218,6 +227,34 @@ static void sensor_monitor_task(void *arg)
             float temp_float = (float)current_sensor_data.temperature / 100.0f;
             float hum_float = (float)current_sensor_data.humidity / 100.0f;
             
+            // MIT App Inventor 데이터 업데이트 (실제 센서 값으로)
+            float skin_temp = temp_float;  // 현재는 온도를 피부온도로 사용
+            float spo2 = 95.0f;  // 기본값 (실제 SpO2 센서가 있다면 여기서 읽기)
+            float noise_level = 50.0f;  // 기본값 (실제 노이즈 센서가 있다면 여기서 읽기)
+            
+            // 경보 상태 결정 (간단한 예시)
+            wbgt_warning_t wbgt_warning = WBGT_NORMAL;
+            temp_warning_t temp_warning = TEMP_NORMAL;
+            hr_warning_t hr_warning = HR_NORMAL;
+            
+            // 체온 경고
+            if (skin_temp < 35.0f) temp_warning = TEMP_LOW;
+            else if (skin_temp > 37.5f) temp_warning = TEMP_HIGH;
+            
+            // 심박수 경고
+            if (current_sensor_data.heart_rate < 60) hr_warning = HR_BRADYCARDIA;
+            else if (current_sensor_data.heart_rate > 100) hr_warning = HR_TACHYCARDIA;
+            
+            // MIT App Inventor 데이터 업데이트
+            esp_err_t mit_ret = bluetooth_update_mit_app_inventor_data(
+                skin_temp, current_sensor_data.heart_rate, spo2, noise_level,
+                wbgt_warning, temp_warning, hr_warning
+            );
+            
+            if (mit_ret != ESP_OK) {
+                ESP_LOGW(TAG, "Failed to update MIT App Inventor data");
+            }
+            
             // 로그 간소화 (5초마다만 출력)
             static uint32_t monitor_log_counter = 0;
             if (++monitor_log_counter >= 5) {
@@ -225,6 +262,8 @@ static void sensor_monitor_task(void *arg)
                         current_sensor_data.heart_rate,
                         temp_float, hum_float,
                         get_health_status_string(current_sensor_data.health_status));
+                ESP_LOGI(TAG, "MIT App Inventor: Skin=%.1f°C, SpO2=%.1f%%, Noise=%.1fdB", 
+                        skin_temp, spo2, noise_level);
                 monitor_log_counter = 0;
             }
             

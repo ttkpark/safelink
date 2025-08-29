@@ -1,6 +1,7 @@
 #include "bluetooth.h"
 #include "esp_log.h"
 #include "esp_timer.h"
+#include "esp_random.h"
 #include <string.h>
 
 static const char *TAG = "NIMBLE_BLE";
@@ -23,7 +24,6 @@ static uint16_t health_status_char_handle = 0;
 // Static data buffers for characteristics
 static uint16_t heart_rate_value = 75;
 static uint32_t temp_humidity_value = 0;
-static uint8_t control_value = 0;
 
 // Health monitoring functions
 health_status_t analyze_health_status(uint16_t heart_rate, uint16_t temperature, uint16_t humidity)
@@ -200,7 +200,42 @@ static int gatt_svr_access_cb(uint16_t conn_handle, uint16_t attr_handle,
             break;
             
         case BLE_GATT_ACCESS_OP_WRITE_CHR:
-            // 표준 Heart Rate Service는 쓰기 권한이 없음
+            uuid = chr->uuid;
+            if (ble_uuid_cmp(uuid, BLE_UUID16_DECLARE(HEART_RATE_CHAR_UUID)) == 0) {
+                // 심박수 데이터 쓰기 (테스트용)
+                if (ctxt->om->om_len >= 1) {
+                    heart_rate_value = ctxt->om->om_data[0];
+                    ESP_LOGI(TAG, "Heart rate written: %d BPM", heart_rate_value);
+                }
+                return 0;
+            } else if (ble_uuid_cmp(uuid, BLE_UUID16_DECLARE(TEMPERATURE_CHAR_UUID)) == 0) {
+                // 온도 데이터 쓰기 (테스트용)
+                if (ctxt->om->om_len >= 2) {
+                    uint16_t temp_value = ctxt->om->om_data[0] | (ctxt->om->om_data[1] << 8);
+                    temp_humidity_value = (temp_humidity_value & 0xFFFF) | (temp_value << 16);
+                    ESP_LOGI(TAG, "Temperature written: %.1f°C", temp_value / 10.0f);
+                }
+                return 0;
+            } else if (ble_uuid_cmp(uuid, BLE_UUID16_DECLARE(HUMIDITY_CHAR_UUID)) == 0) {
+                // 습도 데이터 쓰기 (테스트용)
+                if (ctxt->om->om_len >= 2) {
+                    uint16_t hum_value = ctxt->om->om_data[0] | (ctxt->om->om_data[1] << 8);
+                    temp_humidity_value = (temp_humidity_value & 0xFFFF0000) | hum_value;
+                    ESP_LOGI(TAG, "Humidity written: %.1f%%", hum_value / 10.0f);
+                }
+                return 0;
+            } else if (ble_uuid_cmp(uuid, BLE_UUID16_DECLARE(SENSOR_DATA_CHAR_UUID)) == 0) {
+                // 통합 센서 데이터 쓰기 (테스트용)
+                if (ctxt->om->om_len >= 6) {
+                    heart_rate_value = ctxt->om->om_data[0] | (ctxt->om->om_data[1] << 8);
+                    uint16_t temp_value = ctxt->om->om_data[2] | (ctxt->om->om_data[3] << 8);
+                    uint16_t hum_value = ctxt->om->om_data[4] | (ctxt->om->om_data[5] << 8);
+                    temp_humidity_value = (temp_value << 16) | hum_value;
+                    ESP_LOGI(TAG, "Sensor data written - HR: %d, Temp: %.1f°C, Hum: %.1f%%", 
+                            heart_rate_value, temp_value / 10.0f, hum_value / 10.0f);
+                }
+                return 0;
+            }
             break;
             
         default:
@@ -219,7 +254,7 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
             {
                 .uuid = BLE_UUID16_DECLARE(HEART_RATE_CHAR_UUID),
                 .access_cb = gatt_svr_access_cb,
-                .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
+                .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_NOTIFY,
                 .val_handle = &heart_rate_char_handle,
             },
             {0} // end
@@ -232,7 +267,7 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
             {
                 .uuid = BLE_UUID16_DECLARE(TEMPERATURE_CHAR_UUID),
                 .access_cb = gatt_svr_access_cb,
-                .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
+                .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_NOTIFY,
                 .val_handle = &temperature_char_handle,
             },
             {
@@ -251,7 +286,7 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
             {
                 .uuid = BLE_UUID16_DECLARE(HUMIDITY_CHAR_UUID),
                 .access_cb = gatt_svr_access_cb,
-                .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
+                .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_NOTIFY,
                 .val_handle = &humidity_char_handle,
             },
             {
@@ -270,7 +305,7 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
             {
                 .uuid = BLE_UUID16_DECLARE(SENSOR_DATA_CHAR_UUID),
                 .access_cb = gatt_svr_access_cb,
-                .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_NOTIFY,
+                .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_NOTIFY,
                 .val_handle = &sensor_data_char_handle,
             },
             {
@@ -344,13 +379,232 @@ static void ble_host_task(void *param)
     nimble_port_freertos_deinit();
 }
 
+// MIT App Inventor 전용 11바이트 Advertising 데이터
+static uint8_t mit_app_inventor_adv_data[] = {
+    // 피부온도 (2바이트, 0.1°C 단위, 15.0~40.0°C = 150~400)
+    0x96, 0x00,  // 150 = 36.0°C (기본값)
+    
+    // 심박수 (2바이트, 20~160 BPM)
+    0x4B, 0x00,  // 75 BPM (기본값)
+    
+    // 혈중포화농도 (2바이트, 0.1% 단위, 80.0~99.9% = 800~999)
+    0xE8, 0x03,  // 1000 = 95.0% (기본값)
+    
+    // 평균소음 (2바이트, 0.1dB 단위, 40~150dB = 400~1500)
+    0x90, 0x01,  // 400 = 40.0dB (기본값)
+    
+    // 경보상태 플래그 (1바이트)
+    // 비트 7-5: WBGT 경고 (0=정상, 1=주의, 2=경고, 3=위험, 4=매우위험)
+    // 비트 4-2: 체온경고 (0=정상, 1=저체온, 2=고체온, 3=위험, 4=매우위험)
+    // 비트 1-0: 심박수경고 (0=정상, 1=서맥, 2=빈맥, 3=위험)
+    0x00,        // 모든 경고 정상 (기본값)
+    
+    // 예약 (2바이트)
+    0x00, 0x00   // 향후 확장용
+};
+
+// MIT App Inventor 전용 Advertising 데이터 업데이트 함수
+esp_err_t bluetooth_update_mit_app_inventor_data(float skin_temp, uint16_t heart_rate, 
+                                                float spo2, float noise_level,
+                                                wbgt_warning_t wbgt_warning,
+                                                temp_warning_t temp_warning,
+                                                hr_warning_t hr_warning)
+{
+    // 입력값 검증
+    if (skin_temp < 15.0f || skin_temp > 40.0f) {
+        ESP_LOGE(TAG, "Invalid skin temperature: %.1f°C (15.0~40.0°C)", skin_temp);
+        return ESP_ERR_INVALID_ARG;
+    }
+    
+    if (heart_rate < 20 || heart_rate > 160) {
+        ESP_LOGE(TAG, "Invalid heart rate: %d BPM (20~160)", heart_rate);
+        return ESP_ERR_INVALID_ARG;
+    }
+    
+    if (spo2 < 80.0f || spo2 > 99.9f) {
+        ESP_LOGE(TAG, "Invalid SpO2: %.1f%% (80.0~99.9%%)", spo2);
+        return ESP_ERR_INVALID_ARG;
+    }
+    
+    if (noise_level < 40.0f || noise_level > 150.0f) {
+        ESP_LOGE(TAG, "Invalid noise level: %.1fdB (40~150dB)", noise_level);
+        return ESP_ERR_INVALID_ARG;
+    }
+    
+    // 피부온도 (0.1°C 단위로 변환)
+    uint16_t temp_raw = (uint16_t)(skin_temp * 10.0f);
+    mit_app_inventor_adv_data[0] = temp_raw & 0xFF;
+    mit_app_inventor_adv_data[1] = (temp_raw >> 8) & 0xFF;
+    
+    // 심박수
+    mit_app_inventor_adv_data[2] = heart_rate & 0xFF;
+    mit_app_inventor_adv_data[3] = (heart_rate >> 8) & 0xFF;
+    
+    // 혈중포화농도 (0.1% 단위로 변환)
+    uint16_t spo2_raw = (uint16_t)(spo2 * 10.0f);
+    mit_app_inventor_adv_data[4] = spo2_raw & 0xFF;
+    mit_app_inventor_adv_data[5] = (spo2_raw >> 8) & 0xFF;
+    
+    // 평균소음 (0.1dB 단위로 변환)
+    uint16_t noise_raw = (uint16_t)(noise_level * 10.0f);
+    mit_app_inventor_adv_data[6] = noise_raw & 0xFF;
+    mit_app_inventor_adv_data[7] = (noise_raw >> 8) & 0xFF;
+    
+    // 경보상태 플래그 조합
+    uint8_t warning_flags = 0;
+    warning_flags |= (wbgt_warning & 0x07) << 5;  // 비트 7-5: WBGT 경고
+    warning_flags |= (temp_warning & 0x07) << 2;  // 비트 4-2: 체온경고
+    warning_flags |= (hr_warning & 0x03);         // 비트 1-0: 심박수경고
+    mit_app_inventor_adv_data[8] = warning_flags;
+    
+    // 예약 바이트는 0으로 유지
+    mit_app_inventor_adv_data[9] = 0x00;
+    mit_app_inventor_adv_data[10] = 0x00;
+    
+    ESP_LOGI(TAG, "MIT App Inventor data updated:");
+    ESP_LOGI(TAG, "  Skin Temp: %.1f°C (%d)", skin_temp, temp_raw);
+    ESP_LOGI(TAG, "  Heart Rate: %d BPM", heart_rate);
+    ESP_LOGI(TAG, "  SpO2: %.1f%% (%d)", spo2, spo2_raw);
+    ESP_LOGI(TAG, "  Noise: %.1fdB (%d)", noise_level, noise_raw);
+    ESP_LOGI(TAG, "  Warnings: WBGT=%d, Temp=%d, HR=%d", wbgt_warning, temp_warning, hr_warning);
+    
+    return ESP_OK;
+}
+
+// 정상적인 GATT Server + 커스텀 Beacon Advertising 설정
+esp_err_t bluetooth_set_mit_app_inventor_advertising(void)
+{
+    // Advertising을 중지하고 안전하게 필드를 갱신
+    ble_gap_adv_stop();
+
+    // 29바이트 Advertising Data (Device Name 포함)
+    uint8_t adv_data[29] = {
+        // 1. Flags (3 bytes)
+        0x02, 0x01, 0x06,  // Length=2, Type=Flags, Value=LE General Discoverable + BR/EDR Not Supported
+        
+        // 2. Device Name (13 bytes) - "Safelink_HR"
+        0x0C, 0x09, 'S', 'a', 'f', 'e', 'l', 'i', 'n', 'k', '_', 'H', 'R',
+        
+        // 3. Service UUID (Heart Rate Service) (5 bytes)
+        0x05, 0x16, 0x0D, 0x18, 0x00, 0x00,  // Length=5, Type=Service UUID, UUID=0x180D
+        
+        // 4. Manufacturer Data (8 bytes) - Company ID + 6바이트 센서 데이터
+        0x09, 0xFF,  // Length=9, Type=Manufacturer Specific Data
+        0x4E, 0x00,  // Company ID (0x004E = Nordic Semiconductor)
+        
+        // 6바이트 센서 데이터 (압축된 버전)
+        0x96, 0x00, 0x4B, 0x00, 0xE8, 0x03
+    };
+    
+    // 최신 센서 데이터로 업데이트 (6바이트만 사용)
+    memcpy(&adv_data[21], mit_app_inventor_adv_data, 6);
+    
+    // Advertising data 설정
+    int rc = ble_gap_adv_set_data(adv_data, sizeof(adv_data));
+    if (rc != 0) {
+        ESP_LOGE(TAG, "Failed to set advertising data; rc=%d", rc);
+        return ESP_FAIL;
+    }
+    
+    ESP_LOGI(TAG, "=== 29-byte Advertising Data Set ===");
+    ESP_LOGI(TAG, "Device Name: Safelink_HR (included in ADV)");
+    ESP_LOGI(TAG, "Service UUID: 0x180D (Heart Rate Service)");
+    ESP_LOGI(TAG, "Manufacturer Data: 6-byte sensor data");
+    ESP_LOGI(TAG, "Total Advertising Data: %d bytes", sizeof(adv_data));
+    
+    // Advertising 데이터 내용 출력 (디버깅용)
+    ESP_LOGI(TAG, "Advertising data dump:");
+    for (int i = 0; i < sizeof(adv_data); i++) {
+        ESP_LOGI(TAG, "  [%02d]: 0x%02X", i, adv_data[i]);
+    }
+    ESP_LOGI(TAG, "=== END ADVERTISING DATA ===");
+    
+    // 재시작
+    struct ble_gap_adv_params adv_params = {
+        .conn_mode = BLE_GAP_CONN_MODE_UND,
+        .disc_mode = BLE_GAP_DISC_MODE_GEN,
+        .itvl_min = BLE_GAP_ADV_ITVL_MS(500),
+        .itvl_max = BLE_GAP_ADV_ITVL_MS(2000),
+    };
+    
+    rc = ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER, &adv_params, ble_gap_event_cb, NULL);
+    if (rc != 0) {
+        ESP_LOGE(TAG, "Failed to restart advertising; rc=%d", rc);
+        return ESP_FAIL;
+    }
+    
+    return ESP_OK;
+}
+
+// 5초마다 Advertising 데이터 업데이트 태스크
+static void advertising_update_task(void *pvParameters)
+{
+    ESP_LOGI(TAG, "Advertising update task started");
+    
+    while (1) {
+        // 현재 센서 데이터로 MIT App Inventor 데이터 업데이트
+        float skin_temp = 25.0f + (esp_random() % 100) / 10.0f;  // 25.0~35.0°C
+        uint16_t heart_rate = 60 + (esp_random() % 100);         // 60~160 BPM
+        float spo2 = 90.0f + (esp_random() % 100) / 10.0f;      // 90.0~100.0%
+        float noise_level = 40.0f + (esp_random() % 1100) / 10.0f; // 40.0~150.0dB
+        
+        // 경보 상태 결정
+        wbgt_warning_t wbgt_warning = WBGT_NORMAL;
+        temp_warning_t temp_warning = TEMP_NORMAL;
+        hr_warning_t hr_warning = HR_NORMAL;
+        
+        // 온도 경보
+        if (skin_temp > 38.0f) {
+            temp_warning = TEMP_HIGH;
+        } else if (skin_temp < 35.0f) {
+            temp_warning = TEMP_LOW;
+        }
+        
+        // 심박수 경보
+        if (heart_rate > 120) {
+            hr_warning = HR_TACHYCARDIA;
+        } else if (heart_rate < 60) {
+            hr_warning = HR_BRADYCARDIA;
+        }
+        
+        // MIT App Inventor 데이터 업데이트
+        esp_err_t ret = bluetooth_update_mit_app_inventor_data(
+            skin_temp, heart_rate, spo2, noise_level,
+            wbgt_warning, temp_warning, hr_warning
+        );
+        
+        if (ret == ESP_OK) {
+            // GATT Server 데이터도 동기화
+            temp_humidity_value = ((uint16_t)(skin_temp * 10.0f) << 16) | (uint16_t)(50.0f * 10.0f); // 온도 + 습도
+            heart_rate_value = heart_rate;
+            
+            // Advertising 데이터 다시 설정 (실시간 업데이트)
+            bluetooth_set_mit_app_inventor_advertising();
+            
+            ESP_LOGI(TAG, "Advertising updated - Temp: %.1f°C, HR: %d, SpO2: %.1f%%, Noise: %.1fdB", 
+                    skin_temp, heart_rate, spo2, noise_level);
+        }
+        
+        // 5초 대기
+        vTaskDelay(pdMS_TO_TICKS(2000));
+    }
+}
+
+// Advertising 업데이트 태스크 시작
+esp_err_t bluetooth_start_advertising_update(void)
+{
+    xTaskCreate(advertising_update_task, "adv_update", 4096, NULL, 5, NULL);
+    ESP_LOGI(TAG, "Advertising update task created");
+    return ESP_OK;
+}
+
 // BLE sync callback
 static void ble_on_sync(void)
 {
     int rc;
     
-    // Set device name
-    rc = ble_svc_gap_device_name_set(BLE_DEVICE_NAME);
+    // Set device name to "Safelink_HR" (nRF Connect에서 표시될 이름)
+    rc = ble_svc_gap_device_name_set("Safelink_HR");
     if (rc != 0) {
         ESP_LOGE(TAG, "Failed to set device name; rc=%d", rc);
         return;
@@ -359,20 +613,10 @@ static void ble_on_sync(void)
     // Configure the address
     ble_hs_id_infer_auto(0, &own_addr_type);
     
-    // Create advertising data with device name
-    struct ble_hs_adv_fields adv_fields = {
-        .flags = BLE_HS_ADV_F_DISC_GEN | BLE_HS_ADV_F_BREDR_UNSUP,
-        .tx_pwr_lvl = 0,  // 0 dBm
-        .tx_pwr_lvl_is_present = 1,
-        .name = (uint8_t *)BLE_DEVICE_NAME,
-        .name_len = strlen(BLE_DEVICE_NAME),
-        .name_is_complete = 1,
-    };
-    
-    // Set advertising data
-    rc = ble_gap_adv_set_fields(&adv_fields);
-    if (rc != 0) {
-        ESP_LOGE(TAG, "Failed to set advertising data; rc=%d", rc);
+    // 정상적인 GATT Server + 커스텀 Beacon Advertising 설정
+    rc = bluetooth_set_mit_app_inventor_advertising();
+    if (rc != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set advertising data");
         return;
     }
     
@@ -390,11 +634,17 @@ static void ble_on_sync(void)
         return;
     }
     
-    ESP_LOGI(TAG, "=== BLE ADVERTISING SUCCESS ===");
-    ESP_LOGI(TAG, "Device should now be visible in nRF Connect");
-    ESP_LOGI(TAG, "Look for device named: %s", BLE_DEVICE_NAME);
+    ESP_LOGI(TAG, "=== BLE GATT SERVER + BEACON ADVERTISING SUCCESS ===");
+    ESP_LOGI(TAG, "Device Name: Safelink_HR");
+    ESP_LOGI(TAG, "Service: Heart Rate (0x180D)");
+    ESP_LOGI(TAG, "Custom Beacon: 8-byte sensor data");
+    ESP_LOGI(TAG, "nRF Connect에서 'Safelink_HR'로 표시됨");
     ESP_LOGI(TAG, "=== END SUCCESS INFO ===");
     current_state = BLUETOOTH_STATE_ADVERTISING;
+    
+    // 초기 센서 데이터 설정
+    temp_humidity_value = (250 << 16) | 500;  // 25.0°C, 50.0%
+    heart_rate_value = 75;
 }
 
 // Initialize BLE
@@ -436,6 +686,9 @@ esp_err_t bluetooth_init(void)
     // Create host task
     nimble_port_freertos_init(ble_host_task);
     
+    // Advertising 업데이트 태스크 시작
+    bluetooth_start_advertising_update();
+    
     ESP_LOGI(TAG, "NimBLE initialization completed");
     return ESP_OK;
 }
@@ -471,23 +724,6 @@ esp_err_t bluetooth_start_advertising(void)
     ESP_LOGI(TAG, "Starting BLE advertising...");
     current_state = BLUETOOTH_STATE_ADVERTISING;
     
-    // Create advertising data with device name
-    struct ble_hs_adv_fields adv_fields = {
-        .flags = BLE_HS_ADV_F_DISC_GEN | BLE_HS_ADV_F_BREDR_UNSUP,
-        .tx_pwr_lvl = 0,  // 0 dBm
-        .tx_pwr_lvl_is_present = 1,
-        .name = (uint8_t *)BLE_DEVICE_NAME,
-        .name_len = strlen(BLE_DEVICE_NAME),
-        .name_is_complete = 1,
-    };
-    
-    // Set advertising data
-    int rc = ble_gap_adv_set_fields(&adv_fields);
-    if (rc != 0) {
-        ESP_LOGE(TAG, "Failed to set advertising data; rc=%d", rc);
-        return ESP_FAIL;
-    }
-    
     struct ble_gap_adv_params adv_params = {
         .conn_mode = BLE_GAP_CONN_MODE_UND,
         .disc_mode = BLE_GAP_DISC_MODE_GEN,
@@ -495,7 +731,7 @@ esp_err_t bluetooth_start_advertising(void)
         .itvl_max = BLE_GAP_ADV_ITVL_MS(200),
     };
     
-    rc = ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER, &adv_params, ble_gap_event_cb, NULL);
+    int rc = ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER, &adv_params, ble_gap_event_cb, NULL);
     if (rc != 0) {
         ESP_LOGE(TAG, "Start advertising failed; rc=%d", rc);
         return ESP_FAIL;
