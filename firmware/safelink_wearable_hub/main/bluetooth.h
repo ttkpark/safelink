@@ -44,6 +44,9 @@
 // Debug command write-only characteristic (custom)
 #define DEBUG_CMD_CHAR_UUID           0xFFF2
 
+// GPIO for vibration motor
+#define VIBRATION_GPIO 22
+
 // Bluetooth states
 typedef enum {
     BLUETOOTH_STATE_DISCONNECTED,

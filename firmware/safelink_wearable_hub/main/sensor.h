@@ -22,6 +22,13 @@
 #define SENSOR_DATA_READY_BIT    BIT0
 // BLUETOOTH_READY_BIT는 bluetooth.h 정의 사용
 
+// 알람 상태 비트 정의
+#define ALARM_WBGT_WARNING       BIT0
+#define ALARM_TEMP_WARNING       BIT1
+#define ALARM_HR_WARNING         BIT2
+#define ALARM_NOISE_WARNING      BIT3
+#define ALARM_SPO2_WARNING       BIT4
+
 // Task priorities
 #define SENSOR_TASK_PRIORITY     5
 #define MONITOR_TASK_PRIORITY    3
@@ -90,5 +97,39 @@ esp_err_t sensor_update_health_status(void);
 
 // Task creation functions
 esp_err_t sensor_create_tasks(EventGroupHandle_t event_group);
+
+// 경고 레벨 정의
+#define WARNING_LEVEL_NONE      0
+#define WARNING_LEVEL_CAUTION   1  // 주의
+#define WARNING_LEVEL_DANGER    2  // 위험
+
+// 경고 종류별 음성 파일 번호 (10-30번 범위)
+#define VOICE_WBGT_CAUTION      10  // WBGT 주의 (28-30°C)
+#define VOICE_WBGT_DANGER       11  // WBGT 위험 (30°C 이상)
+#define VOICE_TEMP_CAUTION      12  // 체온 주의 (37.5-38°C)
+#define VOICE_TEMP_DANGER       13  // 체온 위험 (38°C 이상)
+#define VOICE_HR_CAUTION        14  // 심박수 주의 (100-120 BPM)
+#define VOICE_HR_DANGER         15  // 심박수 위험 (120 BPM 이상)
+#define VOICE_NOISE_CAUTION     16  // 소음 주의 (95-110 dB)
+#define VOICE_NOISE_DANGER      17  // 소음 위험 (110 dB 이상)
+#define VOICE_SPO2_CAUTION      18  // 산소포화도 주의 (90-95%)
+#define VOICE_SPO2_DANGER       19  // 산소포화도 위험 (90% 미만)
+
+// 경고 메시지 구조체
+typedef struct {
+    uint8_t warning_type;      // 경고 종류
+    uint8_t warning_level;     // 경고 레벨 (주의/위험)
+    uint8_t voice_file_num;    // 음성 파일 번호
+    const char* message;       // 알림 메시지
+    bool is_active;            // 활성화 상태
+    uint32_t last_triggered;   // 마지막 트리거 시간
+} warning_info_t;
+
+// 경고 시스템 함수들
+esp_err_t warning_system_init(void);
+esp_err_t warning_system_check_and_trigger(void);
+esp_err_t warning_system_play_voice(uint8_t voice_file_num);
+esp_err_t warning_system_vibrate(uint32_t duration_ms);
+void warning_system_reset_all(void);
 
 #endif // SENSOR_H 

@@ -42,8 +42,6 @@ static health_sensor_data_t health_data = {
 // ADC handle for noise measurement
 static adc_oneshot_unit_handle_t adc1_handle = NULL;
 
-// GPIO for vibration motor
-#define VIBRATION_GPIO 22
 
 // Command buffer
 static char command_buffer[32] = {0};
@@ -90,6 +88,8 @@ static int gatt_svr_access_cb(uint16_t conn_handle, uint16_t attr_handle,
             if (ble_uuid_cmp(uuid, BLE_UUID16_DECLARE(TEST_CHAR_UUID)) == 0) {
                 // Device Name characteristic
                 os_mbuf_append(ctxt->om, test_value, strlen(test_value));
+
+
                 return 0;
             } else if (ble_uuid_cmp(uuid, BLE_UUID16_DECLARE(TEMPERATURE_CHAR_UUID)) == 0) {
                 // External Temperature characteristic (밴드 데이터)
@@ -267,10 +267,12 @@ static int gatt_svr_access_cb(uint16_t conn_handle, uint16_t attr_handle,
                         vTaskDelay(1000 / portTICK_PERIOD_MS);
                         gpio_set_level(VIBRATION_GPIO, 0);
                         ESP_LOGI(TAG, "Vibration completed");
-                    } else if (strcmp(command_buffer, "play") == 0) {
-                        ESP_LOGI(TAG, "Executing play command");
+                    } else if (strstr(command_buffer, "play") != NULL) {
+                        int track_num = atoi(command_buffer + 5);
+                        if(track_num < 0) track_num = 0;
+                        ESP_LOGI(TAG, "Executing play command: %d", track_num);
                         // Try different play methods
-                        esp_err_t play_ret = dfplayer_play_folder(0, 1); // Play track 1 from folder 1
+                        esp_err_t play_ret = dfplayer_play_folder(0, track_num); // Play track 1 from folder 1
                         if (play_ret == ESP_OK) {
                             ESP_LOGI(TAG, "Play command sent successfully");
                         } else {

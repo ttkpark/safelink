@@ -1,9 +1,38 @@
 #include "sensor.h"
+#include "i2c.h"
 #include "data_manager.h"
+#include "dfplayer_mini.h"
+#include "driver/gpio.h"
+#include "esp_timer.h"
+#include "esp_log.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/event_groups.h"
 #include "mic_i2s.h"
+#include <string.h>
 #include <math.h>
 
 static const char *TAG = "SENSOR";
+
+// 경고 시스템 전역 변수들
+static warning_info_t warning_list[] = {
+    {ALARM_WBGT_WARNING, WARNING_LEVEL_NONE, VOICE_WBGT_CAUTION, "WBGT 주의: 28-30°C 구간입니다. 1시간마다 15-30분 휴식을 취하세요.", false, 0},
+    {ALARM_WBGT_WARNING, WARNING_LEVEL_NONE, VOICE_WBGT_DANGER, "WBGT 위험: 30°C 이상입니다. 즉시 휴식을 취하고 냉방 시설을 이용하세요.", false, 0},
+    {ALARM_TEMP_WARNING, WARNING_LEVEL_NONE, VOICE_TEMP_CAUTION, "체온 주의: 37.5-38°C 구간입니다. 수분을 보충하고 휴식을 취하세요.", false, 0},
+    {ALARM_TEMP_WARNING, WARNING_LEVEL_NONE, VOICE_TEMP_DANGER, "체온 위험: 38°C 이상입니다. 즉시 작업을 중단하고 냉각 조치를 취하세요.", false, 0},
+    {ALARM_HR_WARNING, WARNING_LEVEL_NONE, VOICE_HR_CAUTION, "심박수 주의: 100-120 BPM 구간입니다. 휴식이 필요합니다.", false, 0},
+    {ALARM_HR_WARNING, WARNING_LEVEL_NONE, VOICE_HR_DANGER, "심박수 위험: 120 BPM 이상입니다. 즉시 휴식을 취하세요.", false, 0},
+    {ALARM_NOISE_WARNING, WARNING_LEVEL_NONE, VOICE_NOISE_CAUTION, "소음 주의: 95-110 dB 구간입니다. 귀마개를 착용하세요.", false, 0},
+    {ALARM_NOISE_WARNING, WARNING_LEVEL_NONE, VOICE_NOISE_DANGER, "소음 위험: 110 dB 이상입니다. 즉시 귀마개를 착용하고 휴식을 취하세요.", false, 0},
+    {ALARM_SPO2_WARNING, WARNING_LEVEL_NONE, VOICE_SPO2_CAUTION, "산소포화도 주의: 90-95% 구간입니다. 신선한 공기를 마시고 휴식을 취하세요.", false, 0},
+    {ALARM_SPO2_WARNING, WARNING_LEVEL_NONE, VOICE_SPO2_DANGER, "산소포화도 위험: 90% 미만입니다. 즉시 의료진의 도움을 받으세요.", false, 0}
+};
+
+#define WARNING_LIST_SIZE (sizeof(warning_list) / sizeof(warning_info_t))
+static bool warning_system_initialized = false;
+static uint32_t last_warning_check = 0;
+static const uint32_t WARNING_CHECK_INTERVAL_MS = 5000; // 5초마다 경고 체크
+static const uint32_t WARNING_COOLDOWN_MS = 30000; // 30초 쿨다운
 
 // Global variables
 static sensor_data_t current_sensor_data = {0};
@@ -85,11 +114,11 @@ float calc_wbgt(float temperature, float humidity) {
     float RH = humidity;
 
     // Stull(2011) 습구온도 근사 공식
-    float Tw = Td * atanf(0.151977 * sqrtf(RH + 8.313659))
+    float Tw = Td * atanf(0.151977f * sqrtf(RH + 8.313659f))
                + atanf(Td + RH)
-               - atanf(RH - 1.676331)
-               + 0.00391838 * powf(RH, 1.5) * atanf(0.023101 * RH)
-               - 4.686035;
+               - atanf(RH - 1.676331f)
+               + 0.00391838f * powf(RH, 1.5f) * atanf(0.023101f * RH)
+               - 4.686035f;
 
     // WBGT 근사 공식 (그늘 환경 기준)
     float WBGT = 0.7f * Tw + 0.3f * Td;
@@ -117,8 +146,9 @@ void sensor_monitor_task(void *arg)
             float avg_noise = mic_i2s_get_average_spl_db();
             ESP_LOGI(TAG, "Measured Noise: %.1fdB", avg_noise);
             // WBGT 계산 (간단한 추정치)
-            float temp_float = (float)current_sensor_data.temperature / 100.0f;
-            float hum_float = (float)current_sensor_data.humidity / 100.0f;
+            float temp_float = (float)current_sensor_data.temperature / 10.0f;
+            float hum_float = (float)current_sensor_data.humidity / 10.0f;
+            ESP_LOGI(TAG, "Temperature: %.1f°C, Humidity: %.1f%%", temp_float, hum_float);
             float wbgt = calc_wbgt(temp_float, hum_float);
             
             // 경보 상태 결정
@@ -179,6 +209,9 @@ void sensor_monitor_task(void *arg)
             if (alarm_status & ALARM_HR_WARNING) {
                 ESP_LOGW(TAG, "⚠️  HEART RATE WARNING");
             }
+            
+            // 경고 시스템 체크 및 트리거
+            warning_system_check_and_trigger();
         }
         
         vTaskDelay(MONITOR_INTERVAL_MS / portTICK_PERIOD_MS);
@@ -208,6 +241,12 @@ esp_err_t sensor_init(void)
     current_extended_data.external_humidity = 0000;    // 50.00%
     current_extended_data.noise_level = 000;     // 65.0dB
     current_extended_data.health_status = HEALTH_STATUS_NORMAL;
+    
+    // 경고 시스템 초기화
+    esp_err_t warning_ret = warning_system_init();
+    if (warning_ret != ESP_OK) {
+        ESP_LOGW(TAG, "Warning system initialization failed: %s", esp_err_to_name(warning_ret));
+    }
     
     ESP_LOGI(TAG, "Sensor initialization completed");
     return ESP_OK;
@@ -386,4 +425,189 @@ const char* get_health_status_string(health_status_t status)
         default:
             return "UNKNOWN";
     }
+}
+
+// 경고 시스템 초기화
+esp_err_t warning_system_init(void)
+{
+    ESP_LOGI(TAG, "Initializing warning system");
+    /*
+    // 진동 모터 GPIO 설정 (GPIO 2번 핀 사용)
+    gpio_config_t io_conf = {
+        .pin_bit_mask = (1ULL << VIBRATION_GPIO),
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&io_conf);
+    gpio_set_level(VIBRATION_GPIO, 0); // 초기 상태: 꺼짐
+    
+    // DFPlayer 초기화 (UART1, TX: GPIO 17, RX: GPIO 16)
+    esp_err_t ret = dfplayer_init(UART_NUM_1, 17, 16, 9600);
+    if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "DFPlayer initialization failed: %s", esp_err_to_name(ret));
+    } else {
+        ESP_LOGI(TAG, "DFPlayer initialized successfully");
+    }
+        */
+    
+    warning_system_initialized = true;
+    last_warning_check = esp_timer_get_time() / 1000;
+    
+    ESP_LOGI(TAG, "Warning system initialized");
+    return ESP_OK;
+}
+
+// 음성 재생
+esp_err_t warning_system_play_voice(uint8_t voice_file_num)
+{
+    if (!warning_system_initialized) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    
+    ESP_LOGI(TAG, "Playing voice file: %d", voice_file_num);
+    return dfplayer_play_folder(0, voice_file_num);
+}
+
+// 진동 알림
+esp_err_t warning_system_vibrate(uint32_t duration_ms)
+{
+    if (!warning_system_initialized) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    
+    ESP_LOGI(TAG, "Vibrating for %lu ms", duration_ms);
+    
+    // 진동 시작
+    gpio_set_level(VIBRATION_GPIO, 1);
+    
+    // 지정된 시간 후 진동 중지
+    vTaskDelay(duration_ms / portTICK_PERIOD_MS);
+    gpio_set_level(VIBRATION_GPIO, 0);
+    
+    return ESP_OK;
+}
+
+// 경고 시스템 체크 및 트리거
+esp_err_t warning_system_check_and_trigger(void)
+{
+    if (!warning_system_initialized) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    
+    uint32_t current_time = esp_timer_get_time() / 1000;
+    
+    // 경고 체크 간격 확인
+    if (current_time - last_warning_check < WARNING_CHECK_INTERVAL_MS) {
+        return ESP_OK;
+    }
+    
+    last_warning_check = current_time;
+    
+    // 현재 센서 데이터 가져오기
+    band_data_t band_data;
+    hub_data_t hub_data;
+    bool has_band_data = (data_manager_get_band_data(&band_data) == ESP_OK && band_data.is_valid);
+    bool has_hub_data = (data_manager_get_hub_data(&hub_data) == ESP_OK && hub_data.is_valid);
+    
+    bool warning_triggered = false;
+    
+    // 각 경고 조건 체크
+    for (int i = 0; i < WARNING_LIST_SIZE; i++) {
+        warning_info_t* warning = &warning_list[i];
+        
+        // 쿨다운 체크
+        if (warning->is_active && (current_time - warning->last_triggered) < WARNING_COOLDOWN_MS) {
+            continue;
+        }
+        
+        bool should_trigger = false;
+        
+        switch (warning->warning_type) {
+            case ALARM_WBGT_WARNING:
+                if (has_hub_data) {
+                    if (warning->voice_file_num == VOICE_WBGT_CAUTION && hub_data.wbgt >= 28.0f && hub_data.wbgt < 30.0f) {
+                        should_trigger = true;
+                    } else if (warning->voice_file_num == VOICE_WBGT_DANGER && hub_data.wbgt >= 30.0f) {
+                        should_trigger = true;
+                    }
+                }
+                break;
+                
+            case ALARM_TEMP_WARNING:
+                if (has_band_data) {
+                    if (warning->voice_file_num == VOICE_TEMP_CAUTION && band_data.skin_temp >= 37.5f && band_data.skin_temp < 38.0f) {
+                        should_trigger = true;
+                    } else if (warning->voice_file_num == VOICE_TEMP_DANGER && band_data.skin_temp >= 38.0f) {
+                        should_trigger = true;
+                    }
+                }
+                break;
+                
+            case ALARM_HR_WARNING:
+                if (has_band_data) {
+                    if (warning->voice_file_num == VOICE_HR_CAUTION && band_data.heart_rate >= 100 && band_data.heart_rate < 120) {
+                        should_trigger = true;
+                    } else if (warning->voice_file_num == VOICE_HR_DANGER && band_data.heart_rate >= 120) {
+                        should_trigger = true;
+                    }
+                }
+                break;
+                
+            case ALARM_NOISE_WARNING:
+                if (has_hub_data) {
+                    if (warning->voice_file_num == VOICE_NOISE_CAUTION && hub_data.avg_noise >= 95.0f && hub_data.avg_noise < 110.0f) {
+                        should_trigger = true;
+                    } else if (warning->voice_file_num == VOICE_NOISE_DANGER && hub_data.avg_noise >= 110.0f) {
+                        should_trigger = true;
+                    }
+                }
+                break;
+                
+            case ALARM_SPO2_WARNING:
+                /*if (has_band_data) {
+                    if (warning->voice_file_num == VOICE_SPO2_CAUTION && band_data.spo2 >= 90.0f && band_data.spo2 < 95.0f) {
+                        should_trigger = true;
+                    } else if (warning->voice_file_num == VOICE_SPO2_DANGER && band_data.spo2 < 90.0f) {
+                        should_trigger = true;
+                    }
+                }*/
+                break;
+        }
+        
+        if (should_trigger) {
+            ESP_LOGW(TAG, "⚠️ WARNING TRIGGERED: %s", warning->message);
+            
+            // 음성 알림 재생
+            warning_system_play_voice(warning->voice_file_num);
+            
+            // 진동 알림 (1초)
+            warning_system_vibrate(1000);
+            
+            // 경고 상태 업데이트
+            warning->is_active = true;
+            warning->last_triggered = current_time;
+            warning_triggered = true;
+        } else {
+            // 조건이 해제되면 비활성화
+            warning->is_active = false;
+        }
+    }
+    
+    if (warning_triggered) {
+        ESP_LOGI(TAG, "Warning system triggered - voice and vibration alerts sent");
+    }
+    
+    return ESP_OK;
+}
+
+// 모든 경고 리셋
+void warning_system_reset_all(void)
+{
+    for (int i = 0; i < WARNING_LIST_SIZE; i++) {
+        warning_list[i].is_active = false;
+        warning_list[i].last_triggered = 0;
+    }
+    ESP_LOGI(TAG, "All warnings reset");
 }

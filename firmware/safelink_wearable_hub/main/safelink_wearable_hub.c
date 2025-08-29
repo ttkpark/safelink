@@ -16,7 +16,6 @@
 #include "bluetooth.h"
 #include "sensor.h"
 #include "data_manager.h"
-#include "test_simulator.h"
 #include "mic_i2s.h"
 
 static const char *TAG = "MAIN";
