@@ -1,100 +1,182 @@
-# SafeLink Band
+# ESP32-C3 SuperMini MAX3010x 심박수 측정 시스템
 
-ESP32C3 기반 웨어러블 밴드 애플리케이션입니다.
+이 프로젝트는 ESP32-C3 SuperMini에서 MAX30102 센서를 사용하여 심박수를 측정하는 시스템입니다. SparkFun MAX3010x 라이브러리를 C로 포팅하여 구현했습니다.
 
-## 프로젝트 구조
+## 하드웨어 요구사항
 
-### 주요 모듈
+- ESP32-C3 SuperMini
+- MAX30102 센서
+- I2C 연결 (SCL: GPIO9, SDA: GPIO8)
+- 3.3V 전원 공급
 
-- **sensor.c/h**: 센서 처리 모듈
-  - 센서 모니터링 태스크 (`sensor_monitor_task`)
-  - 데이터 전송 태스크 (`data_sender_task`)
-  - 센서 데이터 관리 함수들
+## 연결 방법
 
-- **bluetooth.c/h**: Bluetooth 통신 모듈
-  - BLE GATT 클라이언트 구현
-  - Hub 디바이스 검색 및 연결
-  - 센서 데이터 전송
-
-- **i2c.c/h**: I2C 통신 모듈
-  - AM2320 온습도 센서 통신
-
-- **analog.c/h**: 아날로그 센서 모듈
-  - ADC를 통한 심박수 센서 읽기
-
-### 센서 모듈 분리
-
-센서 처리 함수들이 별도의 `sensor.c/h` 파일로 분리되어 있습니다:
-
-#### 주요 함수들:
-- `sensor_init()`: 센서 모듈 초기화
-- `sensor_deinit()`: 센서 모듈 정리
-- `sensor_create_tasks()`: 센서 관련 태스크들 생성
-- `sensor_get_current_data()`: 현재 센서 데이터 가져오기
-- `sensor_get_heart_rate_data()`: 심박수 데이터 가져오기
-- `sensor_update_health_status()`: 건강 상태 업데이트
-
-#### 태스크들:
-- `sensor_monitor_task`: 센서 데이터 모니터링 (100ms마다)
-  - 온습도 센서 읽기 (5초마다)
-  - 심박수 센서 읽기 (1초마다)
-  - 데이터 전송 트리거 (2초마다)
-- `data_sender_task`: Hub로 데이터 전송
-
-## 빌드 및 실행
-
-```bash
-# 프로젝트 디렉토리로 이동
-cd firmware/safelink_band
-
-# 빌드
-idf.py build
-
-# 플래시 및 모니터
-idf.py flash monitor
-```
-
-## 설정
-
-- **Target**: ESP32C3
-- **Bluetooth**: NimBLE (GATT Client)
-- **센서**: AM2320 (온습도), ADC (심박수)
+### MAX30102 센서 연결
+- VCC → 3.3V
+- GND → GND
+- SCL → GPIO9
+- SDA → GPIO8
 
 ## 주요 기능
 
-1. **센서 데이터 수집**: 심박수, 온도, 습도 측정
-2. **Hub 연결**: SafeLink Hub 디바이스 자동 검색 및 연결
-3. **데이터 전송**: 측정된 센서 데이터를 Hub로 전송
-4. **LED 상태 표시**: Hub 연결 상태를 LED로 표시
+### MAX3010x C 라이브러리 기능
+- **센서 초기화 및 설정**: 자동 센서 감지 및 최적 설정
+- **데이터 수집**: FIFO 기반 고성능 데이터 수집
+- **심박수 측정**: 실시간 심박수 계산 알고리즘
+- **SpO2 측정**: 혈중 산소 포화도 측정
+- **온도 측정**: 내장 온도 센서 지원
+- **신호 품질 평가**: 데이터 신뢰도 평가
 
-## 센서 데이터 형식
+### 알고리즘 기능
+- **피크 검출**: 자동 심박수 피크 감지
+- **신호 필터링**: DC/AC 성분 분리 및 노이즈 제거
+- **통계 분석**: 평균, 표준편차, 상관관계 계산
+- **신뢰도 평가**: 측정 결과의 신뢰도 점수 제공
 
+## 사용법
+
+### 기본 사용법
 ```c
-typedef struct {
-    uint16_t heart_rate;      // 심박수 (BPM)
-    uint16_t temperature;     // 온도 (×100, 0.01°C 단위)
-    uint16_t humidity;        // 습도 (×100, 0.01% 단위)
-    uint32_t timestamp;       // 타임스탬프 (ms)
-    health_status_t health_status; // 건강 상태
-} sensor_data_t;
+#include "MAX3010x_ESP32.h"
+#include "MAX3010x_Algorithm.h"
+
+// 센서 인스턴스 생성
+max3010x_t sensor;
+max3010x_algorithm_t algorithm;
+
+// 초기화
+max3010x_init(&sensor, I2C_NUM_0, 0x57);
+max3010x_algorithm_init(&algorithm);
+
+// 센서 설정
+max3010x_setup(&sensor, 50, SAMPLE_RATE_100, MODE_SPO2, 
+               SAMPLE_AVG_4, PULSE_WIDTH_411, ADC_RANGE_4096, 0);
+
+// 데이터 읽기 및 처리
+uint32_t red_buffer[32], ir_buffer[32];
+uint8_t samples_read;
+max3010x_read_fifo(&sensor, red_buffer, ir_buffer, NULL, &samples_read);
+
+// 알고리즘에 데이터 추가
+for (int i = 0; i < samples_read; i++) {
+    max3010x_algorithm_update(&algorithm, ir_buffer[i], red_buffer[i], 0);
+}
+
+// 결과 가져오기
+max3010x_heart_rate_result_t hr_result;
+max3010x_algorithm_get_heart_rate(&algorithm, &hr_result);
+if (hr_result.valid) {
+    printf("심박수: %.1f BPM\n", hr_result.heart_rate);
+}
 ```
 
-## Hub 연결 프로세스
+## 빌드 및 실행
 
-1. **초기화**: Bluetooth 및 센서 모듈 초기화
-2. **Hub 검색**: 주변 SafeLink Hub 디바이스 스캔
-3. **연결**: Hub 발견 시 자동 연결 시도
-4. **데이터 전송**: 연결 성공 시 센서 데이터 전송
-5. **재연결**: 연결 끊김 시 자동 재검색 및 재연결
+### 환경 설정
+```bash
+# ESP-IDF 환경 설정
+C:\Users\yerim\esp\v5.4.2\esp-idf\export.ps1
+```
 
-## LED 상태 표시
+### 빌드
+```bash
+idf.py build
+```
 
-- **빠른 깜빡임 (200ms)**: Hub에 연결됨
-- **느린 깜빡임 (1000ms)**: Hub 연결 안됨, 검색 중
+### 플래시
+```bash
+idf.py flash
+```
 
-## 센서 측정 주기
+### 모니터링
+```bash
+idf.py monitor
+```
 
-- **온습도**: 5초마다 측정
-- **심박수**: 1초마다 측정
-- **데이터 전송**: 2초마다 Hub로 전송
-- **모니터링**: 100ms마다 상태 체크 
+## 예상 출력
+
+```
+I (1234) SENSOR_SYSTEM: ESP32-C3 SuperMini AHT20 + MCP9808 센서 시스템 시작
+I (1235) SENSOR_SYSTEM: I2C 마스터 초기화 완료
+I (1236) SENSOR_SYSTEM: I2C 스캔 시작...
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+70: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+I (1237) SENSOR_SYSTEM: I2C 스캔 완료
+I (1238) SENSOR_SYSTEM: AHT20 센서 초기화 완료
+I (1239) SENSOR_SYSTEM: MCP9808 센서 초기화 완료
+I (1240) MAX3010x: MAX30102 센서 감지됨
+I (1241) MAX3010x: MAX3010x 센서 초기화 완료
+I (1242) MAX3010x_Algorithm: MAX3010x 알고리즘 초기화 완료
+I (1243) SENSOR_SYSTEM: MAX3010x 센서 및 알고리즘 초기화 완료
+I (1244) SENSOR_SYSTEM: 센서 초기화 완료
+I (1245) SENSOR_SYSTEM: 센서 데이터를 측정합니다
+I (1246) SENSOR_SYSTEM: MAX3010x - 데이터 읽기 및 심박수 계산 완료
+I (1247) SENSOR_SYSTEM: 심박수: 72.5 BPM (신뢰도: 0.85)
+I (1248) SENSOR_SYSTEM: SpO2: 98.2% (신뢰도: 0.92)
+```
+
+## 라이브러리 구조
+
+```
+main/
+├── MAX3010x_ESP32.h          # MAX3010x 센서 드라이버 헤더 (C)
+├── MAX3010x_ESP32.c          # MAX3010x 센서 드라이버 구현 (C)
+├── MAX3010x_Algorithm.h      # 심박수/SpO2 알고리즘 헤더 (C)
+├── MAX3010x_Algorithm.c      # 심박수/SpO2 알고리즘 구현 (C)
+├── main.c                    # 메인 애플리케이션
+└── CMakeLists.txt           # 빌드 설정
+```
+
+## 주요 변경사항
+
+### C++에서 C로 포팅
+- 클래스 기반 구조를 구조체 기반으로 변경
+- 멤버 함수를 C 함수로 변환
+- 메모리 관리 최적화
+- ESP-IDF 호환성 향상
+
+### 기능 개선
+- 실시간 심박수 측정
+- SpO2 계산 알고리즘
+- 신호 품질 평가
+- 에러 처리 강화
+
+## 문제 해결
+
+### 일반적인 문제들
+
+1. **센서가 감지되지 않음**
+   - I2C 연결 확인
+   - 전원 공급 확인 (3.3V)
+   - 센서 주소 확인 (0x57)
+
+2. **데이터 품질이 낮음**
+   - 손가락 위치 조정
+   - 센서와 피부 간 접촉 확인
+   - LED 전류 설정 조정
+
+3. **심박수 측정이 불안정함**
+   - 손가락을 고정하고 움직임 최소화
+   - 측정 시간을 충분히 확보 (최소 10초)
+   - 환경광 차단
+
+## 라이센스
+
+이 프로젝트는 MIT 라이센스 하에 배포됩니다.
+
+## 기여
+
+버그 리포트, 기능 요청, 풀 리퀘스트를 환영합니다.
+
+## 참고 자료
+
+- [SparkFun MAX3010x 라이브러리](https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library)
+- [MAX30102 데이터시트](https://www.maximintegrated.com/en/products/interface/sensor-interface/MAX30102.html)
+- [ESP-IDF 문서](https://docs.espressif.com/projects/esp-idf/en/latest/)
