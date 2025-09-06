@@ -466,20 +466,24 @@ esp_err_t warning_system_play_voice(uint8_t voice_file_num)
         return ESP_ERR_INVALID_STATE;
     }
     if(music_playing){
-        if(voice_file_num > 10)return ESP_OK;
-        esp_err_t ret = dfplayer_play_folder(0, 1); //ding, music stop
+        if(voice_file_num >= 10 && voice_file_num <= 19){
+            ESP_LOGI(TAG, "Music is playing, skipping voice file: %d", voice_file_num);
+            return ESP_OK;
+        }
+        ESP_LOGI(TAG, "Music is playing, stopping music");
+        esp_err_t ret = dfplayer_play_folder(0, 2); //ding, music stop
         music_playing = false;
         return ESP_OK;
-    }
+    }else{
+        ESP_LOGI(TAG, "Playing voice file: %d", voice_file_num);
+        esp_err_t ret = dfplayer_play_folder(0, voice_file_num);
     
-    ESP_LOGI(TAG, "Playing voice file: %d", voice_file_num);
-    esp_err_t ret = dfplayer_play_folder(0, voice_file_num);
-
-    if(voice_file_num > 4 && voice_file_num < 10){
-        music_playing = true;
+        if(!(voice_file_num >= 10 && voice_file_num <= 19)){
+            music_playing = true;
+        }
+        return ret;
     }
 
-    return ret;
 }
 
 // 진동 알림

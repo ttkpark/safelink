@@ -11,6 +11,7 @@
 #include "esp_adc/adc_oneshot.h"
 #include "dfplayer_mini.h"
 #include "data_manager.h"
+#include "sensor.h"
 #include <string.h>
 
 static const char *TAG = "NIMBLE_BLE";
@@ -272,7 +273,7 @@ static int gatt_svr_access_cb(uint16_t conn_handle, uint16_t attr_handle,
                         if(track_num < 0) track_num = 0;
                         ESP_LOGI(TAG, "Executing play command: %d", track_num);
                         // Try different play methods
-                        esp_err_t play_ret = dfplayer_play_folder(0, track_num); // Play track 1 from folder 1
+                        esp_err_t play_ret = warning_system_play_voice(track_num); // Play track 1 from folder 1
                         if (play_ret == ESP_OK) {
                             ESP_LOGI(TAG, "Play command sent successfully");
                         } else {
@@ -299,7 +300,7 @@ static int gatt_svr_access_cb(uint16_t conn_handle, uint16_t attr_handle,
                     } else if (strncmp(command_buffer, "play ", 5) == 0) {
                         int track_num = atoi(command_buffer + 5);
                         if (track_num > 0 && track_num <= 3000) {
-                            dfplayer_play(track_num);
+                            warning_system_play_voice(track_num);
                         } else {
                             ESP_LOGW(TAG, "Invalid track number in debug cmd: %d", track_num);
                         }
