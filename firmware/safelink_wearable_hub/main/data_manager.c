@@ -120,13 +120,13 @@ bool data_manager_validate_band_data(const band_data_t *data)
                  data->heart_rate, HEART_RATE_MIN, HEART_RATE_MAX);
         return false;
     }
-    
+    /*
     // 혈중산소포화농도 검증 (80.0~99.9%)
     if (data->spo2 < SPO2_MIN || data->spo2 > SPO2_MAX) {
         ESP_LOGW(TAG, "Invalid SpO2: %.1f%% (range: %.1f~%.1f%%)", 
                  data->spo2, SPO2_MIN, SPO2_MAX);
         return false;
-    }
+    }*/
     
     return true;
 }
