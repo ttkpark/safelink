@@ -458,16 +458,32 @@ esp_err_t warning_system_init(void)
     ESP_LOGI(TAG, "Warning system initialized");
     return ESP_OK;
 }
-
+bool music_playing = false;
 // 음성 재생
 esp_err_t warning_system_play_voice(uint8_t voice_file_num)
 {
     if (!warning_system_initialized) {
         return ESP_ERR_INVALID_STATE;
     }
+    if(music_playing){
+        if(voice_file_num >= 10 && voice_file_num <= 19){
+            ESP_LOGI(TAG, "Music is playing, skipping voice file: %d", voice_file_num);
+            return ESP_OK;
+        }
+        ESP_LOGI(TAG, "Music is playing, stopping music");
+        esp_err_t ret = dfplayer_play_folder(0, 2); //ding, music stop
+        music_playing = false;
+        return ESP_OK;
+    }else{
+        ESP_LOGI(TAG, "Playing voice file: %d", voice_file_num);
+        esp_err_t ret = dfplayer_play_folder(0, voice_file_num);
     
-    ESP_LOGI(TAG, "Playing voice file: %d", voice_file_num);
-    return dfplayer_play_folder(0, voice_file_num);
+        if(!(voice_file_num >= 10 && voice_file_num <= 19)){
+            music_playing = true;
+        }
+        return ret;
+    }
+
 }
 
 // 진동 알림
@@ -579,11 +595,11 @@ esp_err_t warning_system_check_and_trigger(void)
         if (should_trigger) {
             ESP_LOGW(TAG, "⚠️ WARNING TRIGGERED: %s", warning->message);
             
-            // 음성 알림 재생
-            warning_system_play_voice(warning->voice_file_num);
             
             // 진동 알림 (1초)
             warning_system_vibrate(1000);
+            // 음성 알림 재생
+            warning_system_play_voice(warning->voice_file_num);
             
             // 경고 상태 업데이트
             warning->is_active = true;
