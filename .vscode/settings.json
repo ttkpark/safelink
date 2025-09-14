@@ -10,5 +10,5 @@
         "sensor_manager.h": "c",
         "i2c.h": "c"
     },
-    "cmake.sourceDirectory": "C:/Users/GH/Desktop/safelink/test_bluetooth_sensor"
+    "cmake.sourceDirectory": "C:/Users/GH/Desktop/safelink/firmware/safelink_band"
 }

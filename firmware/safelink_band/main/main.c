@@ -71,6 +71,13 @@ static uint16_t current_heart_rate = 0;
 static bool heart_rate_available = false;
 static SemaphoreHandle_t heart_rate_mutex = NULL;
 
+// 심박센서 착용 여부 및 안정성 판단 변수
+static uint32_t last_pulse_time = 0;           // 마지막 펄스 시간
+static bool device_worn = false;               // 디바이스 착용 여부
+static uint16_t stable_pulse_count = 0;        // 안정적인 펄스 카운트
+static uint16_t last_stable_heart_rate = 0;    // 마지막 안정적인 심박수
+static bool heart_rate_stable = false;         // 심박수 안정성 여부
+
 // I2C 및 센서 함수 원형
 static esp_err_t i2c_master_init(void);
 static void i2c_scan(void);
@@ -85,6 +92,8 @@ static esp_err_t heart_rate_gpio_init(void);
 static void heart_rate_sampling_task(void *param);
 static uint16_t calculate_heart_rate_from_buffer(void);
 static void start_heart_rate_sampling(void);
+static bool check_device_worn_status(void);
+static bool check_heart_rate_stability(uint16_t new_heart_rate);
 
 // 광고만 사용
 static void start_sensor_beacon(void);
@@ -715,6 +724,13 @@ static esp_err_t heart_rate_gpio_init(void)
     heart_rate_buffer_full = false;
     current_heart_rate = 0;
     
+    // 착용 여부 및 안정성 변수 초기화
+    last_pulse_time = 0;
+    device_worn = false;
+    stable_pulse_count = 0;
+    last_stable_heart_rate = 0;
+    heart_rate_stable = false;
+    
     ESP_LOGI(TAG, "GPIO4 심박수 측정 초기화 완료");
     return ESP_OK;
 }
@@ -725,10 +741,17 @@ static void heart_rate_sampling_task(void *param)
     
     uint32_t last_calculation_time = 0;
     const uint32_t calculation_interval_ms = 2000; // 2초마다 심박수 계산
+    uint8_t last_gpio_level = 0;
     
     while (1) {
         // GPIO4 상태 읽기
         int gpio_level = gpio_get_level(HEART_RATE_GPIO);
+        
+        // 펄스 감지 (상승 엣지)
+        if (last_gpio_level == 0 && gpio_level == 1) {
+            last_pulse_time = esp_timer_get_time() / 1000; // ms 단위
+        }
+        last_gpio_level = gpio_level;
         
         // 뮤텍스로 보호하여 버퍼에 데이터 저장
         if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
@@ -743,17 +766,44 @@ static void heart_rate_sampling_task(void *param)
             xSemaphoreGive(heart_rate_mutex);
         }
         
-        // 주기적으로 심박수 계산
+        // 주기적으로 심박수 계산 및 착용 여부 판단
         uint32_t current_time = esp_timer_get_time() / 1000; // ms 단위
         if (current_time - last_calculation_time >= calculation_interval_ms) {
-            uint16_t calculated_hr = calculate_heart_rate_from_buffer();
-            if (calculated_hr >= HEART_RATE_MIN_BPM && calculated_hr <= HEART_RATE_MAX_BPM) {
+            // 착용 여부 판단
+            bool worn = check_device_worn_status();
+            
+            if (worn) {
+                uint16_t calculated_hr = calculate_heart_rate_from_buffer();
+                if (calculated_hr >= HEART_RATE_MIN_BPM && calculated_hr <= HEART_RATE_MAX_BPM) {
+                    // 안정성 검증
+                    bool stable = check_heart_rate_stability(calculated_hr);
+                    
+                    if (stable) {
+                        if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
+                            current_heart_rate = calculated_hr;
+                            xSemaphoreGive(heart_rate_mutex);
+                        }
+                        ESP_LOGI(TAG, "심박수: %d BPM (안정적)", calculated_hr);
+                    } else {
+                        ESP_LOGI(TAG, "심박수: %d BPM (불안정, 안정화 대기 중)", calculated_hr);
+                    }
+                } else {
+                    // 유효하지 않은 심박수
+                    if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
+                        current_heart_rate = 0;
+                        xSemaphoreGive(heart_rate_mutex);
+                    }
+                    ESP_LOGI(TAG, "유효하지 않은 심박수: %d BPM", calculated_hr);
+                }
+            } else {
+                // 착용하지 않음
                 if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-                    current_heart_rate = calculated_hr;
+                    current_heart_rate = 0;
                     xSemaphoreGive(heart_rate_mutex);
                 }
-                ESP_LOGI(TAG, "심박수: %d BPM", calculated_hr);
+                ESP_LOGI(TAG, "디바이스 미착용 - 심박수: 0 BPM");
             }
+            
             last_calculation_time = current_time;
         }
         
@@ -821,6 +871,78 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     }
     
     return bpm;
+}
+
+// 착용 여부 판단 함수 (2초 이상 펄스가 없으면 미착용)
+static bool check_device_worn_status(void)
+{
+    uint32_t current_time = esp_timer_get_time() / 1000; // ms 단위
+    const uint32_t no_pulse_threshold_ms = 2000; // 2초
+    
+    if (last_pulse_time == 0) {
+        // 아직 펄스가 감지되지 않음
+        device_worn = false;
+        return false;
+    }
+    
+    if (current_time - last_pulse_time > no_pulse_threshold_ms) {
+        // 2초 이상 펄스가 없음 - 미착용으로 판단
+        device_worn = false;
+        stable_pulse_count = 0; // 안정성 카운트 리셋
+        heart_rate_stable = false;
+        return false;
+    } else {
+        // 펄스가 있음 - 착용으로 판단
+        if (!device_worn) {
+            ESP_LOGI(TAG, "디바이스 착용 감지됨");
+        }
+        device_worn = true;
+        return true;
+    }
+}
+
+// 심박수 안정성 검증 함수 (5펄스 동안 ±10 범위 내에서 안정적이면 true)
+static bool check_heart_rate_stability(uint16_t new_heart_rate)
+{
+    const uint16_t stability_threshold = 10; // ±10 BPM 범위
+    const uint16_t required_stable_pulses = 5; // 5펄스 동안 안정적이어야 함
+    
+    if (last_stable_heart_rate == 0) {
+        // 첫 번째 유효한 심박수
+        last_stable_heart_rate = new_heart_rate;
+        stable_pulse_count = 1;
+        heart_rate_stable = false;
+        return false;
+    }
+    
+    // 현재 심박수가 이전 안정적인 심박수와 ±10 범위 내에 있는지 확인
+    int16_t diff = (int16_t)new_heart_rate - (int16_t)last_stable_heart_rate;
+    if (diff < 0) diff = -diff; // 절댓값
+    
+    if (diff <= stability_threshold) {
+        // 안정적인 범위 내
+        stable_pulse_count++;
+        
+        if (stable_pulse_count >= required_stable_pulses) {
+            // 5펄스 동안 안정적
+            if (!heart_rate_stable) {
+                ESP_LOGI(TAG, "심박수 안정화 완료: %d BPM", new_heart_rate);
+            }
+            heart_rate_stable = true;
+            last_stable_heart_rate = new_heart_rate;
+            return true;
+        } else {
+            // 아직 안정화 중
+            heart_rate_stable = false;
+            return false;
+        }
+    } else {
+        // 불안정한 범위 - 카운트 리셋
+        stable_pulse_count = 1;
+        last_stable_heart_rate = new_heart_rate;
+        heart_rate_stable = false;
+        return false;
+    }
 }
 
 static void start_heart_rate_sampling(void)
