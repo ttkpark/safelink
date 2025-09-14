@@ -26,6 +26,11 @@ static EventGroupHandle_t ble_event_group = NULL;
 static uint8_t own_addr_type;
 static TimerHandle_t ble_scan_timer = NULL;
 
+// 연결 체크 시스템 변수들
+static bool check_system_active = false;
+static TimerHandle_t check_timeout_timer = NULL;
+static uint16_t check_conn_handle = 0;
+
 // Test characteristic value
 static char test_value[32] = "Hello NimBLE!";
 
@@ -54,6 +59,7 @@ static const char *ADV_KEYWORD = "band";
 static void start_passive_scan(void);
 static void start_advertising(void);
 static void scan_timer_cb(TimerHandle_t xTimer);
+static void check_timeout_cb(TimerHandle_t xTimer);
 static void log_adv_report(const struct ble_gap_event *event);
 static void parse_and_log_adv_fields(const uint8_t *data, uint8_t len);
 static bool parse_mfg_and_update_band(const uint8_t *mfg, uint8_t payload_len);
@@ -280,32 +286,45 @@ static int gatt_svr_access_cb(uint16_t conn_handle, uint16_t attr_handle,
                             ESP_LOGW(TAG, "Play command failed: %s", esp_err_to_name(play_ret));
                             
                         }
-                    } else {
-                        ESP_LOGW(TAG, "Unknown command: %s", command_buffer);
-                    }
-                }
-                return 0;
-            } else if (ble_uuid_cmp(uuid, BLE_UUID16_DECLARE(DEBUG_CMD_CHAR_UUID)) == 0) {
-                // Debug command write-only characteristic
-                // Payload: ASCII string, examples: "vib", "play 1"
-                if (ctxt->om->om_len > 0 && ctxt->om->om_len < sizeof(command_buffer)) {
-                    memcpy(command_buffer, ctxt->om->om_data, ctxt->om->om_len);
-                    command_buffer[ctxt->om->om_len] = '\0';
-                    ESP_LOGI(TAG, "Debug command: %s", command_buffer);
-
-                    if (strcmp(command_buffer, "vib") == 0) {
-                        gpio_set_level(VIBRATION_GPIO, 1);
-                        vTaskDelay(1000 / portTICK_PERIOD_MS);
-                        gpio_set_level(VIBRATION_GPIO, 0);
-                    } else if (strncmp(command_buffer, "play ", 5) == 0) {
-                        int track_num = atoi(command_buffer + 5);
-                        if (track_num > 0 && track_num <= 3000) {
-                            warning_system_play_voice(track_num);
-                        } else {
-                            ESP_LOGW(TAG, "Invalid track number in debug cmd: %d", track_num);
+                    } else if (strncmp(command_buffer, "check start", 11) == 0) {
+                        // 이 명령어를 받을 때부터 이 연결은 체크를 확인함. 5초동안 응답 없으면 연결 해제
+                        check_system_active = true;
+                        check_conn_handle = conn_handle;
+                        
+                        // 체크 타이머 생성 (5초)
+                        if (check_timeout_timer == NULL) {
+                            check_timeout_timer = xTimerCreate("check_timeout", 
+                                                              pdMS_TO_TICKS(5000), 
+                                                              pdTRUE, // auto-reload
+                                                              0, 
+                                                              check_timeout_cb);
+                        }
+                        
+                        if (check_timeout_timer != NULL) {
+                            xTimerStart(check_timeout_timer, 0);
+                        }
+                        
+                        ESP_LOGI(TAG, "Check system activated for conn_handle: %d", conn_handle);
+                        
+                    } else if (strncmp(command_buffer, "check", 6) == 0) {
+                        // 체크 수신. 기기는 check start를 했다면 이후 최소 5초 내로 check\0 명령어를 보내야함.
+                        if (check_system_active && conn_handle == check_conn_handle) {
+                            // 타이머 리셋
+                            if (check_timeout_timer != NULL) {
+                                xTimerReset(check_timeout_timer, 0);
+                            }
+                            ESP_LOGI(TAG, "Check received, timer reset for conn_handle: %d", conn_handle);
+                        }
+                        
+                    } else if (strncmp(command_buffer, "check disconnect", 16) == 0) {
+                        // 연결을 자동 해제하는 명령어. (응답 없을 때의 트리거)
+                        if (check_system_active && conn_handle == check_conn_handle) {
+                            ESP_LOGI(TAG, "Check disconnect command received for conn_handle: %d", conn_handle);
+                            
+                            check_timeout_cb(check_timeout_timer);
                         }
                     } else {
-                        ESP_LOGW(TAG, "Unknown debug cmd: %s", command_buffer);
+                        ESP_LOGW(TAG, "Unknown command: %s", command_buffer);
                     }
                 }
                 return 0;
@@ -394,11 +413,6 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
                 .uuid = BLE_UUID16_DECLARE(COMMAND_CHAR_UUID),
                 .access_cb = gatt_svr_access_cb,
                 .flags = BLE_GATT_CHR_F_READ | BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_NOTIFY,
-            },
-            {
-                .uuid = BLE_UUID16_DECLARE(DEBUG_CMD_CHAR_UUID),
-                .access_cb = gatt_svr_access_cb,
-                .flags = BLE_GATT_CHR_F_WRITE, // write-only debug command
             },
             {0} // end
         }
@@ -505,6 +519,18 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
         case BLE_GAP_EVENT_DISCONNECT:
             ESP_LOGE(TAG, "Disconnected");
             current_state = BLUETOOTH_STATE_ADVERTISING;
+            
+            // 체크 시스템이 활성화된 연결이 해제되면 체크 시스템 정리
+            if (check_system_active && check_conn_handle == event->disconnect.conn.conn_handle) {
+                ESP_LOGI(TAG, "Cleaning up check system for disconnected conn_handle: %d", check_conn_handle);
+                check_system_active = false;
+                check_conn_handle = 0;
+                
+                if (check_timeout_timer != NULL) {
+                    xTimerStop(check_timeout_timer, 0);
+                }
+            }
+            
             // 연결 목록에서 제거
             for (uint8_t i = 0; i < num_conns; ++i) {
                 if (conn_handles[i] == event->disconnect.conn.conn_handle) {
@@ -1112,4 +1138,23 @@ esp_err_t bluetooth_update_hub_data_characteristics(void)
              hub_data.avg_noise, hub_data.wbgt, hub_data.alarm_status);
     
     return ESP_OK;
+}
+
+// 체크 타이머 콜백 함수 - 5초 타임아웃 시 연결 해제
+static void check_timeout_cb(TimerHandle_t xTimer)
+{
+    if (check_system_active) {
+        ESP_LOGW(TAG, "Check timeout! Disconnecting conn_handle: %d", check_conn_handle);
+        
+        // 체크 시스템 비활성화
+        check_system_active = false;
+        uint16_t timeout_conn_handle = check_conn_handle;
+        check_conn_handle = 0;
+        
+        // 타이머 정지
+        xTimerStop(check_timeout_timer, 0);
+        
+        // 연결 해제
+        ble_gap_terminate(timeout_conn_handle, BLE_ERR_REM_USER_CONN_TERM);
+    }
 } 

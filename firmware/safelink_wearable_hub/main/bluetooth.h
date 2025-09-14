@@ -41,8 +41,6 @@
 // Control Service UUID (Custom)
 #define CONTROL_SERVICE_UUID          0x1812  // Custom Control Service
 #define COMMAND_CHAR_UUID             0x2A76  // Command Characteristic
-// Debug command write-only characteristic (custom)
-#define DEBUG_CMD_CHAR_UUID           0xFFF2
 
 // GPIO for vibration motor
 #define VIBRATION_GPIO 22
@@ -89,5 +87,7 @@ esp_err_t bluetooth_handle_command_write(const uint8_t *data, size_t len);
 
 // GATT Publishing (허브 데이터 전송) 함수
 esp_err_t bluetooth_update_hub_data_characteristics(void);
+
+
 
 #endif // BLUETOOTH_H 
