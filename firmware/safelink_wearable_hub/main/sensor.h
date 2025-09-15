@@ -22,10 +22,8 @@
 #define SENSOR_DATA_READY_BIT    BIT0
 // BLUETOOTH_READY_BIT는 bluetooth.h 정의 사용
 
-// 알람 상태 비트 정의
-#define ALARM_WBGT_WARNING       BIT0
-#define ALARM_TEMP_WARNING       BIT1
-#define ALARM_HR_WARNING         BIT2
+// 알람 상태 비트 정의 (data_manager.h에서 정의된 것 사용)
+// 추가 알람 비트들만 정의
 #define ALARM_NOISE_WARNING      BIT3
 #define ALARM_SPO2_WARNING       BIT4
 

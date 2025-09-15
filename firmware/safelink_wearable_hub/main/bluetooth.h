@@ -88,6 +88,15 @@ esp_err_t bluetooth_handle_command_write(const uint8_t *data, size_t len);
 // GATT Publishing (허브 데이터 전송) 함수
 esp_err_t bluetooth_update_hub_data_characteristics(void);
 
+// 블루투스 성능 최적화 함수들
+esp_err_t bluetooth_optimize_for_crowded_environment(void);
+esp_err_t bluetooth_set_scan_parameters(uint16_t interval_ms, uint16_t window_ms);
+esp_err_t bluetooth_set_connection_parameters(uint16_t min_interval_ms, uint16_t max_interval_ms);
+void bluetooth_clear_gatt_cache(void);
 
+// BLE 스캔 디버깅 함수들
+esp_err_t bluetooth_force_scan_start(void);
+esp_err_t bluetooth_get_scan_status(void);
+void bluetooth_print_scan_statistics(void);
 
 #endif // BLUETOOTH_H 
