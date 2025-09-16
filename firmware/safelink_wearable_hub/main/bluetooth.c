@@ -70,6 +70,8 @@ static void check_timeout_cb(TimerHandle_t xTimer);
 static void log_adv_report(const struct ble_gap_event *event);
 static void parse_and_log_adv_fields(const uint8_t *data, uint8_t len);
 static bool parse_mfg_and_update_band(const uint8_t *mfg, uint8_t payload_len);
+static int gatt_client_discover_svc_cb(uint16_t conn_handle, const struct ble_gatt_error *error,
+                                       const struct ble_gatt_svc *service, void *arg);
 
 // GATT access callback with optimized response time
 static int gatt_svr_access_cb(uint16_t conn_handle, uint16_t attr_handle,
@@ -461,13 +463,17 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
             static uint8_t duplicate_count = 0;
             static uint32_t total_adv_count = 0;
             
+            // 스캔 이벤트 타입 로그
+            ESP_LOGD(TAG, "Scan event: type=%d, RSSI=%d, len=%d", 
+                     event->disc.event_type, event->disc.rssi, event->disc.length_data);
+            
             total_adv_count++;
             
             // RSSI 필터링: 너무 약한 신호는 무시
-            if (event->disc.rssi < -80) {
+            /*if (event->disc.rssi < -80) {
                 ESP_LOGD(TAG, "Weak signal ignored: RSSI=%d", event->disc.rssi);
                 break;
-            }
+            }*/
             
             // 주기적으로 스캔 상태 로그
             if (total_adv_count % 10 == 0) {
@@ -497,6 +503,19 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
                         if (b >= 'A' && b <= 'Z') b = (char)(b - 'A' + 'a');
                         if (a != b) { found = false; break; }
                     }
+                    
+                    // 키워드로 찾은 밴드 디바이스도 1초 쿨다운 적용
+                    if (found) {
+                        static uint32_t last_keyword_band_update = 0;
+                        uint32_t current_time = esp_timer_get_time() / 1000;
+                        if (current_time - last_keyword_band_update < 1000) {
+                            ESP_LOGD(TAG, "Keyword band device ignored - within 1 second cooldown period");
+                            found = false;
+                        } else {
+                            last_keyword_band_update = current_time;
+                            ESP_LOGI(TAG, "Keyword band device processing allowed - cooldown period expired");
+                        }
+                    }
                 }
             }
             
@@ -508,9 +527,11 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
                 // 중복 방지: 1초 내 동일한 밴드 데이터는 무시
                 uint32_t current_time = esp_timer_get_time() / 1000;
                 if (current_time - last_band_update < 1000) {
+                    ESP_LOGD(TAG, "Band device ignored - within 1 second cooldown period");
                     break;
                 }
                 last_band_update = current_time;
+                ESP_LOGI(TAG, "Band device processing allowed - cooldown period expired");
             }
 
             if (found) {
@@ -524,12 +545,15 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
 
                 // Additionally, extract and print Manufacturer/Service Data in HEX
                 const uint8_t *p = data; uint8_t remaining = len;
+                bool found_mfg_data = false;
+                
                 while (remaining >= 2) {
                     uint8_t field_len = p[0];
                     if (field_len == 0 || field_len + 1 > remaining) break;
                     uint8_t field_type = p[1];
                     const uint8_t *field_data = &p[2];
                     uint8_t payload_len = field_len - 1;
+                    
                     if (field_type == BLE_HS_ADV_TYPE_MFG_DATA ||
                         field_type == BLE_HS_ADV_TYPE_SVC_DATA_UUID16 ||
                         field_type == BLE_HS_ADV_TYPE_SVC_DATA_UUID32 ||
@@ -543,8 +567,10 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
                         buf[o] = '\0';
                         ESP_LOGI(TAG, "ADV field 0x%02X len=%d HEX: %s%s",
                                  field_type, payload_len, buf, (payload_len > 64 ? "..." : ""));
+                        
                         // Parse manufacturer data if present
                         if (field_type == BLE_HS_ADV_TYPE_MFG_DATA) {
+                            found_mfg_data = true;
                             bool ok = parse_mfg_and_update_band(field_data, payload_len);
                             if (ok) {
                                 // 이 광고를 밴드로 인식하고 주소를 기억
@@ -552,7 +578,55 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
                             }
                         }
                     }
+                    
                     p += (field_len + 1); remaining -= (field_len + 1);
+                }
+                
+                // Manufacturer data가 없으면 연결을 시도하여 GATT로 데이터 읽기
+                if (!found_mfg_data) {
+                    static uint32_t last_conn_attempt = 0;
+                    static uint8_t last_conn_addr[6] = {0};
+                    uint32_t current_time = esp_timer_get_time() / 1000;
+                    
+                    // 같은 주소에 대해 5초 내 중복 연결 시도 방지
+                    bool is_same_addr = (memcmp(event->disc.addr.val, last_conn_addr, 6) == 0);
+                    bool time_elapsed = (current_time - last_conn_attempt > 5000);
+                    
+                    if (!is_same_addr || time_elapsed) {
+                        ESP_LOGI(TAG, "No manufacturer data in ADV - attempting connection for GATT read");
+                        
+                        // 현재 연결 상태 확인
+                        if (num_conns >= MAX_CONNS) {
+                            ESP_LOGW(TAG, "Max connections reached, cannot connect to band");
+                        } else {
+                            // 연결 시도 (비동기)
+                            struct ble_gap_conn_params conn_params = {
+                                .scan_itvl = BLE_GAP_SCAN_ITVL_MS(100),
+                                .scan_window = BLE_GAP_SCAN_WIN_MS(50),
+                                .itvl_min = BLE_GAP_INITIAL_CONN_ITVL_MIN,
+                                .itvl_max = BLE_GAP_INITIAL_CONN_ITVL_MAX,
+                                .latency = 0,
+                                .supervision_timeout = BLE_GAP_INITIAL_SUPERVISION_TIMEOUT,
+                                .min_ce_len = BLE_GAP_INITIAL_CONN_MIN_CE_LEN,
+                                .max_ce_len = BLE_GAP_INITIAL_CONN_MAX_CE_LEN,
+                            };
+                            
+                            int conn_rc = ble_gap_connect(own_addr_type, &event->disc.addr, 30000, &conn_params, 
+                                                        gap_event_cb, NULL);
+                            if (conn_rc == 0) {
+                                ESP_LOGI(TAG, "Connection attempt initiated to band device");
+                                last_conn_attempt = current_time;
+                                memcpy(last_conn_addr, event->disc.addr.val, 6);
+                            } else {
+                                ESP_LOGW(TAG, "Failed to initiate connection: %d", conn_rc);
+                                if (conn_rc == BLE_HS_EALREADY) {
+                                    ESP_LOGD(TAG, "Connection already in progress or device busy");
+                                }
+                            }
+                        }
+                    } else {
+                        ESP_LOGD(TAG, "Skipping connection attempt - too recent for this device");
+                    }
                 }
             }
             break; }
@@ -585,8 +659,17 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
                 if (ble_event_group) {
                     xEventGroupSetBits(ble_event_group, BLUETOOTH_READY_BIT);
                 }
+                
+                // 밴드 디바이스인지 확인하고 GATT 서비스 발견 시도
+                ESP_LOGI(TAG, "Connection established - discovering GATT services");
+                int disc_rc = ble_gattc_disc_all_svcs(event->connect.conn_handle, 
+                                                    gatt_client_discover_svc_cb, NULL);
+                if (disc_rc != 0) {
+                    ESP_LOGW(TAG, "Failed to start GATT service discovery: %d", disc_rc);
+                }
+                
                 // 연결 중에도 스캔 유지하여 광고 수집(스택이 허용하는 범위 내)
-                start_passive_scan();
+                //start_passive_scan();
             }
             break;
             
@@ -684,8 +767,11 @@ static void start_advertising(void)
 
     // BLE 스택이 준비된 후 스캔 타이머 시작
     if (ble_scan_timer != NULL) {
-        xTimerStart(ble_scan_timer, 0);
-        ESP_LOGI(TAG, "BLE scan timer started");
+        BaseType_t timer_result = xTimerStart(ble_scan_timer, 0);
+        ESP_LOGI(TAG, "BLE scan timer started, result: %s", timer_result == pdPASS ? "SUCCESS" : "FAILED");
+        ESP_LOGI(TAG, "Timer handle: %p", ble_scan_timer);
+    } else {
+        ESP_LOGE(TAG, "BLE scan timer is NULL - cannot start");
     }
 
     // 즉시 첫 번째 스캔 시작
@@ -732,26 +818,27 @@ esp_err_t bluetooth_init(void)
         return ESP_FAIL;
     }
     
+
+    
+    // BLE 스캔 주기 타이머 생성 (BLE 스택 준비 후 시작)
+    if (ble_scan_timer == NULL) {
+        ESP_LOGI(TAG, "Creating BLE scan timer...");
+        ble_scan_timer = xTimerCreate("ble_scan_timer", pdMS_TO_TICKS(3000), pdTRUE, NULL, scan_timer_cb);
+        if (ble_scan_timer == NULL) {
+            ESP_LOGE(TAG, "Failed to create BLE scan timer");
+            return ESP_FAIL;
+        }
+        ESP_LOGI(TAG, "BLE scan timer created successfully, handle: %p", ble_scan_timer);
+        ESP_LOGI(TAG, "Timer period: 3000ms, Auto-reload: TRUE");
+    }
+
+
     // Create event group
     ble_event_group = xEventGroupCreate();
     
     // Create NimBLE host task
     nimble_port_freertos_init(nimble_host_task);
-    /*
-    // Initialize hardware
-    // Initialize ADC for noise measurement
-    adc_oneshot_unit_init_cfg_t init_config1 = {
-        .unit_id = ADC_UNIT_1,
-    };
-    ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config1, &adc1_handle));
     
-    // Configure ADC channel
-    adc_oneshot_chan_cfg_t config = {
-        .bitwidth = ADC_BITWIDTH_DEFAULT,
-        .atten = ADC_ATTEN_DB_12,
-    };
-    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC_CHANNEL_0, &config));
-    */
     // Initialize vibration GPIO
     gpio_config_t io_conf = {
         .intr_type = GPIO_INTR_DISABLE,
@@ -773,16 +860,6 @@ esp_err_t bluetooth_init(void)
     } else {
         ESP_LOGE(TAG, "DFPlayer Mini initialization failed: %s", esp_err_to_name(dfplayer_ret));
     }
-    
-    // BLE 스캔 주기 타이머 생성 (BLE 스택 준비 후 시작)
-    if (ble_scan_timer == NULL) {
-        ble_scan_timer = xTimerCreate("ble_scan_timer", pdMS_TO_TICKS(3000), pdTRUE, NULL, scan_timer_cb);
-        if (ble_scan_timer == NULL) {
-            ESP_LOGE(TAG, "Failed to create BLE scan timer");
-            return ESP_FAIL;
-        }
-        ESP_LOGI(TAG, "BLE scan timer created successfully");
-    }
 
     ESP_LOGI(TAG, "NimBLE Bluetooth and hardware initialized successfully");
     return ESP_OK;
@@ -792,16 +869,16 @@ esp_err_t bluetooth_init(void)
 static void start_passive_scan(void)
 {
     struct ble_gap_disc_params disc_params = {
-        .filter_duplicates = 1,  // 중복 필터링 활성화
+        .filter_duplicates = 0,  // 중복 필터링 비활성화 (더 많은 데이터 수집)
         .passive = 0,  // Active scan으로 변경 (스캔 응답도 수신)
         .itvl = BLE_GAP_SCAN_ITVL_MS(100),    // 100ms 간격 (더 빠른 스캔)
-        .window = BLE_GAP_SCAN_WIN_MS(50),    // 50ms 윈도우 (더 짧은 수신 시간)
+        .window = BLE_GAP_SCAN_WIN_MS(100),   // 100ms 윈도우 (더 긴 수신 시간)
         .filter_policy = 0,  // 필터 정책 없음 (모든 디바이스 스캔)
         .limited = 0,
     };
 
-    // 1초 동안 스캔 (충분한 시간 확보)
-    int rc = ble_gap_disc(own_addr_type, 1000, &disc_params, gap_event_cb, NULL);
+    // 3초 동안 스캔 (scan response를 위한 충분한 시간)
+    int rc = ble_gap_disc(own_addr_type, 3000, &disc_params, gap_event_cb, NULL);
     if (rc != 0 && rc != BLE_HS_EALREADY) {
         ESP_LOGE(TAG, "Failed to start scan; rc=%d", rc);
     } else if (rc == 0) {
@@ -854,6 +931,20 @@ static void parse_and_log_adv_fields(const uint8_t *data, uint8_t len)
             }
             case BLE_HS_ADV_TYPE_MFG_DATA: {
                 has_mfg = true;
+                ESP_LOGI(TAG, "Manufacturer Data found: %d bytes", payload_len);
+                if (payload_len >= 2) {
+                    uint16_t company_id = (uint16_t)field_data[0] | ((uint16_t)field_data[1] << 8);
+                    ESP_LOGI(TAG, "Company ID: 0x%04X", company_id);
+                    if (payload_len > 2) {
+                        ESP_LOGI(TAG, "MFG Payload: %d bytes", payload_len - 2);
+                        char mfg_hex[64] = {0};
+                        int hex_len = 0;
+                        for (int i = 2; i < payload_len && hex_len < 60; i++) {
+                            hex_len += snprintf(&mfg_hex[hex_len], sizeof(mfg_hex) - hex_len, "%02X ", field_data[i]);
+                        }
+                        ESP_LOGI(TAG, "MFG Data: %s", mfg_hex);
+                    }
+                }
                 break;
             }
             case BLE_HS_ADV_TYPE_SVC_DATA_UUID16:
@@ -895,8 +986,12 @@ static void log_adv_report(const struct ble_gap_event *event)
 // 스캔 주기 타이머 콜백: 호출 시 짧은 스캔을 시작
 static void scan_timer_cb(TimerHandle_t xTimer)
 {
+    ESP_LOGI(TAG, "=== SCAN TIMER CALLBACK TRIGGERED ===");
+    ESP_LOGI(TAG, "Timer handle: %p", xTimer);
+    ESP_LOGI(TAG, "Current tick count: %lu", xTaskGetTickCount());
     ESP_LOGI(TAG, "Scan timer triggered - starting BLE scan");
     start_passive_scan();
+    ESP_LOGI(TAG, "=== SCAN TIMER CALLBACK COMPLETED ===");
 }
 
 // Parse manufacturer data: CompanyID=0x02E5, ver=0x01, flags=0x0F, then sensor payload
@@ -1358,4 +1453,30 @@ void bluetooth_print_scan_statistics(void)
     ESP_LOGI(TAG, "Use bluetooth_get_scan_status() for detailed status");
     ESP_LOGI(TAG, "Check logs for 'Scan active' and 'BAND DEVICE FOUND' messages");
     ESP_LOGI(TAG, "=============================");
+}
+
+// GATT 클라이언트 서비스 발견 콜백
+static int gatt_client_discover_svc_cb(uint16_t conn_handle, const struct ble_gatt_error *error,
+                                       const struct ble_gatt_svc *service, void *arg)
+{
+    if (error != NULL) {
+        ESP_LOGE(TAG, "GATT service discovery failed: %d", error->status);
+        return error->status;
+    }
+    
+    if (service == NULL) {
+        ESP_LOGI(TAG, "GATT service discovery completed");
+        return 0;
+    }
+    
+    ESP_LOGI(TAG, "GATT service found: UUID=0x%04X, start_handle=%d, end_handle=%d", 
+             service->uuid.u16.value, service->start_handle, service->end_handle);
+    
+    // 센서 데이터 서비스인지 확인 (예: 0x180D Heart Rate Service)
+    if (service->uuid.u16.value == 0x180D) {
+        ESP_LOGI(TAG, "Heart Rate Service found - attempting to read characteristics");
+        // 여기서 characteristic을 발견하고 읽기 시도
+    }
+    
+    return 0;
 } 
