@@ -30,13 +30,32 @@ typedef struct {
 } hub_data_t;
 
 // 경보상태 비트 정의
-#define ALARM_WBGT_WARNING    0x01    // WBGT 경고
-#define ALARM_TEMP_WARNING    0x02    // 체온 경고
-#define ALARM_HR_WARNING      0x04    // 심박수 경고
+/*#define ALARM_WBGT_WARNING_FLAG    0x03    // WBGT 경고
+#define ALARM_TEMP_WARNING_FLAG    0x0C    // 체온 경고
+#define ALARM_HR_WARNING_FLAG      0x30    // 심박수 경고
+#define ALARM_NOISE_WARNING_FLAG   0xC0    // 소음 경고
+#define ALARM_WBGT_WARNING_POS     0
+#define ALARM_TEMP_WARNING_POS     2
+#define ALARM_HR_WARNING_POS       4
+#define ALARM_NOISE_WARNING_POS    6
+#define ALARM_WBGT_WARNING(x)      (x << ALARM_WBGT_WARNING_POS)
+#define ALARM_TEMP_WARNING(x)      (x << ALARM_TEMP_WARNING_POS)
+#define ALARM_HR_WARNING(x)        (x << ALARM_HR_WARNING_POS)
+#define ALARM_NOISE_WARNING(x)     (x << ALARM_NOISE_WARNING_POS)*/
+
+#define ALARM_WBGT_WARNING_FLAG    0x03    // WBGT 경고
+#define ALARM_TEMP_WARNING_FLAG    0x0C    // 체온 경고
+#define ALARM_HR_WARNING_FLAG      0x30    // 심박수 경고
+#define ALARM_NOISE_WARNING_FLAG   0xC0    // 소음 경고
+#define ALARM_WBGT_WARNING_POS     0
+#define ALARM_TEMP_WARNING_POS     2
+#define ALARM_HR_WARNING_POS       4
+#define ALARM_NOISE_WARNING_POS    6
 
 // 데이터 범위 검증 상수
 #define SKIN_TEMP_MIN         15.0f
 #define SKIN_TEMP_MAX         40.0f
+#define HEART_RATE_IGNORE     0
 #define HEART_RATE_MIN        20
 #define HEART_RATE_MAX        160
 #define SPO2_MIN              80.0f
@@ -58,13 +77,6 @@ bool data_manager_validate_band_data(const band_data_t *data);
 // 허브 데이터 관리 (GATT Publishing)
 esp_err_t data_manager_update_hub_data(const hub_data_t *data);
 esp_err_t data_manager_get_hub_data(hub_data_t *data);
-esp_err_t data_manager_update_alarm_status(uint8_t alarm_status);
-
-// 경보 상태 관리
-esp_err_t data_manager_set_wbgt_alarm(bool enabled);
-esp_err_t data_manager_set_temp_alarm(bool enabled);
-esp_err_t data_manager_set_hr_alarm(bool enabled);
-uint8_t data_manager_get_alarm_status(void);
 
 // 데이터 출력 함수
 void data_manager_print_all_data(void);

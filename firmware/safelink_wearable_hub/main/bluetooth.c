@@ -460,26 +460,55 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
         case BLE_GAP_EVENT_DISC: {
             static uint8_t band_addr[6] = {0x0C, 0x4E, 0xA0, 0x00, 0x00, 0x00};
             static uint32_t last_band_update = 0;
+            static uint32_t last_keyword_band_update = 0;
             static uint8_t duplicate_count = 0;
             static uint32_t total_adv_count = 0;
             
-            // 스캔 이벤트 타입 로그
-            ESP_LOGD(TAG, "Scan event: type=%d, RSSI=%d, len=%d", 
-                     event->disc.event_type, event->disc.rssi, event->disc.length_data);
-            
+            // 스캔 이벤트 타입 로그 (모든 이벤트 타입 로깅)
+            const char* event_type_str;
+            switch (event->disc.event_type) {
+                case 0: event_type_str = "Connectable Undirected"; break;
+                case 1: event_type_str = "Connectable Directed"; break;
+                case 2: event_type_str = "Non-connectable Undirected"; break;
+                case 3: event_type_str = "Scan Response"; break;
+                case 4: event_type_str = "Scan Response (Alt)"; break;
+                case 5: event_type_str = "Non-connectable Directed"; break;
+                default: event_type_str = "Unknown"; break;
+            }
             total_adv_count++;
             
             // RSSI 필터링: 너무 약한 신호는 무시
-            /*if (event->disc.rssi < -80) {
+            /*if (event->disc.rssi < -100) {
                 ESP_LOGD(TAG, "Weak signal ignored: RSSI=%d", event->disc.rssi);
                 break;
             }*/
             
             // 주기적으로 스캔 상태 로그
-            if (total_adv_count % 10 == 0) {
+            if (total_adv_count % 1000 == 0) {
                 ESP_LOGI(TAG, "Scan active: %u advertisements received, RSSI=%d", 
                          (unsigned int)total_adv_count, event->disc.rssi);
             }
+            bool found = false;
+
+            // 알려진 밴드 주소와 비교
+            if(memcmp(event->disc.addr.val, band_addr, 6) == 0) {
+                found = true;
+                duplicate_count++;
+                // 중복 방지: 1초 내 동일한 밴드 데이터는 무시
+                uint32_t current_time = esp_timer_get_time() / 1000;
+                if ((current_time - last_band_update) < 1000) {
+                    //ESP_LOGI(TAG, "Band device ignored - within 1 second cooldown period, now = %lu", current_time);
+                    found = false;
+                    return 0;
+                }
+                ESP_LOGD(TAG, "Band device processing allowed - cooldown period expired");
+            }
+            if(found)
+                ESP_LOGD(TAG, "Scan event: %s (type=%d), found = %d,RSSI=%d, len=%d, MAC : %02X:%02X:%02X:%02X:%02X:%02X", 
+                    event_type_str, event->disc.event_type, found, event->disc.rssi, event->disc.length_data,
+                    event->disc.addr.val[5], event->disc.addr.val[4], event->disc.addr.val[3],
+                    event->disc.addr.val[2], event->disc.addr.val[1], event->disc.addr.val[0]);
+                
             
             // Advertising report received while scanning
             if (event->disc.length_data == 0) break;
@@ -487,61 +516,52 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
             uint8_t len = event->disc.length_data;
 
             // 빠른 키워드 검색 (첫 번째 바이트부터 시작)
-            bool found = false;
             size_t klen = strlen(ADV_KEYWORD);
             
             // 최적화된 문자열 검색
+            
+            bool found_keyword = false;
             for (uint8_t i = 0; i + klen <= len && !found; i++) {
                 if (data[i] == ADV_KEYWORD[0] || 
                     (data[i] >= 'A' && data[i] <= 'Z' && data[i] == ADV_KEYWORD[0] - 'A' + 'a') ||
                     (data[i] >= 'a' && data[i] <= 'z' && data[i] == ADV_KEYWORD[0] - 'a' + 'A')) {
-                    found = true;
+                    found_keyword = true;
                     for (size_t j = 1; j < klen; j++) {
                         char a = (char)data[i + j];
                         char b = ADV_KEYWORD[j];
                         if (a >= 'A' && a <= 'Z') a = (char)(a - 'A' + 'a');
                         if (b >= 'A' && b <= 'Z') b = (char)(b - 'A' + 'a');
-                        if (a != b) { found = false; break; }
+                        if (a != b) { found_keyword = false; break; }
                     }
                     
-                    // 키워드로 찾은 밴드 디바이스도 1초 쿨다운 적용
-                    if (found) {
-                        static uint32_t last_keyword_band_update = 0;
-                        uint32_t current_time = esp_timer_get_time() / 1000;
-                        if (current_time - last_keyword_band_update < 1000) {
-                            ESP_LOGD(TAG, "Keyword band device ignored - within 1 second cooldown period");
-                            found = false;
-                        } else {
-                            last_keyword_band_update = current_time;
-                            ESP_LOGI(TAG, "Keyword band device processing allowed - cooldown period expired");
-                        }
-                    }
+                }
+            }
+            found |= found_keyword;
+            if(found_keyword){
+                // 이 광고를 밴드로 인식하고 주소를 기억
+                memcpy(band_addr, event->disc.addr.val, 6);
+            }
+            // 키워드로 찾은 밴드 디바이스도 1초 쿨다운 적용
+            if (found) {
+                uint32_t current_time = esp_timer_get_time() / 1000;
+                if ((current_time - last_keyword_band_update) < 1000) {
+                    //ESP_LOGI(TAG, "Keyword band device ignored - within 1 second cooldown period, now = %lu", current_time);
+                    found = false;
+                    return 0;
+                } else {
+                    ESP_LOGD(TAG, "Keyword band device processing allowed - cooldown period expired");
                 }
             }
             
-            // 알려진 밴드 주소와 비교
-            if(memcmp(event->disc.addr.val, band_addr, 6) == 0) {
-                found = true;
-                duplicate_count++;
-                
-                // 중복 방지: 1초 내 동일한 밴드 데이터는 무시
-                uint32_t current_time = esp_timer_get_time() / 1000;
-                if (current_time - last_band_update < 1000) {
-                    ESP_LOGD(TAG, "Band device ignored - within 1 second cooldown period");
-                    break;
-                }
-                last_band_update = current_time;
-                ESP_LOGI(TAG, "Band device processing allowed - cooldown period expired");
-            }
-
             if (found) {
-                ESP_LOGI(TAG, "*** BAND DEVICE FOUND *** RSSI=%d, Addr=%02X:%02X:%02X:%02X:%02X:%02X", 
+                ESP_LOGD(TAG, "*** BAND DEVICE FOUND *** RSSI=%d, Addr=%02X:%02X:%02X:%02X:%02X:%02X", 
                          event->disc.rssi,
                          event->disc.addr.val[5], event->disc.addr.val[4], event->disc.addr.val[3],
                          event->disc.addr.val[2], event->disc.addr.val[1], event->disc.addr.val[0]);
                 
                 // Only log matched devices (filter mode)
-                log_adv_report(event);
+                
+                //log_adv_report(event);
 
                 // Additionally, extract and print Manufacturer/Service Data in HEX
                 const uint8_t *p = data; uint8_t remaining = len;
@@ -565,7 +585,7 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
                             if (o >= (int)sizeof(buf) - 1) break;
                         }
                         buf[o] = '\0';
-                        ESP_LOGI(TAG, "ADV field 0x%02X len=%d HEX: %s%s",
+                        ESP_LOGD(TAG, "ADV field 0x%02X len=%d HEX: %s%s",
                                  field_type, payload_len, buf, (payload_len > 64 ? "..." : ""));
                         
                         // Parse manufacturer data if present
@@ -573,60 +593,15 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
                             found_mfg_data = true;
                             bool ok = parse_mfg_and_update_band(field_data, payload_len);
                             if (ok) {
-                                // 이 광고를 밴드로 인식하고 주소를 기억
-                                memcpy(band_addr, event->disc.addr.val, 6);
                             }
+                            // 성공하든 안 하든 타이머 업데이트(BPM에 의한 실패도 간주.)
+                            uint32_t current_time = esp_timer_get_time() / 1000;
+                            last_band_update = current_time;
+                            last_keyword_band_update = current_time;
                         }
                     }
                     
                     p += (field_len + 1); remaining -= (field_len + 1);
-                }
-                
-                // Manufacturer data가 없으면 연결을 시도하여 GATT로 데이터 읽기
-                if (!found_mfg_data) {
-                    static uint32_t last_conn_attempt = 0;
-                    static uint8_t last_conn_addr[6] = {0};
-                    uint32_t current_time = esp_timer_get_time() / 1000;
-                    
-                    // 같은 주소에 대해 5초 내 중복 연결 시도 방지
-                    bool is_same_addr = (memcmp(event->disc.addr.val, last_conn_addr, 6) == 0);
-                    bool time_elapsed = (current_time - last_conn_attempt > 5000);
-                    
-                    if (!is_same_addr || time_elapsed) {
-                        ESP_LOGI(TAG, "No manufacturer data in ADV - attempting connection for GATT read");
-                        
-                        // 현재 연결 상태 확인
-                        if (num_conns >= MAX_CONNS) {
-                            ESP_LOGW(TAG, "Max connections reached, cannot connect to band");
-                        } else {
-                            // 연결 시도 (비동기)
-                            struct ble_gap_conn_params conn_params = {
-                                .scan_itvl = BLE_GAP_SCAN_ITVL_MS(100),
-                                .scan_window = BLE_GAP_SCAN_WIN_MS(50),
-                                .itvl_min = BLE_GAP_INITIAL_CONN_ITVL_MIN,
-                                .itvl_max = BLE_GAP_INITIAL_CONN_ITVL_MAX,
-                                .latency = 0,
-                                .supervision_timeout = BLE_GAP_INITIAL_SUPERVISION_TIMEOUT,
-                                .min_ce_len = BLE_GAP_INITIAL_CONN_MIN_CE_LEN,
-                                .max_ce_len = BLE_GAP_INITIAL_CONN_MAX_CE_LEN,
-                            };
-                            
-                            int conn_rc = ble_gap_connect(own_addr_type, &event->disc.addr, 30000, &conn_params, 
-                                                        gap_event_cb, NULL);
-                            if (conn_rc == 0) {
-                                ESP_LOGI(TAG, "Connection attempt initiated to band device");
-                                last_conn_attempt = current_time;
-                                memcpy(last_conn_addr, event->disc.addr.val, 6);
-                            } else {
-                                ESP_LOGW(TAG, "Failed to initiate connection: %d", conn_rc);
-                                if (conn_rc == BLE_HS_EALREADY) {
-                                    ESP_LOGD(TAG, "Connection already in progress or device busy");
-                                }
-                            }
-                        }
-                    } else {
-                        ESP_LOGD(TAG, "Skipping connection attempt - too recent for this device");
-                    }
                 }
             }
             break; }

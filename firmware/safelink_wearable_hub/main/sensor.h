@@ -24,8 +24,10 @@
 
 // 알람 상태 비트 정의 (data_manager.h에서 정의된 것 사용)
 // 추가 알람 비트들만 정의
-#define ALARM_NOISE_WARNING      BIT3
-#define ALARM_SPO2_WARNING       BIT4
+#define ALARM_WBGT_TYPE       0
+#define ALARM_TEMP_TYPE       1
+#define ALARM_HR_TYPE         2
+#define ALARM_NOISE_TYPE      3
 
 // Task priorities
 #define SENSOR_TASK_PRIORITY     5
@@ -100,8 +102,21 @@ esp_err_t sensor_create_tasks(EventGroupHandle_t event_group);
 #define WARNING_LEVEL_NONE      0
 #define WARNING_LEVEL_CAUTION   1  // 주의
 #define WARNING_LEVEL_DANGER    2  // 위험
+#define WARNING_LEVEL_CRITICAL  3  // 심각
 
 // 경고 종류별 음성 파일 번호 (10-30번 범위)
+#define VOICE_NOISE_CAUTION     10  // 소음 주의: 귀마개를 착용하세요
+#define VOICE_NOISE_DANGER      11  // 소음 경고: 즉시 귀마개 착용 후 소음원에서 벗어나세요
+#define VOICE_NOISE_CRITICAL    12  // 소음 위험: 즉시 작업을 중단하고 안전지대로 이동하세요
+#define VOICE_WBGT_CAUTION      13  // 기온 주의: 1시간 후 15분 휴식을 권고합니다
+#define VOICE_WBGT_CRITICAL     14  // 기온 위험: 즉시 30분 휴식을 취하세요
+#define VOICE_TEMP_CAUTION      15  // 체온 주의: 휴식을 권고합니다
+#define VOICE_TEMP_CRITICAL     16  // 체온 위험: 즉시 작업 중단 및 의료 확인이 필요합니다
+#define VOICE_HR_CAUTION        17  // 심박수 주의: 심박수가 높습니다
+#define VOICE_HR_DANGER         18  // 심박수 경고: 휴식을 취하세요
+#define VOICE_HR_CRITICAL       19  // 심박수 위험: 즉시 중단하고 관리자에게 연락하세요
+
+/*
 #define VOICE_WBGT_CAUTION      10  // WBGT 주의 (28-30°C)
 #define VOICE_WBGT_DANGER       11  // WBGT 위험 (30°C 이상)
 #define VOICE_TEMP_CAUTION      12  // 체온 주의 (37.5-38°C)
@@ -112,6 +127,7 @@ esp_err_t sensor_create_tasks(EventGroupHandle_t event_group);
 #define VOICE_NOISE_DANGER      17  // 소음 위험 (110 dB 이상)
 #define VOICE_SPO2_CAUTION      18  // 산소포화도 주의 (90-95%)
 #define VOICE_SPO2_DANGER       19  // 산소포화도 위험 (90% 미만)
+*/
 
 // 경고 메시지 구조체
 typedef struct {
@@ -125,7 +141,7 @@ typedef struct {
 
 // 경고 시스템 함수들
 esp_err_t warning_system_init(void);
-esp_err_t warning_system_check_and_trigger(void);
+esp_err_t warning_system_check_and_trigger(uint8_t alarm_status);
 esp_err_t warning_system_play_voice(uint8_t voice_file_num);
 esp_err_t warning_system_vibrate(uint32_t duration_ms);
 void warning_system_reset_all(void);

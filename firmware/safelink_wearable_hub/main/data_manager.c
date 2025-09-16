@@ -116,9 +116,11 @@ bool data_manager_validate_band_data(const band_data_t *data)
     
     // 심박수 검증 (20~160 BPM)
     if (data->heart_rate < HEART_RATE_MIN || data->heart_rate > HEART_RATE_MAX) {
-        ESP_LOGW(TAG, "Invalid heart rate: %d BPM (range: %d~%d BPM)", 
-                 data->heart_rate, HEART_RATE_MIN, HEART_RATE_MAX);
-        return false;
+        if(data->heart_rate != HEART_RATE_IGNORE){
+            ESP_LOGW(TAG, "Invalid heart rate: %d BPM (range: %d~%d BPM)", 
+                    data->heart_rate, HEART_RATE_MIN, HEART_RATE_MAX);
+            return false;
+        }
     }
     
     return true;
@@ -158,79 +160,6 @@ esp_err_t data_manager_get_hub_data(hub_data_t *data)
     return ESP_ERR_TIMEOUT;
 }
 
-esp_err_t data_manager_update_alarm_status(uint8_t alarm_status)
-{
-    if (xSemaphoreTake(g_data_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
-        g_hub_data.alarm_status = alarm_status;
-        g_hub_data.timestamp = esp_timer_get_time() / 1000;
-        xSemaphoreGive(g_data_mutex);
-        
-        ESP_LOGI(TAG, "Alarm status updated: 0x%02X", alarm_status);
-        return ESP_OK;
-    }
-    
-    return ESP_ERR_TIMEOUT;
-}
-
-esp_err_t data_manager_set_wbgt_alarm(bool enabled)
-{
-    if (xSemaphoreTake(g_data_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
-        if (enabled) {
-            g_hub_data.alarm_status |= ALARM_WBGT_WARNING;
-        } else {
-            g_hub_data.alarm_status &= ~ALARM_WBGT_WARNING;
-        }
-        g_hub_data.timestamp = esp_timer_get_time() / 1000;
-        xSemaphoreGive(g_data_mutex);
-        return ESP_OK;
-    }
-    
-    return ESP_ERR_TIMEOUT;
-}
-
-esp_err_t data_manager_set_temp_alarm(bool enabled)
-{
-    if (xSemaphoreTake(g_data_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
-        if (enabled) {
-            g_hub_data.alarm_status |= ALARM_TEMP_WARNING;
-        } else {
-            g_hub_data.alarm_status &= ~ALARM_TEMP_WARNING;
-        }
-        g_hub_data.timestamp = esp_timer_get_time() / 1000;
-        xSemaphoreGive(g_data_mutex);
-        return ESP_OK;
-    }
-    
-    return ESP_ERR_TIMEOUT;
-}
-
-esp_err_t data_manager_set_hr_alarm(bool enabled)
-{
-    if (xSemaphoreTake(g_data_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
-        if (enabled) {
-            g_hub_data.alarm_status |= ALARM_HR_WARNING;
-        } else {
-            g_hub_data.alarm_status &= ~ALARM_HR_WARNING;
-        }
-        g_hub_data.timestamp = esp_timer_get_time() / 1000;
-        xSemaphoreGive(g_data_mutex);
-        return ESP_OK;
-    }
-    
-    return ESP_ERR_TIMEOUT;
-}
-
-uint8_t data_manager_get_alarm_status(void)
-{
-    uint8_t alarm_status = 0;
-    
-    if (xSemaphoreTake(g_data_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
-        alarm_status = g_hub_data.alarm_status;
-        xSemaphoreGive(g_data_mutex);
-    }
-    
-    return alarm_status;
-}
 
 void data_manager_print_all_data(void)
 {
@@ -249,43 +178,44 @@ void data_manager_print_all_data(void)
     if (data_manager_get_band_data(&band_data) == ESP_OK &&
         data_manager_get_hub_data(&hub_data) == ESP_OK) {
         
-        printf("\n=== SafeLink Wearable Hub Data ===\n");
-        printf("Timestamp: %lu ms\n", current_time);
+        ESP_LOGI(TAG, "\n=== SafeLink Wearable Hub Data ===\n");
+        ESP_LOGI(TAG, "Timestamp: %u ms\n", current_time);
         
         // 밴드 데이터 출력
-        printf("\n[Band Data] %s\n", band_data.is_valid ? "VALID" : "INVALID");
+        ESP_LOGI(TAG, "\n[Band Data] %s\n", band_data.is_valid ? "VALID" : "INVALID");
         if (band_data.is_valid) {
-            printf("  External Temp: %.1f°C\n", band_data.external_temp);
-            printf("  External Humidity: %.1f%%\n", band_data.external_humidity);
-            printf("  Skin Temperature: %.1f°C\n", band_data.skin_temp);
-            printf("  Heart Rate: %d BPM\n", band_data.heart_rate);
-            printf("  SpO2: %.1f%%\n", band_data.spo2);
-            printf("  Band Timestamp: %lu ms\n", band_data.timestamp);
-            printf("  Data Source: %s\n", 
+            ESP_LOGI(TAG, "  External Temp: %.1f°C\n", band_data.external_temp);
+            ESP_LOGI(TAG, "  External Humidity: %.1f%%\n", band_data.external_humidity);
+            ESP_LOGI(TAG, "  Skin Temperature: %.1f°C\n", band_data.skin_temp);
+            ESP_LOGI(TAG, "  Heart Rate: %d BPM\n", band_data.heart_rate);
+            ESP_LOGI(TAG, "  SpO2: %.1f%%\n", band_data.spo2);
+            ESP_LOGI(TAG, "  Band Timestamp: %lu ms\n", band_data.timestamp);
+            ESP_LOGI(TAG, "  Data Source: %s\n", 
                    (band_data.data_source == DATA_SOURCE_CLIENT) ? "CLIENT" : "SIMULATOR");
         }
         
         // 허브 데이터 출력
-        printf("\n[Hub Data] %s\n", hub_data.is_valid ? "VALID" : "INVALID");
+        ESP_LOGI(TAG, "\n[Hub Data] %s\n", hub_data.is_valid ? "VALID" : "INVALID");
         if (hub_data.is_valid) {
-            printf("  Average Noise: %.1f dB\n", hub_data.avg_noise);
-            printf("  WBGT: %.1f°C\n", hub_data.wbgt);
-            printf("  Alarm Status: 0x%02X", hub_data.alarm_status);
+            ESP_LOGI(TAG, "  Average Noise: %.1f dB\n", hub_data.avg_noise);
+            ESP_LOGI(TAG, "  WBGT: %.1f°C\n", hub_data.wbgt);
+            ESP_LOGI(TAG, "  Alarm Status: 0x%02X", hub_data.alarm_status);
             
             // 경보 상태 상세 출력
-            if (hub_data.alarm_status & ALARM_WBGT_WARNING) printf(" (WBGT)");
-            if (hub_data.alarm_status & ALARM_TEMP_WARNING) printf(" (TEMP)");
-            if (hub_data.alarm_status & ALARM_HR_WARNING) printf(" (HR)");
-            printf("\n");
+            if (hub_data.alarm_status & ALARM_WBGT_WARNING_FLAG) printf(" (WBGT)");
+            if (hub_data.alarm_status & ALARM_TEMP_WARNING_FLAG) ESP_LOGI(TAG, " (TEMP)");
+            if (hub_data.alarm_status & ALARM_HR_WARNING_FLAG) ESP_LOGI(TAG, " (HR)");
+            if (hub_data.alarm_status & ALARM_NOISE_WARNING_FLAG) ESP_LOGI(TAG, " (NOISE)");
+            ESP_LOGI(TAG, "\n");
             
-            printf("  Hub Timestamp: %lu ms\n", hub_data.timestamp);
+            ESP_LOGI(TAG, "  Hub Timestamp: %lu ms\n", hub_data.timestamp);
         }
         
         // 클라이언트 데이터 상태 출력
-        printf("\n[System Status]\n");
-        printf("  Client Data Active: %s\n", g_has_client_data ? "YES" : "NO");
+        ESP_LOGI(TAG, "\n[System Status]\n");
+        ESP_LOGI(TAG, "  Client Data Active: %s\n", g_has_client_data ? "YES" : "NO");
         
-        printf("================================\n\n");
+        ESP_LOGI(TAG, "================================\n\n");
     }
 }
 

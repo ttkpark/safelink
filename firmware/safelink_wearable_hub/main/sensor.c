@@ -16,16 +16,16 @@ static const char *TAG = "SENSOR";
 
 // 경고 시스템 전역 변수들
 static warning_info_t warning_list[] = {
-    {ALARM_WBGT_WARNING, WARNING_LEVEL_NONE, VOICE_WBGT_CAUTION, "WBGT 주의: 28-30°C 구간입니다. 1시간마다 15-30분 휴식을 취하세요.", false, 0},
-    {ALARM_WBGT_WARNING, WARNING_LEVEL_NONE, VOICE_WBGT_DANGER, "WBGT 위험: 30°C 이상입니다. 즉시 휴식을 취하고 냉방 시설을 이용하세요.", false, 0},
-    {ALARM_TEMP_WARNING, WARNING_LEVEL_NONE, VOICE_TEMP_CAUTION, "체온 주의: 37.5-38°C 구간입니다. 수분을 보충하고 휴식을 취하세요.", false, 0},
-    {ALARM_TEMP_WARNING, WARNING_LEVEL_NONE, VOICE_TEMP_DANGER, "체온 위험: 38°C 이상입니다. 즉시 작업을 중단하고 냉각 조치를 취하세요.", false, 0},
-    {ALARM_HR_WARNING, WARNING_LEVEL_NONE, VOICE_HR_CAUTION, "심박수 주의: 100-120 BPM 구간입니다. 휴식이 필요합니다.", false, 0},
-    {ALARM_HR_WARNING, WARNING_LEVEL_NONE, VOICE_HR_DANGER, "심박수 위험: 120 BPM 이상입니다. 즉시 휴식을 취하세요.", false, 0},
-    {ALARM_NOISE_WARNING, WARNING_LEVEL_NONE, VOICE_NOISE_CAUTION, "소음 주의: 95-110 dB 구간입니다. 귀마개를 착용하세요.", false, 0},
-    {ALARM_NOISE_WARNING, WARNING_LEVEL_NONE, VOICE_NOISE_DANGER, "소음 위험: 110 dB 이상입니다. 즉시 귀마개를 착용하고 휴식을 취하세요.", false, 0},
-    {ALARM_SPO2_WARNING, WARNING_LEVEL_NONE, VOICE_SPO2_CAUTION, "산소포화도 주의: 90-95% 구간입니다. 신선한 공기를 마시고 휴식을 취하세요.", false, 0},
-    {ALARM_SPO2_WARNING, WARNING_LEVEL_NONE, VOICE_SPO2_DANGER, "산소포화도 위험: 90% 미만입니다. 즉시 의료진의 도움을 받으세요.", false, 0}
+    {ALARM_WBGT_TYPE, WARNING_LEVEL_CAUTION, VOICE_WBGT_CAUTION,    "소음 주의: 귀마개를 착용하세요"                          , true, 0},
+    {ALARM_WBGT_TYPE, WARNING_LEVEL_CRITICAL, VOICE_WBGT_CRITICAL,  "소음 경고: 즉시 귀마개 착용 후 소음원에서 벗어나세요"       , true, 0},
+    {ALARM_TEMP_TYPE, WARNING_LEVEL_CAUTION, VOICE_TEMP_CAUTION,    "소음 위험: 즉시 작업을 중단하고 안전지대로 이동하세요"      , true, 0},
+    {ALARM_TEMP_TYPE, WARNING_LEVEL_CRITICAL, VOICE_TEMP_CRITICAL,  "기온 주의: 1시간 후 15분 휴식을 권고합니다"               , true, 0},
+    {ALARM_HR_TYPE, WARNING_LEVEL_CAUTION, VOICE_HR_CAUTION,        "기온 위험: 즉시 30분 휴식을 취하세요"                    , true, 0},
+    {ALARM_HR_TYPE, WARNING_LEVEL_DANGER, VOICE_HR_DANGER,          "체온 주의: 휴식을 권고합니다"                            , true, 0},
+    {ALARM_HR_TYPE, WARNING_LEVEL_CRITICAL, VOICE_HR_CRITICAL,      "체온 위험: 즉시 작업 중단 및 의료 확인이 필요합니다"        , true, 0},
+    {ALARM_NOISE_TYPE, WARNING_LEVEL_CAUTION, VOICE_NOISE_CAUTION,  "심박수 주의: 심박수가 높습니다"                           , true, 0},
+    {ALARM_NOISE_TYPE, WARNING_LEVEL_DANGER, VOICE_NOISE_DANGER,    "심박수 경고: 휴식을 취하세요"                            , true, 0},
+    {ALARM_NOISE_TYPE, WARNING_LEVEL_CRITICAL, VOICE_NOISE_CRITICAL,"심박수 위험: 즉시 중단하고 관리자에게 연락하세요"           , true, 0},
 };
 
 #define WARNING_LIST_SIZE (sizeof(warning_list) / sizeof(warning_info_t))
@@ -156,17 +156,31 @@ void sensor_monitor_task(void *arg)
             
             // WBGT 경고 (30°C 이상)
             if (wbgt >= 30.0f) {
-                alarm_status |= ALARM_WBGT_WARNING;
+                alarm_status |= (3<<ALARM_WBGT_WARNING_POS);
+            }else if (wbgt >= 28.0f) {
+                alarm_status |= (1<<ALARM_WBGT_WARNING_POS);
+            }
+
+            if(avg_noise >= 120.0f){
+                alarm_status |= (3<<ALARM_NOISE_WARNING_POS);
+            }else if(avg_noise >= 110.0f){
+                alarm_status |= (2<<ALARM_NOISE_WARNING_POS);
+            }else if(avg_noise >= 95.0f){
+                alarm_status |= (1<<ALARM_NOISE_WARNING_POS);
             }
             
             // 체온 경고 (밴드 데이터에서 확인)
             band_data_t band_data;
             if (data_manager_get_band_data(&band_data) == ESP_OK && band_data.is_valid) {
-                if (band_data.skin_temp > 38.0f || band_data.skin_temp < 35.0f) {
-                    alarm_status |= ALARM_TEMP_WARNING;
+                if (band_data.skin_temp > 38.0f || band_data.skin_temp < 27.0f) {
+                    alarm_status |= (3<<ALARM_TEMP_WARNING_POS);
+                }else if (band_data.skin_temp > 37.5f) {
+                    alarm_status |= (1<<ALARM_TEMP_WARNING_POS);
                 }
                 if (band_data.heart_rate > 120 || band_data.heart_rate < 50) {
-                    alarm_status |= ALARM_HR_WARNING;
+                    alarm_status |= (3<<ALARM_HR_WARNING_POS);
+                }else if (band_data.heart_rate > 100) {
+                    alarm_status |= (1<<ALARM_HR_WARNING_POS);
                 }
             }
             
@@ -200,18 +214,21 @@ void sensor_monitor_task(void *arg)
             }
             
             // 경보 상태 로그
-            if (alarm_status & ALARM_WBGT_WARNING) {
+            if (alarm_status & ALARM_WBGT_WARNING_FLAG) {
                 ESP_LOGW(TAG, "⚠️  WBGT WARNING: %.1f°C", wbgt);
             }
-            if (alarm_status & ALARM_TEMP_WARNING) {
+            if (alarm_status & ALARM_TEMP_WARNING_FLAG) {
                 ESP_LOGW(TAG, "⚠️  TEMPERATURE WARNING");
             }
-            if (alarm_status & ALARM_HR_WARNING) {
+            if (alarm_status & ALARM_HR_WARNING_FLAG) {
                 ESP_LOGW(TAG, "⚠️  HEART RATE WARNING");
+            }
+            if (alarm_status & ALARM_NOISE_WARNING_FLAG) {
+                ESP_LOGW(TAG, "⚠️  NOISE WARNING");
             }
             
             // 경고 시스템 체크 및 트리거
-            warning_system_check_and_trigger();
+            warning_system_check_and_trigger(alarm_status);
         }
         
         vTaskDelay(MONITOR_INTERVAL_MS / portTICK_PERIOD_MS);
@@ -506,7 +523,7 @@ esp_err_t warning_system_vibrate(uint32_t duration_ms)
 }
 
 // 경고 시스템 체크 및 트리거
-esp_err_t warning_system_check_and_trigger(void)
+esp_err_t warning_system_check_and_trigger(uint8_t alarm_status)
 {
     if (!warning_system_initialized) {
         return ESP_ERR_INVALID_STATE;
@@ -539,56 +556,34 @@ esp_err_t warning_system_check_and_trigger(void)
         }
         
         bool should_trigger = false;
-        
+        int level = 0;
         switch (warning->warning_type) {
-            case ALARM_WBGT_WARNING:
-                if (has_hub_data) {
-                    if (warning->voice_file_num == VOICE_WBGT_CAUTION && hub_data.wbgt >= 28.0f && hub_data.wbgt < 30.0f) {
-                        should_trigger = true;
-                    } else if (warning->voice_file_num == VOICE_WBGT_DANGER && hub_data.wbgt >= 30.0f) {
-                        should_trigger = true;
-                    }
+            case ALARM_WBGT_TYPE:
+                level = (alarm_status & ALARM_WBGT_WARNING_FLAG) >> ALARM_WBGT_WARNING_POS;
+                if(level == warning->warning_level){
+                    should_trigger = true;
                 }
                 break;
                 
-            case ALARM_TEMP_WARNING:
-                if (has_band_data) {
-                    if (warning->voice_file_num == VOICE_TEMP_CAUTION && band_data.skin_temp >= 37.5f && band_data.skin_temp < 38.0f) {
-                        should_trigger = true;
-                    } else if (warning->voice_file_num == VOICE_TEMP_DANGER && band_data.skin_temp >= 38.0f) {
-                        should_trigger = true;
-                    }
+            case ALARM_TEMP_TYPE:
+                level = (alarm_status & ALARM_TEMP_WARNING_FLAG) >> ALARM_TEMP_WARNING_POS;
+                if(level == warning->warning_level){
+                    should_trigger = true;
                 }
                 break;
                 
-            case ALARM_HR_WARNING:
-                if (has_band_data) {
-                    if (warning->voice_file_num == VOICE_HR_CAUTION && band_data.heart_rate >= 100 && band_data.heart_rate < 120) {
-                        should_trigger = true;
-                    } else if (warning->voice_file_num == VOICE_HR_DANGER && band_data.heart_rate >= 120) {
-                        should_trigger = true;
-                    }
+            case ALARM_HR_TYPE:
+                level = (alarm_status & ALARM_HR_WARNING_FLAG) >> ALARM_HR_WARNING_POS;
+                if(level == warning->warning_level){
+                    should_trigger = true;
                 }
                 break;
                 
-            case ALARM_NOISE_WARNING:
-                if (has_hub_data) {
-                    if (warning->voice_file_num == VOICE_NOISE_CAUTION && hub_data.avg_noise >= 95.0f && hub_data.avg_noise < 110.0f) {
-                        should_trigger = true;
-                    } else if (warning->voice_file_num == VOICE_NOISE_DANGER && hub_data.avg_noise >= 110.0f) {
-                        should_trigger = true;
-                    }
+            case ALARM_NOISE_TYPE:
+                level = (alarm_status & ALARM_NOISE_WARNING_FLAG) >> ALARM_NOISE_WARNING_POS;
+                if(level == warning->warning_level){
+                    should_trigger = true;
                 }
-                break;
-                
-            case ALARM_SPO2_WARNING:
-                /*if (has_band_data) {
-                    if (warning->voice_file_num == VOICE_SPO2_CAUTION && band_data.spo2 >= 90.0f && band_data.spo2 < 95.0f) {
-                        should_trigger = true;
-                    } else if (warning->voice_file_num == VOICE_SPO2_DANGER && band_data.spo2 < 90.0f) {
-                        should_trigger = true;
-                    }
-                }*/
                 break;
         }
         
