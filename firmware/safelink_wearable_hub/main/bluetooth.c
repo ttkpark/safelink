@@ -311,24 +311,6 @@ static int gatt_svr_access_cb(uint16_t conn_handle, uint16_t attr_handle,
                             
                         }
                     } else if (strncmp(command_buffer, "check start", 11) == 0) {
-                        // 이 명령어를 받을 때부터 이 연결은 체크를 확인함. 5초동안 응답 없으면 연결 해제
-                        check_system_active = true;
-                        check_conn_handle = conn_handle;
-                        
-                        // 체크 타이머 생성 (5초)
-                        if (check_timeout_timer == NULL) {
-                            check_timeout_timer = xTimerCreate("check_timeout", 
-                                                              pdMS_TO_TICKS(5000), 
-                                                              pdTRUE, // auto-reload
-                                                              0, 
-                                                              check_timeout_cb);
-                        }
-                        
-                        if (check_timeout_timer != NULL) {
-                            xTimerStart(check_timeout_timer, 0);
-                        }
-                        
-                        ESP_LOGI(TAG, "Check system activated for conn_handle: %d", conn_handle);
                         
                     } else if (strncmp(command_buffer, "check", 6) == 0) {
                         // 체크 수신. 기기는 check start를 했다면 이후 최소 5초 내로 check\0 명령어를 보내야함.
@@ -614,7 +596,6 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
             ESP_LOGI(TAG, "Connection %s", event->connect.status == 0 ? "established" : "failed");
             if (event->connect.status == 0) {
                 current_state = BLUETOOTH_STATE_CONNECTED;
-                dfplayer_play_folder(0, 23);
                 if (num_conns < MAX_CONNS) {
                     conn_handles[num_conns++] = event->connect.conn_handle;
                     ESP_LOGI(TAG, "conn_handles: %d active", num_conns);
@@ -643,6 +624,27 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
                 if (disc_rc != 0) {
                     ESP_LOGW(TAG, "Failed to start GATT service discovery: %d", disc_rc);
                 }
+                dfplayer_play_folder(0, 23);
+
+                // 이 연결은 체크를 확인함. 5초동안 응답 없으면 연결 해제
+                check_system_active = true;
+                check_conn_handle = event->connect.conn_handle;
+                
+                // 체크 타이머 생성 (5초)
+                if (check_timeout_timer == NULL) {
+                    check_timeout_timer = xTimerCreate("check_timeout", 
+                                                      pdMS_TO_TICKS(5000), 
+                                                      pdTRUE, // auto-reload
+                                                      0, 
+                                                      check_timeout_cb);
+                }
+                
+                if (check_timeout_timer != NULL) {
+                    xTimerStart(check_timeout_timer, 0);
+                }
+                
+                ESP_LOGI(TAG, "Check system activated for conn_handle: %d", event->connect.conn_handle);
+
                 
                 // 연결 중에도 스캔 유지하여 광고 수집(스택이 허용하는 범위 내)
                 //start_passive_scan();
