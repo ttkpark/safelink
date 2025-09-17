@@ -177,10 +177,12 @@ void sensor_monitor_task(void *arg)
                 }else if (band_data.skin_temp > 37.5f) {
                     alarm_status |= (1<<ALARM_TEMP_WARNING_POS);
                 }
-                if (band_data.heart_rate > 120 || band_data.heart_rate < 50) {
-                    alarm_status |= (3<<ALARM_HR_WARNING_POS);
-                }else if (band_data.heart_rate > 100) {
-                    alarm_status |= (1<<ALARM_HR_WARNING_POS);
+                if(band_data.heart_rate != HEART_RATE_IGNORE){
+                    if (band_data.heart_rate > 120 || band_data.heart_rate < 50) {
+                        alarm_status |= (3<<ALARM_HR_WARNING_POS);
+                    }else if (band_data.heart_rate > 100) {
+                        alarm_status |= (1<<ALARM_HR_WARNING_POS);
+                    }
                 }
             }
             

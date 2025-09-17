@@ -179,7 +179,7 @@ void data_manager_print_all_data(void)
         data_manager_get_hub_data(&hub_data) == ESP_OK) {
         
         ESP_LOGI(TAG, "\n=== SafeLink Wearable Hub Data ===\n");
-        ESP_LOGI(TAG, "Timestamp: %u ms\n", current_time);
+        ESP_LOGI(TAG, "Timestamp: %lu ms\n", current_time);
         
         // 밴드 데이터 출력
         ESP_LOGI(TAG, "\n[Band Data] %s\n", band_data.is_valid ? "VALID" : "INVALID");
@@ -199,7 +199,7 @@ void data_manager_print_all_data(void)
         if (hub_data.is_valid) {
             ESP_LOGI(TAG, "  Average Noise: %.1f dB\n", hub_data.avg_noise);
             ESP_LOGI(TAG, "  WBGT: %.1f°C\n", hub_data.wbgt);
-            ESP_LOGI(TAG, "  Alarm Status: 0x%02X", hub_data.alarm_status);
+            ESP_LOGE(TAG, "  Alarm Status: 0x%02X", hub_data.alarm_status);
             
             // 경보 상태 상세 출력
             if (hub_data.alarm_status & ALARM_WBGT_WARNING_FLAG) printf(" (WBGT)");

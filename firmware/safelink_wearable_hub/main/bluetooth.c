@@ -614,6 +614,7 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
             ESP_LOGI(TAG, "Connection %s", event->connect.status == 0 ? "established" : "failed");
             if (event->connect.status == 0) {
                 current_state = BLUETOOTH_STATE_CONNECTED;
+                dfplayer_play_folder(0, 23);
                 if (num_conns < MAX_CONNS) {
                     conn_handles[num_conns++] = event->connect.conn_handle;
                     ESP_LOGI(TAG, "conn_handles: %d active", num_conns);
@@ -650,6 +651,7 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
             
         case BLE_GAP_EVENT_DISCONNECT:
             ESP_LOGE(TAG, "Disconnected");
+            dfplayer_play_folder(0, 24);
             current_state = BLUETOOTH_STATE_ADVERTISING;
             
             // 체크 시스템이 활성화된 연결이 해제되면 체크 시스템 정리
@@ -830,7 +832,7 @@ esp_err_t bluetooth_init(void)
     if (dfplayer_ret == ESP_OK) {
         ESP_LOGI(TAG, "DFPlayer Mini initialized successfully");
         // Set volume to 20%
-        dfplayer_set_volume(20);
+        dfplayer_set_volume(30);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     } else {
         ESP_LOGE(TAG, "DFPlayer Mini initialization failed: %s", esp_err_to_name(dfplayer_ret));
