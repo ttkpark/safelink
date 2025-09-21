@@ -836,6 +836,7 @@ esp_err_t bluetooth_init(void)
         // Set volume to 20%
         dfplayer_set_volume(30);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
+        dfplayer_play_folder(0, 22);
     } else {
         ESP_LOGE(TAG, "DFPlayer Mini initialization failed: %s", esp_err_to_name(dfplayer_ret));
     }
