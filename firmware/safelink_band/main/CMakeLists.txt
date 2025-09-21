@@ -1,3 +1,3 @@
 idf_component_register(SRCS "main.c"
                     INCLUDE_DIRS "."
-                    REQUIRES driver esp_common esp_timer nvs_flash bt)
+                    REQUIRES driver esp_common esp_timer nvs_flash bt esp_wifi esp_netif lwip)

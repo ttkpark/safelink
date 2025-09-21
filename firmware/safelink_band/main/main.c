@@ -13,13 +13,17 @@
 #include "nimble/nimble_port.h"
 #include "nimble/nimble_port_freertos.h"
 #include "host/ble_hs.h"
-// GATT 서비스 헤더는 사용하지 않음
-#include <ctype.h>
 #include <inttypes.h>
+
+// WiFi and Network
+#include "esp_wifi.h"
+#include "esp_event.h"
+#include "esp_netif.h"
+#include "lwip/sockets.h"
 
 // Sensors
 #include "driver/i2c.h"
-#include "driver/gpio.h"
+#include "driver/adc.h"
 
 // I2C 설정
 #define I2C_MASTER_SCL_IO           7
@@ -42,17 +46,30 @@
 #define MCP9808_REG_DEVICE_ID       0x07
 #define MCP9808_REG_CONFIG          0x01
 
-// GPIO4 심박수 측정 설정
-#define HEART_RATE_GPIO             4
+// ADC4 심박수 측정 설정
+#define HEART_RATE_ADC_CHANNEL      ADC1_CHANNEL_4  // GPIO4
 #define HEART_RATE_BUFFER_SIZE      1000
 #define HEART_RATE_SAMPLE_RATE_MS   10  // 10ms마다 샘플링 (100Hz)
 #define HEART_RATE_MIN_BPM          40
 #define HEART_RATE_MAX_BPM          200
+#define ADC_THRESHOLD_PERCENT       50  // 50% 임계값
 
 // 광고 디바이스 이름
 #define ADV_DEVICE_NAME             "link_band"
 
+// WiFi 설정
+#define WIFI_SSID                   "Smart Meeting"        // WiFi SSID를 여기에 입력하세요
+#define WIFI_PASS                   "12345678"    // WiFi 비밀번호를 여기에 입력하세요
+#define WIFI_MAXIMUM_RETRY          5
+
+// UDP 서버 설정
+#define UDP_SERVER_IP               "211.221.184.17"
+#define UDP_SERVER_PORT             11344
+#define UDP_BUFFER_SIZE             1024
+
 static const char *TAG = "NIMBLE_GATTC";
+static const char *WIFI_TAG = "WIFI";
+static const char *UDP_TAG = "UDP";
 
 // NimBLE GATT Client 관련 변수
 static bool gatt_client_ready = false;
@@ -63,20 +80,34 @@ static uint8_t own_addr_type = BLE_OWN_ADDR_PUBLIC; // ble_hs_id_infer_auto로 �
 static bool aht20_available = false;
 static bool mcp9808_available = false;
 
-// GPIO4 심박수 측정 변수
-static uint8_t heart_rate_buffer[HEART_RATE_BUFFER_SIZE];
+// ADC4 심박수 측정 변수
+static uint16_t heart_rate_buffer[HEART_RATE_BUFFER_SIZE];
+static uint16_t heart_rate_movingavg_buffer[HEART_RATE_BUFFER_SIZE];
 static uint16_t heart_rate_buffer_index = 0;
 static bool heart_rate_buffer_full = false;
 static uint16_t current_heart_rate = 0;
 static bool heart_rate_available = false;
 static SemaphoreHandle_t heart_rate_mutex = NULL;
 
-// 심박센서 착용 여부 및 안정성 판단 변수
+// ADC 관련 변수
+static uint32_t adc_max_value = 4095;  // 12-bit ADC
+static uint32_t adc_threshold_value;
+
+// 심박수 이동 평균 버퍼 (1분 = 30개 데이터, 2초 간격)
+#define HEART_RATE_MOVAVG_BUFFER_SIZE 30
+static uint16_t heart_rate_movavg_buffer[HEART_RATE_MOVAVG_BUFFER_SIZE];
+static uint16_t movavg_buffer_index = 0;
+static bool movavg_buffer_full = false;
+
+// 심박센서 펄스 감지 변수
 static uint32_t last_pulse_time = 0;           // 마지막 펄스 시간
-static bool device_worn = false;               // 디바이스 착용 여부
-static uint16_t stable_pulse_count = 0;        // 안정적인 펄스 카운트
-static uint16_t last_stable_heart_rate = 0;    // 마지막 안정적인 심박수
-static bool heart_rate_stable = false;         // 심박수 안정성 여부
+
+// WiFi 및 UDP 관련 변수
+static int s_retry_num = 0;
+static int udp_socket = -1;
+static struct sockaddr_in server_addr;
+static bool wifi_connected = false;
+static SemaphoreHandle_t wifi_semaphore = NULL;
 
 // I2C 및 센서 함수 원형
 static esp_err_t i2c_master_init(void);
@@ -87,241 +118,27 @@ static esp_err_t aht20_read_data(float *temperature, float *humidity);
 static esp_err_t mcp9808_init(void);
 static esp_err_t mcp9808_read_temperature(float *temperature);
 
-// GPIO4 심박수 측정 함수
-static esp_err_t heart_rate_gpio_init(void);
+// ADC4 심박수 측정 함수
+static esp_err_t heart_rate_adc_init(void);
 static void heart_rate_sampling_task(void *param);
 static uint16_t calculate_heart_rate_from_buffer(void);
 static void start_heart_rate_sampling(void);
-static bool check_device_worn_status(void);
-static bool check_heart_rate_stability(uint16_t new_heart_rate);
+static uint16_t calculate_moving_average_heart_rate(void);
+// static void print_heart_rate_buffer(void);  // 디버깅용 함수
 
 // 광고만 사용
 static void start_sensor_beacon(void);
 static void sensor_beacon_task(void *param);
 static void ble_app_on_sync(void);
 static void ble_host_task(void *param);
-// (GATT 콜백 제거)
 
-// GATT 에러 상세 로깅 유틸
-static void log_gatt_error(const char *phase, uint16_t conn_handle, const struct ble_gatt_error *error)
-{
-    if (error == NULL) return;
-    ESP_LOGE(TAG, "%s: status=%d (0x%02x), conn_handle=%u, att_handle=%u",
-             phase, error->status, error->status, conn_handle, error->att_handle);
-}
+// WiFi 및 UDP 함수
+static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+static esp_err_t wifi_init_sta(void);
+static esp_err_t udp_client_init(void);
+static void udp_send_heart_rate_data(uint16_t heart_rate);
+static void wifi_udp_task(void *param);
 
-// (GAP 이벤트 핸들러 제거)
-
-// GATT 서비스 발견 콜백
-static int gatt_svc_discovered(uint16_t conn_handle, const struct ble_gatt_error *error, const struct ble_gatt_svc *service, void *arg)
-{
-    if (error != NULL && error->status != 0) {
-        log_gatt_error("서비스 탐색 오류", conn_handle, error);
-        return 0;
-    }
-    
-    if (service == NULL) {
-        ESP_LOGI(TAG, "=== 서비스 탐색 완료 ===");
-        return 0;
-    }
-    
-    // 서비스 UUID를 문자열로 변환
-    char uuid_str[37];
-    if (BLE_UUID16(&service->uuid)) {
-        snprintf(uuid_str, sizeof(uuid_str), "0x%04X", BLE_UUID16(&service->uuid)->value);
-    } else if (BLE_UUID32(&service->uuid)) {
-        snprintf(uuid_str, sizeof(uuid_str), "0x%08" PRIX32, BLE_UUID32(&service->uuid)->value);
-    } else {
-        snprintf(uuid_str, sizeof(uuid_str), "128-bit UUID");
-    }
-    
-    ESP_LOGI(TAG, "서비스 발견 - UUID: %s, 시작 핸들: %d, 끝 핸들: %d",
-             uuid_str, service->start_handle, service->end_handle);
-    
-    // 알려진 서비스 UUID 매핑
-    if (BLE_UUID16(&service->uuid)) {
-        switch (BLE_UUID16(&service->uuid)->value) {
-            case 0x1800: ESP_LOGI(TAG, "  -> Generic Access Service"); break;
-            case 0x1801: ESP_LOGI(TAG, "  -> Generic Attribute Service"); break;
-            case 0x180A: ESP_LOGI(TAG, "  -> Device Information Service"); break;
-            case 0x180D: ESP_LOGI(TAG, "  -> Heart Rate Service"); break;
-            case 0x180F: ESP_LOGI(TAG, "  -> Battery Service"); break;
-            case 0x1810: ESP_LOGI(TAG, "  -> Health Thermometer Service"); break;
-            case 0x1812: ESP_LOGI(TAG, "  -> HID Service"); break;
-            case 0x1813: ESP_LOGI(TAG, "  -> Scan Parameters Service"); break;
-            case 0x1814: ESP_LOGI(TAG, "  -> Running Speed and Cadence Service"); break;
-            case 0x1815: ESP_LOGI(TAG, "  -> Automation IO Service"); break;
-            case 0x1816: ESP_LOGI(TAG, "  -> Cycling Speed and Cadence Service"); break;
-            case 0x1818: ESP_LOGI(TAG, "  -> Weight Scale Service"); break;
-            case 0x1819: ESP_LOGI(TAG, "  -> Current Time Service"); break;
-            case 0x181A: ESP_LOGI(TAG, "  -> Environmental Sensing Service"); break;
-            case 0x181B: ESP_LOGI(TAG, "  -> Location and Navigation Service"); break;
-            case 0x181C: ESP_LOGI(TAG, "  -> User Data Service"); break;
-            case 0x181D: ESP_LOGI(TAG, "  -> Weight Scale Service"); break;
-            case 0x181E: ESP_LOGI(TAG, "  -> Bond Management Service"); break;
-            case 0x181F: ESP_LOGI(TAG, "  -> Continuous Glucose Monitoring Service"); break;
-            case 0x1820: ESP_LOGI(TAG, "  -> Internet Protocol Support Service"); break;
-            case 0x1821: ESP_LOGI(TAG, "  -> Indoor Positioning Service"); break;
-            case 0x1822: ESP_LOGI(TAG, "  -> Pulse Oximeter Service"); break;
-            case 0x1823: ESP_LOGI(TAG, "  -> HTTP Proxy Service"); break;
-            case 0x1824: ESP_LOGI(TAG, "  -> Transport Discovery Service"); break;
-            case 0x1825: ESP_LOGI(TAG, "  -> Object Transfer Service"); break;
-            case 0x1826: ESP_LOGI(TAG, "  -> Fitness Machine Service"); break;
-            case 0x1827: ESP_LOGI(TAG, "  -> Mesh Provisioning Service"); break;
-            case 0x1828: ESP_LOGI(TAG, "  -> Mesh Proxy Service"); break;
-            case 0x1829: ESP_LOGI(TAG, "  -> Reconnection Configuration Service"); break;
-            case 0x182A: ESP_LOGI(TAG, "  -> Insulin Delivery Service"); break;
-            case 0x182B: ESP_LOGI(TAG, "  -> Binary Sensor Service"); break;
-            case 0x182C: ESP_LOGI(TAG, "  -> Emergency Configuration Service"); break;
-            case 0x182D: ESP_LOGI(TAG, "  -> Physical Activity Monitor Service"); break;
-            case 0x182E: ESP_LOGI(TAG, "  -> Audio Input Control Service"); break;
-            case 0x182F: ESP_LOGI(TAG, "  -> Volume Control Service"); break;
-            case 0x1830: ESP_LOGI(TAG, "  -> Volume Offset Control Service"); break;
-            case 0x1831: ESP_LOGI(TAG, "  -> Coordinated Set Identification Service"); break;
-            case 0x1832: ESP_LOGI(TAG, "  -> Device Time Service"); break;
-            case 0x1833: ESP_LOGI(TAG, "  -> Media Control Service"); break;
-            case 0x1834: ESP_LOGI(TAG, "  -> Generic Media Control Service"); break;
-            case 0x1835: ESP_LOGI(TAG, "  -> Constant Tone Extension Service"); break;
-            case 0x1836: ESP_LOGI(TAG, "  -> Telephone Bearer Service"); break;
-            case 0x1837: ESP_LOGI(TAG, "  -> Generic Telephone Bearer Service"); break;
-            case 0x1838: ESP_LOGI(TAG, "  -> Microphone Control Service"); break;
-            case 0x1839: ESP_LOGI(TAG, "  -> Audio Stream Control Service"); break;
-            case 0x183A: ESP_LOGI(TAG, "  -> Broadcast Audio Scan Service"); break;
-            case 0x183B: ESP_LOGI(TAG, "  -> Published Audio Capabilities Service"); break;
-            case 0x183C: ESP_LOGI(TAG, "  -> Audio Input Control Service"); break;
-            case 0x183D: ESP_LOGI(TAG, "  -> Volume Control Service"); break;
-            case 0x183E: ESP_LOGI(TAG, "  -> Volume Offset Control Service"); break;
-            case 0x183F: ESP_LOGI(TAG, "  -> Coordinated Set Identification Service"); break;
-            case 0x1840: ESP_LOGI(TAG, "  -> Device Time Service"); break;
-            case 0x1841: ESP_LOGI(TAG, "  -> Media Control Service"); break;
-            case 0x1842: ESP_LOGI(TAG, "  -> Generic Media Control Service"); break;
-            case 0x1843: ESP_LOGI(TAG, "  -> Constant Tone Extension Service"); break;
-            case 0x1844: ESP_LOGI(TAG, "  -> Telephone Bearer Service"); break;
-            case 0x1845: ESP_LOGI(TAG, "  -> Generic Telephone Bearer Service"); break;
-            case 0x1846: ESP_LOGI(TAG, "  -> Microphone Control Service"); break;
-            case 0x1847: ESP_LOGI(TAG, "  -> Audio Stream Control Service"); break;
-            case 0x1848: ESP_LOGI(TAG, "  -> Broadcast Audio Scan Service"); break;
-            case 0x1849: ESP_LOGI(TAG, "  -> Published Audio Capabilities Service"); break;
-            default: ESP_LOGI(TAG, "  -> 사용자 정의 서비스"); break;
-        }
-    }
-    
-    // 타겟 서비스 검사 제거 (GATT Client 비활성)
-    (void)conn_handle; (void)error; (void)service; (void)arg;
-    
-    return 0;
-}
-
-// GATT 특성 발견 콜백
-static int gatt_chr_discovered(uint16_t conn_handle, const struct ble_gatt_error *error, const struct ble_gatt_chr *chr, void *arg)
-{
-    if (error != NULL && error->status != 0) {
-        log_gatt_error("특성 탐색 오류", conn_handle, error);
-        return 0;
-    }
-    
-    if (chr == NULL) {
-        ESP_LOGI(TAG, "=== 특성 탐색 완료 ===");
-        return 0;
-    }
-    
-    // 특성 UUID를 문자열로 변환
-    char uuid_str[37];
-    if (BLE_UUID16(&chr->uuid)) {
-        snprintf(uuid_str, sizeof(uuid_str), "0x%04X", BLE_UUID16(&chr->uuid)->value);
-    } else if (BLE_UUID32(&chr->uuid)) {
-        snprintf(uuid_str, sizeof(uuid_str), "0x%08" PRIX32, BLE_UUID32(&chr->uuid)->value);
-    } else {
-        snprintf(uuid_str, sizeof(uuid_str), "128-bit UUID");
-    }
-    
-    ESP_LOGI(TAG, "특성 발견 - UUID: %s, 핸들: %d, 속성: 0x%02X",
-             uuid_str, chr->val_handle, chr->properties);
-    
-    // 알려진 특성 UUID 매핑
-    if (BLE_UUID16(&chr->uuid)) {
-        switch (BLE_UUID16(&chr->uuid)->value) {
-            case 0x2A00: ESP_LOGI(TAG, "  -> Device Name"); break;
-            case 0x2A01: ESP_LOGI(TAG, "  -> Appearance"); break;
-            case 0x2A02: ESP_LOGI(TAG, "  -> Peripheral Privacy Flag"); break;
-            case 0x2A03: ESP_LOGI(TAG, "  -> Reconnection Address"); break;
-            case 0x2A04: ESP_LOGI(TAG, "  -> Peripheral Preferred Connection Parameters"); break;
-            case 0x2A05: ESP_LOGI(TAG, "  -> Service Changed"); break;
-            case 0x2A06: ESP_LOGI(TAG, "  -> Alert Level"); break;
-            case 0x2A07: ESP_LOGI(TAG, "  -> Tx Power Level"); break;
-            case 0x2A08: ESP_LOGI(TAG, "  -> Date Time"); break;
-            case 0x2A09: ESP_LOGI(TAG, "  -> Day of Week"); break;
-            case 0x2A0A: ESP_LOGI(TAG, "  -> Day Date Time"); break;
-            case 0x2A0B: ESP_LOGI(TAG, "  -> Exact Time 100"); break;
-            case 0x2A0C: ESP_LOGI(TAG, "  -> Exact Time 256"); break;
-            case 0x2A0D: ESP_LOGI(TAG, "  -> DST Offset"); break;
-            case 0x2A0E: ESP_LOGI(TAG, "  -> Time Zone"); break;
-            case 0x2A0F: ESP_LOGI(TAG, "  -> Local Time Information"); break;
-            case 0x2A10: ESP_LOGI(TAG, "  -> Secondary Time Zone"); break;
-            case 0x2A11: ESP_LOGI(TAG, "  -> Time with DST"); break;
-            case 0x2A12: ESP_LOGI(TAG, "  -> Time Accuracy"); break;
-            case 0x2A13: ESP_LOGI(TAG, "  -> Time Source"); break;
-            case 0x2A14: ESP_LOGI(TAG, "  -> Reference Time Information"); break;
-            case 0x2A15: ESP_LOGI(TAG, "  -> Time Update Control Point"); break;
-            case 0x2A16: ESP_LOGI(TAG, "  -> Time Update State"); break;
-            case 0x2A17: ESP_LOGI(TAG, "  -> Glucose Measurement"); break;
-            case 0x2A18: ESP_LOGI(TAG, "  -> Battery Level"); break;
-            case 0x2A19: ESP_LOGI(TAG, "  -> Temperature Measurement"); break;
-            case 0x2A1A: ESP_LOGI(TAG, "  -> Temperature Type"); break;
-            case 0x2A1B: ESP_LOGI(TAG, "  -> Intermediate Temperature"); break;
-            case 0x2A1C: ESP_LOGI(TAG, "  -> Measurement Interval"); break;
-            case 0x2A1D: ESP_LOGI(TAG, "  -> Boot Keyboard Input Report"); break;
-            case 0x2A1E: ESP_LOGI(TAG, "  -> System ID"); break;
-            case 0x2A1F: ESP_LOGI(TAG, "  -> Model Number String"); break;
-            case 0x2A20: ESP_LOGI(TAG, "  -> Serial Number String"); break;
-            case 0x2A21: ESP_LOGI(TAG, "  -> Firmware Revision String"); break;
-            case 0x2A22: ESP_LOGI(TAG, "  -> Hardware Revision String"); break;
-            case 0x2A23: ESP_LOGI(TAG, "  -> Software Revision String"); break;
-            case 0x2A24: ESP_LOGI(TAG, "  -> Manufacturer Name String"); break;
-            case 0x2A25: ESP_LOGI(TAG, "  -> IEEE 11073-20601 Regulatory Certification Data List"); break;
-            case 0x2A26: ESP_LOGI(TAG, "  -> Current Time"); break;
-            case 0x2A27: ESP_LOGI(TAG, "  -> Elevation"); break;
-            case 0x2A28: ESP_LOGI(TAG, "  -> Latitude"); break;
-            case 0x2A29: ESP_LOGI(TAG, "  -> Longitude"); break;
-            case 0x2A2A: ESP_LOGI(TAG, "  -> LN Control Point"); break;
-            case 0x2A2B: ESP_LOGI(TAG, "  -> LN Feature"); break;
-            case 0x2A2C: ESP_LOGI(TAG, "  -> Local North Coordinate"); break;
-            case 0x2A2D: ESP_LOGI(TAG, "  -> Local East Coordinate"); break;
-            case 0x2A2E: ESP_LOGI(TAG, "  -> Local North Reference"); break;
-            case 0x2A2F: ESP_LOGI(TAG, "  -> Local East Reference"); break;
-            case 0x2A30: ESP_LOGI(TAG, "  -> Local North Reference"); break;
-            case 0x2A31: ESP_LOGI(TAG, "  -> Local East Reference"); break;
-            case 0x2A32: ESP_LOGI(TAG, "  -> Local North Reference"); break;
-            case 0x2A33: ESP_LOGI(TAG, "  -> Local East Reference"); break;
-            case 0x2A34: ESP_LOGI(TAG, "  -> Local North Reference"); break;
-            case 0x2A35: ESP_LOGI(TAG, "  -> Local East Reference"); break;
-            case 0x2A36: ESP_LOGI(TAG, "  -> Local North Reference"); break;
-            case 0x2A37: ESP_LOGI(TAG, "  -> Heart Rate Measurement"); break;
-            case 0x2A38: ESP_LOGI(TAG, "  -> Body Sensor Location"); break;
-            case 0x2A39: ESP_LOGI(TAG, "  -> Heart Rate Control Point"); break;
-            case 0x2A3A: ESP_LOGI(TAG, "  -> Alert Status"); break;
-            case 0x2A3B: ESP_LOGI(TAG, "  -> Ringer Control point"); break;
-            case 0x2A3C: ESP_LOGI(TAG, "  -> Ringer Setting"); break;
-            case 0x2A3D: ESP_LOGI(TAG, "  -> Alert Category ID Bit Mask"); break;
-            case 0x2A3E: ESP_LOGI(TAG, "  -> Alert Category ID"); break;
-            case 0x2A3F: ESP_LOGI(TAG, "  -> Alert Notification Control Point"); break;
-            case 0x2A40: ESP_LOGI(TAG, "  -> Unread Alert Status"); break;
-            case 0x2A41: ESP_LOGI(TAG, "  -> New Alert"); break;
-            case 0x2A42: ESP_LOGI(TAG, "  -> Supported New Alert Category"); break;
-            case 0x2A43: ESP_LOGI(TAG, "  -> Supported Unread Alert Category"); break;
-            case 0x2A44: ESP_LOGI(TAG, "  -> Blood Pressure Feature"); break;
-            case 0x2A45: ESP_LOGI(TAG, "  -> Intermediate Cuff Pressure"); break;
-            case 0x2A46: ESP_LOGI(TAG, "  -> Heart Rate Measurement"); break;
-            case 0x2A47: ESP_LOGI(TAG, "  -> Heart Rate Max"); break;
-            case 0x2A48: ESP_LOGI(TAG, "  -> Heart Rate Min"); break;
-            default: ESP_LOGI(TAG, "  -> 사용자 정의 특성"); break;
-        }
-    }
-    
-    // GATT Client 비활성: 매개변수 미사용 처리
-    (void)conn_handle; (void)error; (void)chr; (void)arg;
-    return 0;
-}
 
 // NimBLE 초기화
 static esp_err_t nimble_init(void)
@@ -341,7 +158,7 @@ static esp_err_t nimble_init(void)
     // NimBLE 초기화
     ret = nimble_port_init();
     if (ret != 0) {
-        ESP_LOGE(TAG, "nimble_port_init failed: %d", ret);
+        ESP_LOGE(TAG, "nimble_port_init failed: %ld", (long)ret);
         return ESP_FAIL;
     }
     
@@ -370,10 +187,10 @@ static void ble_app_on_sync(void)
     // own address type 자동 추론 (공개/랜덤/정체성)
     int rc = ble_hs_id_infer_auto(0, &own_addr_type);
     if (rc != 0) {
-        ESP_LOGE(TAG, "own_addr_type 결정 실패: %d", rc);
+        ESP_LOGE(TAG, "own_addr_type 결정 실패: %ld", (long)rc);
         own_addr_type = BLE_OWN_ADDR_PUBLIC;
     }
-    ESP_LOGI(TAG, "own_addr_type=%d", own_addr_type);
+    ESP_LOGI(TAG, "own_addr_type=%ld", (long)own_addr_type);
     
     // I2C + 센서 초기화
     if (i2c_master_init() == ESP_OK) {
@@ -394,12 +211,12 @@ static void ble_app_on_sync(void)
         ESP_LOGE(TAG, "I2C 초기화 실패");
     }
 
-    // GPIO4 심박수 측정 초기화
-    if (heart_rate_gpio_init() == ESP_OK) {
+    // ADC4 심박수 측정 초기화
+    if (heart_rate_adc_init() == ESP_OK) {
         heart_rate_available = true;
         start_heart_rate_sampling();
     } else {
-        ESP_LOGE(TAG, "GPIO4 심박수 측정 초기화 실패");
+        ESP_LOGE(TAG, "ADC4 심박수 측정 초기화 실패");
     }
 
     // 광고 비콘 시작
@@ -435,10 +252,14 @@ void app_main(void)
     
     ESP_LOGI(TAG, "NimBLE 초기화 완료. Advertising 비콘을 시작합니다...");
     
+    // WiFi UDP 태스크 시작
+    xTaskCreate(wifi_udp_task, "wifi_udp_task", 8192, NULL, 5, NULL);
+    ESP_LOGI(TAG, "WiFi UDP 태스크 시작됨");
+    
     // 무한 루프로 상태 모니터링
     while (1) {
         vTaskDelay(5000 / portTICK_PERIOD_MS);
-        ESP_LOGI(TAG, "Sensor Beacon 실행 중... (광고명: %s)", ADV_DEVICE_NAME);
+        //ESP_LOGI(TAG, "Sensor Beacon 실행 중... (광고명: %s)", ADV_DEVICE_NAME);
     }
 }
 
@@ -537,6 +358,7 @@ static void sensor_beacon_task(void *param)
             }
         }
         
+        ESP_LOGI(TAG, "heart_rate_bpm: %d", heart_rate_bpm);
         // 산소포화도는 0으로 고정 (MAX3010x 제거됨)
         spo2_percent = 0;
         
@@ -568,11 +390,11 @@ static void sensor_beacon_task(void *param)
 
         int rc = ble_gap_adv_set_fields(&adv_fields);
         if (rc != 0) {
-            ESP_LOGE(TAG, "ble_gap_adv_set_fields 실패: %d", rc);
+            ESP_LOGE(TAG, "ble_gap_adv_set_fields 실패: %ld", (long)rc);
         }
         rc = ble_gap_adv_rsp_set_fields(&rsp_fields);
         if (rc != 0) {
-            ESP_LOGE(TAG, "ble_gap_adv_rsp_set_fields 실패: %d", rc);
+            ESP_LOGE(TAG, "ble_gap_adv_rsp_set_fields 실패: %ld", (long)rc);
         }
 
         struct ble_gap_adv_params advp;
@@ -584,10 +406,10 @@ static void sensor_beacon_task(void *param)
 
         rc = ble_gap_adv_start(own_addr_type, NULL, BLE_HS_FOREVER, &advp, NULL, NULL);
         if (rc != 0) {
-            ESP_LOGE(TAG, "ble_gap_adv_start 실패: %d", rc);
+            ESP_LOGE(TAG, "ble_gap_adv_start 실패: %ld", (long)rc);
         } else {
-            ESP_LOGI(TAG, "Advertising 업데이트 완료 (T=%.2fC, RH=%.2f%%, Body=%.2fC, HR=%ubpm, SpO2=%u%%)",
-                     ext_temp_centi / 100.0f, rh_centi / 100.0f, body_temp_centi / 100.0f, (unsigned)heart_rate_bpm, (unsigned)spo2_percent);
+            //ESP_LOGI(TAG, "Advertising 업데이트 완료 (T=%.2fC, RH=%.2f%%, Body=%.2fC, HR=%lubpm, SpO2=%lu%%)",
+            //         ext_temp_centi / 100.0f, rh_centi / 100.0f, body_temp_centi / 100.0f, (unsigned)heart_rate_bpm, (unsigned)spo2_percent);
         }
 
         vTaskDelay(500 / portTICK_PERIOD_MS); // 2초 주기로 갱신
@@ -692,24 +514,28 @@ static esp_err_t mcp9808_read_temperature(float *temperature)
 }
 
 
-// ===== GPIO4 심박수 측정 함수들 =====
+// ===== ADC4 심박수 측정 함수들 =====
 
-static esp_err_t heart_rate_gpio_init(void)
+static esp_err_t heart_rate_adc_init(void)
 {
-    // GPIO4를 입력으로 설정
-    gpio_config_t io_conf = {
-        .intr_type = GPIO_INTR_DISABLE,
-        .mode = GPIO_MODE_INPUT,
-        .pin_bit_mask = (1ULL << HEART_RATE_GPIO),
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .pull_up_en = GPIO_PULLUP_ENABLE,
-    };
-    
-    esp_err_t ret = gpio_config(&io_conf);
+    // ADC1 초기화
+    esp_err_t ret = adc1_config_width(ADC_WIDTH_BIT_12);
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "GPIO4 설정 실패: %s", esp_err_to_name(ret));
+        ESP_LOGE(TAG, "ADC1 width 설정 실패: %s", esp_err_to_name(ret));
         return ret;
     }
+    
+    ret = adc1_config_channel_atten(HEART_RATE_ADC_CHANNEL, ADC_ATTEN_DB_11);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "ADC1 channel attenuation 설정 실패: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    
+    // ADC 원시값 사용 (캘리브레이션 없이)
+    ESP_LOGI(TAG, "ADC 원시값 사용 모드");
+    
+    // 임계값 계산 (50% of max value)
+    adc_threshold_value = (adc_max_value * ADC_THRESHOLD_PERCENT) / 100;
     
     // 뮤텍스 생성
     heart_rate_mutex = xSemaphoreCreateMutex();
@@ -724,14 +550,15 @@ static esp_err_t heart_rate_gpio_init(void)
     heart_rate_buffer_full = false;
     current_heart_rate = 0;
     
-    // 착용 여부 및 안정성 변수 초기화
-    last_pulse_time = 0;
-    device_worn = false;
-    stable_pulse_count = 0;
-    last_stable_heart_rate = 0;
-    heart_rate_stable = false;
+    // 이동 평균 버퍼 초기화
+    memset(heart_rate_movavg_buffer, 0, sizeof(heart_rate_movavg_buffer));
+    movavg_buffer_index = 0;
+    movavg_buffer_full = false;
     
-    ESP_LOGI(TAG, "GPIO4 심박수 측정 초기화 완료");
+    // 펄스 감지 변수 초기화
+    last_pulse_time = 0;
+    
+    ESP_LOGI(TAG, "ADC4 심박수 측정 초기화 완료 (임계값: %lu)", (unsigned long)adc_threshold_value);
     return ESP_OK;
 }
 
@@ -744,18 +571,23 @@ static void heart_rate_sampling_task(void *param)
     uint8_t last_gpio_level = 0;
     
     while (1) {
-        // GPIO4 상태 읽기
-        int gpio_level = gpio_get_level(HEART_RATE_GPIO);
+        // ADC4에서 아날로그 값 읽기
+        uint32_t adc_value = adc1_get_raw(HEART_RATE_ADC_CHANNEL);
+        
+        // 50% 임계값으로 HIGH/LOW 판단
+        uint8_t digital_level = (adc_value > adc_threshold_value) ? 1 : 0;
         
         // 펄스 감지 (상승 엣지)
-        if (last_gpio_level == 0 && gpio_level == 1) {
+        if (last_gpio_level == 0 && digital_level == 1) {
             last_pulse_time = esp_timer_get_time() / 1000; // ms 단위
         }
-        last_gpio_level = gpio_level;
+        last_gpio_level = digital_level;
         
-        // 뮤텍스로 보호하여 버퍼에 데이터 저장
+        // 뮤텍스로 보호하여 버퍼에 데이터 저장 (아날로그 값 저장)
         if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-            heart_rate_buffer[heart_rate_buffer_index] = (uint8_t)gpio_level;
+            // ADC 값을 0-65535 범위로 스케일링하여 저장 (16비트)
+            uint16_t scaled_value = (uint16_t)((adc_value * 65535.0f) / adc_max_value);
+            heart_rate_buffer[heart_rate_buffer_index] = scaled_value;
             heart_rate_buffer_index++;
             
             if (heart_rate_buffer_index >= HEART_RATE_BUFFER_SIZE) {
@@ -766,43 +598,41 @@ static void heart_rate_sampling_task(void *param)
             xSemaphoreGive(heart_rate_mutex);
         }
         
-        // 주기적으로 심박수 계산 및 착용 여부 판단
+        // 주기적으로 심박수 계산 및 이동 평균 업데이트
         uint32_t current_time = esp_timer_get_time() / 1000; // ms 단위
         if (current_time - last_calculation_time >= calculation_interval_ms) {
-            // 착용 여부 판단
-            bool worn = check_device_worn_status();
+            // 심박수 계산
+            uint16_t calculated_hr = calculate_heart_rate_from_buffer();
             
-            if (worn) {
-                uint16_t calculated_hr = calculate_heart_rate_from_buffer();
-                if (calculated_hr >= HEART_RATE_MIN_BPM && calculated_hr <= HEART_RATE_MAX_BPM) {
-                    // 안정성 검증
-                    bool stable = check_heart_rate_stability(calculated_hr);
-                    
-                    if (stable) {
-                        if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-                            current_heart_rate = calculated_hr;
-                            xSemaphoreGive(heart_rate_mutex);
-                        }
-                        ESP_LOGI(TAG, "심박수: %d BPM (안정적)", calculated_hr);
-                    } else {
-                        ESP_LOGI(TAG, "심박수: %d BPM (불안정, 안정화 대기 중)", calculated_hr);
-                    }
-                } else {
-                    // 유효하지 않은 심박수
-                    if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-                        current_heart_rate = 0;
-                        xSemaphoreGive(heart_rate_mutex);
-                    }
-                    ESP_LOGI(TAG, "유효하지 않은 심박수: %d BPM", calculated_hr);
-                }
-            } else {
-                // 착용하지 않음
-                if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-                    current_heart_rate = 0;
-                    xSemaphoreGive(heart_rate_mutex);
-                }
-                ESP_LOGI(TAG, "디바이스 미착용 - 심박수: 0 BPM");
+            // 이동 평균 버퍼에 저장 (유효한 값이든 아니든 모두 저장)
+            heart_rate_movavg_buffer[movavg_buffer_index] = calculated_hr;
+            movavg_buffer_index++;
+            
+            if (movavg_buffer_index >= HEART_RATE_MOVAVG_BUFFER_SIZE) {
+                movavg_buffer_index = 0;
+                movavg_buffer_full = true;
             }
+            
+            // 4분 데이터에서 이동 평균 계산
+            uint16_t moving_avg_hr_val = calculate_moving_average_heart_rate();
+            static uint16_t moving_avg_hr = 0;
+            if(moving_avg_hr_val > 0)moving_avg_hr = moving_avg_hr_val;
+
+            //moving_avg_hr = 75;
+            // 현재 심박수 업데이트 (이동 평균값 사용)
+            if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
+                current_heart_rate = moving_avg_hr;
+                xSemaphoreGive(heart_rate_mutex);
+            }
+            
+            ESP_LOGI(TAG, "심박수: %ld BPM (현재), 이동평균: %ld BPM (1분)", (long)calculated_hr, (long)moving_avg_hr);
+            
+            // 10초마다 버퍼 내용 출력 (디버깅용)
+            /*static uint32_t last_buffer_print_time = 0;
+            if (current_time - last_buffer_print_time >= 5000) { // 10초
+                print_heart_rate_buffer();
+                last_buffer_print_time = current_time;
+            }*/
             
             last_calculation_time = current_time;
         }
@@ -820,27 +650,69 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     uint16_t buffer_size = heart_rate_buffer_full ? HEART_RATE_BUFFER_SIZE : heart_rate_buffer_index;
     uint16_t peak_positions[50]; // 최대 50개 피크 위치 저장
     uint16_t peak_count = 0;
-    uint8_t last_state = 0;
-    uint8_t current_state = 0;
-    
-    // HIGH->LOW->HIGH 패턴을 찾아서 피크 위치 저장
-    for (uint16_t i = 1; i < buffer_size && peak_count < 50; i++) {
-        current_state = heart_rate_buffer[i];
-        
-        // 상승 엣지 감지 (LOW -> HIGH)
-        if (last_state == 0 && current_state == 1) {
-            peak_positions[peak_count] = i;
-            peak_count++;
+
+    // 이동 평균 버퍼에 저장 (16비트)
+    #define HEART_RATE_VALUE_MOVAVG_BUFFER_SIZE 30
+    uint32_t sum = 0;
+    for(uint16_t i = 0; i < buffer_size; i++) {
+        if(i<HEART_RATE_VALUE_MOVAVG_BUFFER_SIZE){
+            sum += heart_rate_buffer[i];
+            heart_rate_movingavg_buffer[i] = (uint16_t)(sum/(i+1));
         }
-        
-        last_state = current_state;
+        else{
+            sum += heart_rate_buffer[i];
+            sum -= heart_rate_buffer[i-HEART_RATE_VALUE_MOVAVG_BUFFER_SIZE];
+            heart_rate_movingavg_buffer[i] = (uint16_t)(sum/(HEART_RATE_VALUE_MOVAVG_BUFFER_SIZE));
+        }
     }
     
+    
+    // heart_rate_movingavg_buffer에서 아날로그 극대값 피크 감지
+    const uint16_t window_size = 10; // 피크 감지를 위한 윈도우 크기 (작게 설정)
+    
+    // 이동평균 버퍼 크기 확인
+    uint16_t movavg_size = buffer_size;
+    
+    for (uint16_t i = window_size; i < movavg_size - window_size && peak_count < 50; i++) {
+        uint16_t current_value = heart_rate_movingavg_buffer[i];
+        bool is_peak = true;
+        
+        // 현재 값이 주변 윈도우 내에서 최대값인지 확인
+        for (uint16_t j = i - window_size; j <= i + window_size; j++) {
+            if (j != i && heart_rate_movingavg_buffer[j] >= current_value) {
+                is_peak = false;
+                break;
+            }
+        }
+        
+        // 피크가 감지되고, 이전 피크와 충분한 거리가 있는지 확인
+        if (is_peak && current_value > 0) {
+            bool valid_peak = true;
+            
+            // 이전 피크와의 거리 확인 (최소 3 샘플 간격으로 줄임)
+            if (peak_count > 0) {
+                uint16_t distance = i - peak_positions[peak_count - 1];
+                if (distance < 3) {
+                    valid_peak = false;
+                }
+            }
+            
+            if (valid_peak) {
+                peak_positions[peak_count] = i;
+                peak_count++;
+                ESP_LOGI(TAG, "피크 발견: 인덱스 %ld, 값 %ld", (long)i, (long)current_value);
+            }
+        }
+    }
+    
+    ESP_LOGI(TAG, "피크 감지 완료: %ld개 피크 발견", (long)peak_count);
+    
     if (peak_count < 2) {
+        ESP_LOGI(TAG, "피크가 부족함 (최소 2개 필요)");
         return 0; // 최소 2개 피크가 필요
     }
     
-    // 피크 간 간격 계산
+    // 피크 간 간격 계산 (이동평균 버퍼 기준)
     uint32_t total_intervals = 0;
     uint16_t valid_intervals = 0;
     
@@ -848,105 +720,259 @@ static uint16_t calculate_heart_rate_from_buffer(void)
         uint16_t interval = peak_positions[i] - peak_positions[i-1];
         
         // 유효한 간격 범위 체크 (40-200 BPM에 해당하는 간격)
-        // 100Hz 샘플링에서: 30-150 샘플 간격이 유효
-        if (interval >= 30 && interval <= 150) {
+        // 2초 간격 샘플링에서: 3-15 샘플 간격이 유효 (2초*1.5 ~ 2초*7.5)
+        if (interval >= 25 && interval <= 200) {
             total_intervals += interval;
             valid_intervals++;
+            ESP_LOGI(TAG, "유효한 피크 간격: %ld", (long)interval);
         }
     }
     
     if (valid_intervals == 0) {
+        ESP_LOGI(TAG, "유효한 피크 간격이 없음");
         return 0;
     }
+    
+    ESP_LOGI(TAG, "유효한 피크 간격: %ld개", (long)valid_intervals);
     
     // 평균 피크 간격 계산
     uint32_t avg_interval = total_intervals / valid_intervals;
     
-    // BPM 계산: 100Hz 샘플링에서 60초(6000 샘플) / 평균간격
-    uint16_t bpm = 6000 / avg_interval;
+    // BPM 계산: 2초 간격 샘플링에서 60초(30 샘플) / 평균간격
+    uint16_t bpm = (uint16_t)(100.0f / avg_interval * 60.0f);
+    
+    ESP_LOGI(TAG, "평균 피크 간격: %lu, 계산된 BPM: %ld", (unsigned long)avg_interval, (long)bpm);
     
     // 유효 범위 체크
     if (bpm < HEART_RATE_MIN_BPM || bpm > HEART_RATE_MAX_BPM) {
+        ESP_LOGI(TAG, "BPM이 유효 범위를 벗어남: %ld (범위: %ld-%ld)", (long)bpm, (long)HEART_RATE_MIN_BPM, (long)HEART_RATE_MAX_BPM);
         return 0;
     }
     
+    ESP_LOGI(TAG, "최종 BPM: %ld", (long)bpm);
     return bpm;
 }
 
-// 착용 여부 판단 함수 (2초 이상 펄스가 없으면 미착용)
-static bool check_device_worn_status(void)
+// 심박수 이동 평균 계산 함수 (4분 데이터에서 이상값 제외)
+static uint16_t calculate_moving_average_heart_rate(void)
 {
-    uint32_t current_time = esp_timer_get_time() / 1000; // ms 단위
-    const uint32_t no_pulse_threshold_ms = 2000; // 2초
+    uint16_t buffer_size = movavg_buffer_full ? HEART_RATE_MOVAVG_BUFFER_SIZE : movavg_buffer_index;
     
-    if (last_pulse_time == 0) {
-        // 아직 펄스가 감지되지 않음
-        device_worn = false;
-        return false;
+    if (buffer_size == 0) {
+        return 0;
     }
     
-    if (current_time - last_pulse_time > no_pulse_threshold_ms) {
-        // 2초 이상 펄스가 없음 - 미착용으로 판단
-        device_worn = false;
-        stable_pulse_count = 0; // 안정성 카운트 리셋
-        heart_rate_stable = false;
-        return false;
-    } else {
-        // 펄스가 있음 - 착용으로 판단
-        if (!device_worn) {
-            ESP_LOGI(TAG, "디바이스 착용 감지됨");
+    uint32_t sum = 0;
+    uint16_t valid_count = 0;
+    
+    // 4분 데이터에서 BPM 0과 200 초과 값 제외하고 평균 계산
+    for (uint16_t i = 0; i < buffer_size; i++) {
+        uint16_t hr = heart_rate_movavg_buffer[i];
+        
+        // 유효한 심박수 범위 체크 (0 제외, 200 초과 제외)
+        if (hr > 0 && hr <= 200) {
+            sum += hr;
+            valid_count++;
         }
-        device_worn = true;
-        return true;
     }
+    
+    if (valid_count == 0) {
+        return 0;
+    }
+    
+    return (uint16_t)(sum / valid_count);
 }
 
-// 심박수 안정성 검증 함수 (5펄스 동안 ±10 범위 내에서 안정적이면 true)
-static bool check_heart_rate_stability(uint16_t new_heart_rate)
+// 심박수 버퍼 내용을 인덱스별로 출력하는 함수 (디버깅용)
+/*
+static void print_heart_rate_buffer(void)
 {
-    const uint16_t stability_threshold = 10; // ±10 BPM 범위
-    const uint16_t required_stable_pulses = 5; // 5펄스 동안 안정적이어야 함
-    
-    if (last_stable_heart_rate == 0) {
-        // 첫 번째 유효한 심박수
-        last_stable_heart_rate = new_heart_rate;
-        stable_pulse_count = 1;
-        heart_rate_stable = false;
-        return false;
-    }
-    
-    // 현재 심박수가 이전 안정적인 심박수와 ±10 범위 내에 있는지 확인
-    int16_t diff = (int16_t)new_heart_rate - (int16_t)last_stable_heart_rate;
-    if (diff < 0) diff = -diff; // 절댓값
-    
-    if (diff <= stability_threshold) {
-        // 안정적인 범위 내
-        stable_pulse_count++;
+    if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+        uint16_t buffer_size = heart_rate_buffer_full ? HEART_RATE_BUFFER_SIZE : heart_rate_buffer_index;
         
-        if (stable_pulse_count >= required_stable_pulses) {
-            // 5펄스 동안 안정적
-            if (!heart_rate_stable) {
-                ESP_LOGI(TAG, "심박수 안정화 완료: %d BPM", new_heart_rate);
-            }
-            heart_rate_stable = true;
-            last_stable_heart_rate = new_heart_rate;
-            return true;
-        } else {
-            // 아직 안정화 중
-            heart_rate_stable = false;
-            return false;
+        ESP_LOGI(TAG, "=== 심박수 버퍼 출력 (크기: %ld) ===", (long)buffer_size);
+        
+        // 한 열로 출력
+        ESP_LOGI(TAG, "심박수 버퍼: `");
+        for (uint16_t i = 0; i < buffer_size/2; i++) {
+            ESP_LOGI(TAG, "IR 버퍼   %4d,   %5d, %5d", i, heart_rate_buffer[i],heart_rate_movingavg_buffer[i]);
+
+            if((i%0x1F) == 0)
+                vTaskDelay(pdMS_TO_TICKS(1));
         }
-    } else {
-        // 불안정한 범위 - 카운트 리셋
-        stable_pulse_count = 1;
-        last_stable_heart_rate = new_heart_rate;
-        heart_rate_stable = false;
-        return false;
+        
+        ESP_LOGI(TAG, "end ~");
+        xSemaphoreGive(heart_rate_mutex);
     }
 }
+*/
 
 static void start_heart_rate_sampling(void)
 {
     xTaskCreate(heart_rate_sampling_task, "heart_rate_sampling", 4096, NULL, 5, NULL);
     ESP_LOGI(TAG, "심박수 샘플링 태스크 시작됨");
+}
+
+// ===== WiFi 및 UDP 함수들 =====
+
+static void wifi_event_handler(void* arg, esp_event_base_t event_base,
+                              int32_t event_id, void* event_data)
+{
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
+        esp_wifi_connect();
+    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        if (s_retry_num < WIFI_MAXIMUM_RETRY) {
+            esp_wifi_connect();
+            s_retry_num++;
+            ESP_LOGI(WIFI_TAG, "WiFi 재연결 시도 %d/%d", s_retry_num, WIFI_MAXIMUM_RETRY);
+        } else {
+            ESP_LOGE(WIFI_TAG, "WiFi 연결 실패. 최대 재시도 횟수 초과");
+        }
+        wifi_connected = false;
+        ESP_LOGI(WIFI_TAG, "WiFi 연결 끊어짐");
+    } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
+        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+        ESP_LOGI(WIFI_TAG, "IP 주소 획득:" IPSTR, IP2STR(&event->ip_info.ip));
+        s_retry_num = 0;
+        wifi_connected = true;
+        if (wifi_semaphore) {
+            xSemaphoreGive(wifi_semaphore);
+        }
+    }
+}
+
+static esp_err_t wifi_init_sta(void)
+{
+    wifi_semaphore = xSemaphoreCreateBinary();
+    if (wifi_semaphore == NULL) {
+        ESP_LOGE(WIFI_TAG, "WiFi 세마포어 생성 실패");
+        return ESP_FAIL;
+    }
+
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    esp_netif_create_default_wifi_sta();
+
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+    esp_event_handler_instance_t instance_any_id;
+    esp_event_handler_instance_t instance_got_ip;
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        &wifi_event_handler,
+                                                        NULL,
+                                                        &instance_any_id));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
+                                                        IP_EVENT_STA_GOT_IP,
+                                                        &wifi_event_handler,
+                                                        NULL,
+                                                        &instance_got_ip));
+
+    wifi_config_t wifi_config = {
+        .sta = {
+            .ssid = WIFI_SSID,
+            .password = WIFI_PASS,
+            .threshold.authmode = WIFI_AUTH_WPA2_PSK,
+            .pmf_cfg = {
+                .capable = true,
+                .required = false
+            },
+        },
+    };
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
+    ESP_ERROR_CHECK(esp_wifi_start() );
+
+    ESP_LOGI(WIFI_TAG, "WiFi 초기화 완료");
+
+    // WiFi 연결 대기
+    if (xSemaphoreTake(wifi_semaphore, portMAX_DELAY) == pdTRUE) {
+        ESP_LOGI(WIFI_TAG, "WiFi 연결 성공");
+        return ESP_OK;
+    } else {
+        ESP_LOGE(WIFI_TAG, "WiFi 연결 실패");
+        return ESP_FAIL;
+    }
+}
+
+static esp_err_t udp_client_init(void)
+{
+    // UDP 소켓 생성
+    udp_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+    if (udp_socket < 0) {
+        ESP_LOGE(UDP_TAG, "UDP 소켓 생성 실패: errno %d", errno);
+        return ESP_FAIL;
+    }
+
+    // 서버 주소 설정
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(UDP_SERVER_PORT);
+    inet_pton(AF_INET, UDP_SERVER_IP, &server_addr.sin_addr);
+
+    ESP_LOGI(UDP_TAG, "UDP 클라이언트 초기화 완료 - 서버: %s:%d", UDP_SERVER_IP, UDP_SERVER_PORT);
+    return ESP_OK;
+}
+
+static void udp_send_heart_rate_data(uint16_t heart_rate)
+{
+    if (udp_socket < 0 || !wifi_connected) {
+        return;
+    }
+
+    // JSON 형태로 심박 데이터 구성
+    char json_data[256];
+    snprintf(json_data, sizeof(json_data), 
+             "{\"device_id\":\"%s\",\"heart_rate\":%d,\"timestamp\":%lld}",
+             ADV_DEVICE_NAME, heart_rate, esp_timer_get_time() / 1000);
+
+    // UDP로 데이터 전송
+    int err = sendto(udp_socket, json_data, strlen(json_data), 0,
+                     (struct sockaddr *)&server_addr, sizeof(server_addr));
+    
+    if (err < 0) {
+        ESP_LOGE(UDP_TAG, "UDP 전송 실패: errno %d", errno);
+    } else {
+        ESP_LOGI(UDP_TAG, "심박 데이터 전송: %s", json_data);
+    }
+}
+
+static void wifi_udp_task(void *param)
+{
+    ESP_LOGI(WIFI_TAG, "WiFi UDP 태스크 시작");
+    
+    // WiFi 초기화 및 연결
+    if (wifi_init_sta() != ESP_OK) {
+        ESP_LOGE(WIFI_TAG, "WiFi 초기화 실패");
+        vTaskDelete(NULL);
+        return;
+    }
+
+    // UDP 클라이언트 초기화
+    if (udp_client_init() != ESP_OK) {
+        ESP_LOGE(UDP_TAG, "UDP 클라이언트 초기화 실패");
+        vTaskDelete(NULL);
+        return;
+    }
+
+    ESP_LOGI(WIFI_TAG, "WiFi 및 UDP 초기화 완료");
+
+    // 주기적으로 심박 데이터 전송
+    while (1) {
+        if (wifi_connected && heart_rate_available) {
+            uint16_t current_hr = 0;
+            if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+                current_hr = current_heart_rate;
+                xSemaphoreGive(heart_rate_mutex);
+            }
+            
+            if (current_hr > 0) {
+                udp_send_heart_rate_data(current_hr);
+            }
+        }
+        
+        // 5초마다 전송
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+    }
 }
