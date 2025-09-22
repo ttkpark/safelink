@@ -147,6 +147,14 @@ void receiveMessage() {
 void processMessage(String message) {
   println("수신: " + message);
   
+  // 연결 종료 메시지 처리
+  if (message.equals("disconnected")) {
+    println("🔚 서버에서 연결 종료 확인됨");
+    isConnected = false;
+    connectionStatus = "연결 종료됨";
+    return;
+  }
+  
   // 메시지를 "\n"을 기준으로 나누어서 각각 처리
   String[] lines = message.split("\n");
   
@@ -191,6 +199,15 @@ void processMessage(String message) {
             } else {
               x = 0;
             }
+          }
+
+          if((int)x == 1){
+            int size = xData.size();
+            for(int i=0;i<size;i++){
+              xData.remove(0);
+              y1Data.remove(0);
+              y2Data.remove(0);
+            } 
           }
         }
         
@@ -499,7 +516,7 @@ void drawStatus() {
   fill(textColor);
   textFont(koreanFont, 10);
   textAlign(RIGHT);
-  text("단축키: R(초기화) S(재연결) Z(자동조정) F(전체화면) C(데이터정리)", width - 20, height - 5);
+  text("단축키: R(초기화) S(재연결) Z(자동조정) F(전체화면) C(데이터정리) E(연결종료)", width - 20, height - 5);
 }
 
 void keyPressed() {
@@ -540,6 +557,10 @@ void keyPressed() {
     // NaN 값이 포함된 데이터 정리
     cleanData();
     println("NaN 값이 포함된 데이터 정리 완료");
+  } else if (key == 'e' || key == 'E') {
+    // 연결 종료
+    sendMessage("end");
+    println("연결 종료 요청 전송");
   }
 }
 

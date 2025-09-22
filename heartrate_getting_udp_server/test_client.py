@@ -204,10 +204,37 @@ class TestClient:
     
     def disconnect(self):
         """연결 해제"""
+        if self.socket and self.running:
+            # 서버에 연결 종료 요청
+            self.send_message("end")
+            time.sleep(0.1)  # 응답 대기
+        
         self.running = False
         if self.socket:
             self.socket.close()
         print("🔌 연결 해제됨")
+    
+    def convert_filename_to_time(self, filename):
+        """파일명을 시간 형식으로 변환"""
+        try:
+            # 언더바가 있는 경우 (새로운 형식: 2024_01_15_14_30_45.txt)
+            if '_' in filename:
+                time_str = filename.replace('.txt', '')
+                parts = time_str.split('_')
+                if len(parts) == 6:
+                    return ''.join(parts)  # YYYYMMDDHHMMSS 형식으로 변환
+            
+            # 언더바가 없는 경우 (기존 형식: 20240115143045.txt)
+            else:
+                time_str = filename.replace('.txt', '')
+                if len(time_str) == 14:  # YYYYMMDDHHMMSS 형식
+                    return time_str
+            
+            return None
+            
+        except Exception as e:
+            print(f"❌ 파일명 변환 오류: {e}")
+            return None
 
 def main():
     parser = argparse.ArgumentParser(description='UDP 테스트 클라이언트')
@@ -230,18 +257,31 @@ def main():
     
     if args.time:
         # 특정 시간의 데이터 재전송
-        if len(args.time) != 14:
-            print("❌ 시간 형식이 올바르지 않습니다. YYYYMMDDHHMMSS 형식을 사용하세요.")
+        time_str = args.time
+        
+        # 파일명 형식인 경우 자동 변환
+        if '.txt' in time_str:
+            converted_time = client.convert_filename_to_time(time_str)
+            if converted_time:
+                time_str = converted_time
+                print(f"📁 파일명을 시간 형식으로 변환: {args.time} -> {time_str}")
+            else:
+                print("❌ 파일명 형식을 인식할 수 없습니다.")
+                return
+        
+        if len(time_str) != 14:
+            print("❌ 시간 형식이 올바르지 않습니다. YYYYMMDDHHMMSS 형식 또는 파일명을 사용하세요.")
+            print("예시: 20240115143045 또는 2024_01_15_14_30_45.txt")
             return
         
         try:
             # 시간 문자열 파싱
-            year = args.time[:4]
-            month = args.time[4:6]
-            day = args.time[6:8]
-            hour = args.time[8:10]
-            minute = args.time[10:12]
-            second = args.time[12:14]
+            year = time_str[:4]
+            month = time_str[4:6]
+            day = time_str[6:8]
+            hour = time_str[8:10]
+            minute = time_str[10:12]
+            second = time_str[12:14]
             
             print(f"🕐 재전송할 시간: {year}-{month}-{day} {hour}:{minute}:{second}")
             

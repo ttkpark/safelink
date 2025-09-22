@@ -44,14 +44,25 @@ python test_client.py --list
 python test_client.py --time 20240115143045
 ```
 
-- 형식: `YYYYMMDDHHMMSS`
+- 형식: `YYYYMMDDHHMMSS` 또는 파일명
 - 예: `20240115143045` = 2024년 1월 15일 14시 30분 45초
+- 파일명도 지원: `2024_01_15_14_30_45.txt` → 자동으로 `20240115143045`로 변환
 
 ### 3. 일반 시뮬레이션 모드
 
 ```bash
 python test_client.py
 ```
+
+## 🔚 연결 종료
+
+### 서버에서 연결 종료 처리
+- 클라이언트가 "end" 메시지를 보내면 서버에서 자동으로 연결 해제
+- "disconnected" 응답을 클라이언트에 전송
+
+### Processing에서 연결 종료
+- **E 키**: 연결 종료 요청 전송
+- 서버에서 "disconnected" 메시지를 받으면 자동으로 연결 상태 업데이트
 
 ## 🔧 추가 옵션
 
@@ -100,7 +111,13 @@ Data:
 4. **특정 시간 데이터 재전송**:
    ```bash
    python test_client.py --time 20240115143045
+   # 또는 파일명으로
+   python test_client.py --time 2024_01_15_14_30_45.txt
    ```
+
+5. **연결 종료**:
+   - Processing에서 **E 키** 누르기
+   - 또는 Ctrl+C로 클라이언트 종료
 
 ## ⚠️ 주의사항
 

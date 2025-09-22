@@ -146,6 +146,14 @@ class HeartRateUDPServer:
             # 모든 등록된 장치에 브로드캐스트
             self.broadcast_data(data_part, exclude_address=address)
             
+        elif message == "end":
+            # 연결 종료 요청
+            print(f"🔚 연결 종료 요청: {address[0]}:{address[1]}")
+            with self.lock:
+                if address in self.registered_devices:
+                    del self.registered_devices[address]
+            self.send_response(address, "disconnected")
+            
         elif "," in message and not message.startswith("start"):
             # "x,y1,y2" 형식의 직접 데이터 전송
             print(f"📡 직접 데이터 수신: {address[0]}:{address[1]} -> {message}")
