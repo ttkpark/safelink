@@ -49,6 +49,9 @@ PFont koreanFont;
 // 전체 화면 모드
 boolean fullScreen = false;
 
+// 그래프 범위 변수 (전역)
+float minY1_adjusted, maxY1_adjusted, minY2_adjusted, maxY2_adjusted;
+
 void setup() {
   size(1000, 600);
   background(backgroundColor);
@@ -101,12 +104,6 @@ void draw() {
   drawLegend();
   drawStatus();
   
-  // 데이터가 너무 많으면 오래된 데이터 제거
-  if (xData.size() > maxDataPoints) {
-    xData.remove(0);
-    y1Data.remove(0);
-    y2Data.remove(0);
-  }
 }
 
 void initializeData() {
@@ -150,19 +147,23 @@ void receiveMessage() {
 void processMessage(String message) {
   println("수신: " + message);
   
-  // 디버깅을 위한 상세 로그
-  if (message.contains(",") && !message.contains("메시지 :")) {
-    String[] parts = message.split(",");
-    println("파싱된 부분들: " + parts.length + "개");
-    for (int i = 0; i < parts.length; i++) {
-      println("  [" + i + "]: '" + parts[i] + "'");
-    }
-  }
+  // 메시지를 "\n"을 기준으로 나누어서 각각 처리
+  String[] lines = message.split("\n");
   
-  // "x,y1,y2" 형식 파싱 (새로운 형식)
-  if (message.contains(",") && !message.contains("메시지 :")) {
+  for (int lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    String line = lines[lineIndex].trim();
+    
+    // 빈 줄은 건너뜀
+    if (line.isEmpty()) {
+      continue;
+    }
+    
+    println("라인 " + (lineIndex + 1) + " 처리: " + line);
+    
+    // "x,y1,y2" 형식 파싱 (새로운 형식)
+    if (line.contains(",")) {
     try {
-      String[] parts = message.split(",");
+      String[] parts = line.split(",");
       
       if (parts.length >= 3) {
         // 빈 문자열 체크 및 처리
@@ -171,6 +172,7 @@ void processMessage(String message) {
         String y2Str = parts[2].trim();
         
         float x, y1, y2;
+        
         
         // X 값 처리
         if (xStr.isEmpty()) {
@@ -246,24 +248,7 @@ void processMessage(String message) {
         lastDataTime = millis();
         
         println("데이터 추가: x=" + x + ", y1=" + y1 + ", y2=" + y2);
-      } else {
-        // 데이터가 부족한 경우 이전 값으로 채움
-        if (hasValidData) {
-          float x = lastValidX + 1;
-          float y1 = lastValidY1;
-          float y2 = lastValidY2;
-          
-          // 새 데이터 추가 (기존 데이터 유지)
-          xData.add(x);
-          y1Data.add(y1);
-          y2Data.add(y2);
-          
-          lastValidX = x;
-          lastDataTime = millis();
-          
-          println("데이터 부족 - 이전 값으로 채움: x=" + x + ", y1=" + y1 + ", y2=" + y2);
-        }
-      }
+      } 
     } catch (Exception e) {
       println("데이터 파싱 오류: " + e.getMessage());
       // 오류 발생 시에도 이전 값으로 채움
@@ -283,131 +268,7 @@ void processMessage(String message) {
         println("오류 발생 - 이전 값으로 채움: x=" + x + ", y1=" + y1 + ", y2=" + y2);
       }
     }
-  }
-  // 기존 "메시지 : x축, y축1, y축2" 형식도 지원
-  else if (message.contains("메시지 :")) {
-    try {
-      String[] parts = message.split("메시지 :")[1].trim().split(",");
-      
-      if (parts.length >= 3) {
-        // 빈 문자열 체크 및 처리
-        String xStr = parts[0].trim();
-        String y1Str = parts[1].trim();
-        String y2Str = parts[2].trim();
-        
-        float x, y1, y2;
-        
-        // X 값 처리
-        if (xStr.isEmpty()) {
-          if (hasValidData) {
-            x = lastValidX + 1;
-            println("X 값 빈 문자열 - 이전 값 사용: " + x);
-          } else {
-            x = 0;
-          }
-        } else {
-          x = parseFloat(xStr);
-          if (Float.isNaN(x)) {
-            if (hasValidData) {
-              x = lastValidX + 1;
-              println("X 값 NaN - 이전 값 사용: " + x);
-            } else {
-              x = 0;
-            }
-          }
-        }
-        
-        // Y1 값 처리
-        if (y1Str.isEmpty()) {
-          if (hasValidData) {
-            y1 = lastValidY1;
-            println("Y1 값 빈 문자열 - 이전 값 사용: " + y1);
-          } else {
-            y1 = 0;
-          }
-        } else {
-          y1 = parseFloat(y1Str);
-          if (Float.isNaN(y1)) {
-            if (hasValidData) {
-              y1 = lastValidY1;
-              println("Y1 값 NaN - 이전 값 사용: " + y1);
-            } else {
-              y1 = 0;
-            }
-          }
-        }
-        
-        // Y2 값 처리
-        if (y2Str.isEmpty()) {
-          if (hasValidData) {
-            y2 = lastValidY2;
-            println("Y2 값 빈 문자열 - 이전 값 사용: " + y2);
-          } else {
-            y2 = 0;
-          }
-        } else {
-          y2 = parseFloat(y2Str);
-          if (Float.isNaN(y2)) {
-            if (hasValidData) {
-              y2 = lastValidY2;
-              println("Y2 값 NaN - 이전 값 사용: " + y2);
-            } else {
-              y2 = 0;
-            }
-          }
-        }
-        
-        // 새 데이터 추가 (기존 데이터 유지)
-        xData.add(x);
-        y1Data.add(y1);
-        y2Data.add(y2);
-        
-        // 유효한 데이터로 저장
-        lastValidX = x;
-        lastValidY1 = y1;
-        lastValidY2 = y2;
-        hasValidData = true;
-        
-        lastDataTime = millis();
-        
-        println("데이터 추가: x=" + x + ", y1=" + y1 + ", y2=" + y2);
-      } else {
-        // 데이터가 부족한 경우 이전 값으로 채움
-        if (hasValidData) {
-          float x = lastValidX + 1;
-          float y1 = lastValidY1;
-          float y2 = lastValidY2;
-          
-          // 새 데이터 추가 (기존 데이터 유지)
-          xData.add(x);
-          y1Data.add(y1);
-          y2Data.add(y2);
-          
-          lastValidX = x;
-          lastDataTime = millis();
-          
-          println("데이터 부족 - 이전 값으로 채움: x=" + x + ", y1=" + y1 + ", y2=" + y2);
-        }
-      }
-    } catch (Exception e) {
-      println("데이터 파싱 오류: " + e.getMessage());
-      // 오류 발생 시에도 이전 값으로 채움
-      if (hasValidData) {
-        float x = lastValidX + 1;
-        float y1 = lastValidY1;
-        float y2 = lastValidY2;
-        
-        // 새 데이터 추가 (기존 데이터 유지)
-        xData.add(x);
-        y1Data.add(y1);
-        y2Data.add(y2);
-        
-        lastValidX = x;
-        lastDataTime = millis();
-        
-        println("오류 발생 - 이전 값으로 채움: x=" + x + ", y1=" + y1 + ", y2=" + y2);
-      }
-    }
+    } // for 루프 닫기
   }
 }
 
@@ -436,33 +297,41 @@ void drawGraph() {
   float minY2 = getMinValue(y2Data);
   float maxY2 = getMaxValue(y2Data);
   
-  // Y축 범위 통합 (더 나은 시각화를 위해)
-  float minY = min(minY1, minY2);
-  float maxY = max(maxY1, maxY2);
+  // Y1과 Y2 각각의 범위 계산
+  minY1_adjusted = minY1;
+  maxY1_adjusted = maxY1;
+  minY2_adjusted = minY2;
+  maxY2_adjusted = maxY2;
   
   // NaN 값 체크
-  if (Float.isNaN(minX) || Float.isNaN(maxX) || Float.isNaN(minY) || Float.isNaN(maxY)) {
+  if (Float.isNaN(minX) || Float.isNaN(maxX) || Float.isNaN(minY1) || Float.isNaN(maxY1) || Float.isNaN(minY2) || Float.isNaN(maxY2)) {
     println("그래프 범위에 NaN 값 발견 - 그래프 그리기 건너뜀");
     return;
   }
   
-  // 자동 확대/축소를 위한 여백 추가 (데이터 범위의 5%)
+  // X축 범위 계산
   float xRange = maxX - minX;
-  float yRange = maxY - minY;
-  
   if (xRange == 0) xRange = 1; // 0으로 나누기 방지
-  if (yRange == 0) yRange = 1; // 0으로 나누기 방지
-  
   float xMargin = xRange * 0.05;
-  float yMargin = yRange * 0.1;
-  
   float adjustedMinX = minX - xMargin;
   float adjustedMaxX = maxX + xMargin;
-  float adjustedMinY = minY - yMargin;
-  float adjustedMaxY = maxY + yMargin;
   
-  // 그리드 그리기 (조정된 범위로)
-  drawGrid(adjustedMinX, adjustedMaxX, adjustedMinY, adjustedMaxY);
+  // Y1축 범위 계산
+  float y1Range = maxY1 - minY1;
+  if (y1Range == 0) y1Range = 1; // 0으로 나누기 방지
+  float y1Margin = y1Range * 0.1;
+  minY1_adjusted = minY1 - y1Margin;
+  maxY1_adjusted = maxY1 + y1Margin;
+  
+  // Y2축 범위 계산
+  float y2Range = maxY2 - minY2;
+  if (y2Range == 0) y2Range = 1; // 0으로 나누기 방지
+  float y2Margin = y2Range * 0.1;
+  minY2_adjusted = minY2 - y2Margin;
+  maxY2_adjusted = maxY2 + y2Margin;
+  
+  // 그리드 그리기 (X축 범위만 사용)
+  drawGrid(adjustedMinX, adjustedMaxX, minY1_adjusted, maxY1_adjusted);
   
   // 데이터 포인트 그리기
   strokeWeight(2);
@@ -481,9 +350,9 @@ void drawGraph() {
     }
     
     float x1 = map(x1Val, adjustedMinX, adjustedMaxX, graphX, graphX + graphWidth);
-    float y1 = map(y1Val, adjustedMinY, adjustedMaxY, graphY + graphHeight, graphY);
+    float y1 = map(y1Val, minY1_adjusted, maxY1_adjusted, graphY + graphHeight, graphY);
     float x2 = map(x2Val, adjustedMinX, adjustedMaxX, graphX, graphX + graphWidth);
-    float y2 = map(y2Val, adjustedMinY, adjustedMaxY, graphY + graphHeight, graphY);
+    float y2 = map(y2Val, minY1_adjusted, maxY1_adjusted, graphY + graphHeight, graphY);
     
     line(x1, y1, x2, y2);
   }
@@ -502,15 +371,15 @@ void drawGraph() {
     }
     
     float x1 = map(x1Val, adjustedMinX, adjustedMaxX, graphX, graphX + graphWidth);
-    float y1 = map(y2Val1, adjustedMinY, adjustedMaxY, graphY + graphHeight, graphY);
+    float y1 = map(y2Val1, minY2_adjusted, maxY2_adjusted, graphY + graphHeight, graphY);
     float x2 = map(x2Val, adjustedMinX, adjustedMaxX, graphX, graphX + graphWidth);
-    float y2 = map(y2Val2, adjustedMinY, adjustedMaxY, graphY + graphHeight, graphY);
+    float y2 = map(y2Val2, minY2_adjusted, maxY2_adjusted, graphY + graphHeight, graphY);
     
     line(x1, y1, x2, y2);
   }
   
-  // 축 레이블 그리기 (조정된 범위로)
-  drawAxisLabels(adjustedMinX, adjustedMaxX, adjustedMinY, adjustedMaxY);
+  // 축 레이블 그리기 (Y1 범위 기준)
+  drawAxisLabels(adjustedMinX, adjustedMaxX, minY1_adjusted, maxY1_adjusted);
 }
 
 void drawGrid(float minX, float maxX, float minY, float maxY) {
@@ -598,6 +467,8 @@ void drawLegend() {
       text("X 범위: " + nf(minX, 0, 1) + " ~ " + nf(maxX, 0, 1), legendX, legendY + 190);
       text("Y1 범위: " + nf(minY1, 0, 1) + " ~ " + nf(maxY1, 0, 1), legendX, legendY + 210);
       text("Y2 범위: " + nf(minY2, 0, 1) + " ~ " + nf(maxY2, 0, 1), legendX, legendY + 230);
+      text("Y1 확대: " + nf(minY1_adjusted, 0, 1) + " ~ " + nf(maxY1_adjusted, 0, 1), legendX, legendY + 250);
+      text("Y2 확대: " + nf(minY2_adjusted, 0, 1) + " ~ " + nf(maxY2_adjusted, 0, 1), legendX, legendY + 270);
     }
   }
 }
@@ -634,9 +505,13 @@ void drawStatus() {
 void keyPressed() {
   if (key == 'r' || key == 'R') {
     // 데이터 초기화
-    xData.clear();
-    y1Data.clear();
-    y2Data.clear();
+    println("데이터 지우기");
+    int size = xData.size();
+    for(int i=0;i<size;i++){
+      xData.remove(0);
+      y1Data.remove(0);
+      y2Data.remove(0);
+    } 
     
     // 이전 값들도 리셋
     lastValidX = 0;

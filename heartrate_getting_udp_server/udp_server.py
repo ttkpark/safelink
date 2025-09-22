@@ -9,6 +9,7 @@ import socket
 import threading
 import time
 import json
+import os
 from datetime import datetime
 
 class HeartRateUDPServer:
@@ -18,8 +19,53 @@ class HeartRateUDPServer:
         self.socket = None
         self.registered_devices = {}  # {address: {'last_seen': timestamp, 'name': str}}
         self.running = False
+        self.data_dir = "saved_data"  # 데이터 저장 디렉토리
         self.lock = threading.Lock()
         
+        # 데이터 저장 디렉토리 생성
+        if not os.path.exists(self.data_dir):
+            os.makedirs(self.data_dir)
+    
+    def save_packet_to_file(self, data, address):
+        """패킷을 시간별 파일에 저장"""
+        try:
+            # 현재 시간 정보
+            now = datetime.now()
+            year = now.strftime("%Y")
+            month = now.strftime("%m")
+            day = now.strftime("%d")
+            hour = now.strftime("%H")
+            minute = now.strftime("%M")
+            second = now.strftime("%S")
+            
+            # 디렉토리 구조: saved_data/년/월/일/시/분/
+            dir_path = os.path.join(self.data_dir, year, month, day, hour, minute)
+            os.makedirs(dir_path, exist_ok=True)
+            
+            # 파일명: 년_월_일_시_분_초.txt (사람이 읽기 쉬운 형식)
+            filename = f"{year}_{month}_{day}_{hour}_{minute}_{second}.txt"
+            filepath = os.path.join(dir_path, filename)
+            
+            # 패킷 정보와 함께 저장
+            packet_info = {
+                'timestamp': now.isoformat(),
+                'address': f"{address[0]}:{address[1]}",
+                'size': len(data),
+                'data': data.decode('utf-8', errors='ignore')
+            }
+            
+            with open(filepath, 'a', encoding='utf-8') as f:
+                f.write(f"=== Packet at {now.isoformat()} ===\n")
+                f.write(f"From: {address[0]}:{address[1]}\n")
+                f.write(f"Size: {len(data)} bytes\n")
+                f.write(f"Data:\n{data.decode('utf-8', errors='ignore')}\n")
+                f.write("=" * 50 + "\n\n")
+            
+            print(f"💾 패킷 저장됨: {filepath} ({len(data)} bytes)")
+            
+        except Exception as e:
+            print(f"❌ 파일 저장 오류: {e}")
+    
     def start_server(self):
         """서버 시작"""
         try:
@@ -52,8 +98,12 @@ class HeartRateUDPServer:
         def handle_messages():
             while self.running:
                 try:
-                    data, address = self.socket.recvfrom(1024)
+                    data, address = self.socket.recvfrom(6000)
                     message = data.decode('utf-8').strip()
+                    
+                    # 1000바이트 이상 패킷 저장
+                    if len(data) >= 1000:
+                        self.save_packet_to_file(data, address)
                     
                     # 메시지 처리
                     self.process_message(message, address)
@@ -82,14 +132,26 @@ class HeartRateUDPServer:
             print(f"✅ 장치 등록됨: {address[0]}:{address[1]}")
             self.send_response(address, "registered")
             
-        elif message.startswith("send\r\n"):
-            # 데이터 추출 (send\r\n 이후 부분)
-            data_part = message[6:]  # "send\r\n" 제거
+        elif message.startswith("send"):
+            # 데이터 추출 (send 이후 부분)
+            if message.startswith("send\r\n"):
+                data_part = message[6:]  # "send\r\n" 제거
+            else:
+                data_part = message[4:]  # "send" 제거
+                if data_part.startswith(" "):
+                    data_part = data_part[1:]  # 공백 제거
             
             print(f"📡 데이터 수신: {address[0]}:{address[1]} -> {data_part}")
             
             # 모든 등록된 장치에 브로드캐스트
             self.broadcast_data(data_part, exclude_address=address)
+            
+        elif "," in message and not message.startswith("start"):
+            # "x,y1,y2" 형식의 직접 데이터 전송
+            print(f"📡 직접 데이터 수신: {address[0]}:{address[1]} -> {message}")
+            
+            # 모든 등록된 장치에 브로드캐스트
+            self.broadcast_data(message, exclude_address=address)
             
         else:
             print(f"❓ 알 수 없는 메시지: {address[0]}:{address[1]} -> {message}")
