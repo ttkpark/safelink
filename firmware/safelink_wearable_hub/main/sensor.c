@@ -149,17 +149,8 @@ void sensor_monitor_task(void *arg)
             float temp_float = (float)current_sensor_data.temperature / 10.0f;
             float hum_float = (float)current_sensor_data.humidity / 10.0f;
             ESP_LOGI(TAG, "Temperature: %.1f°C, Humidity: %.1f%%", temp_float, hum_float);
-            float wbgt = calc_wbgt(temp_float, hum_float);
-            
             // 경보 상태 결정
             uint8_t alarm_status = 0;
-            
-            // WBGT 경고 (30°C 이상)
-            if (wbgt >= 30.0f) {
-                alarm_status |= (3<<ALARM_WBGT_WARNING_POS);
-            }else if (wbgt >= 28.0f) {
-                alarm_status |= (1<<ALARM_WBGT_WARNING_POS);
-            }
 
             if(avg_noise >= 120.0f){
                 alarm_status |= (3<<ALARM_NOISE_WARNING_POS);
@@ -184,6 +175,22 @@ void sensor_monitor_task(void *arg)
                         alarm_status |= (1<<ALARM_HR_WARNING_POS);
                     }
                 }
+                band_data.external_temp = temp_float = (temp_float+band_data.external_temp) / 2;
+                band_data.external_humidity = hum_float = (hum_float+band_data.external_humidity) / 2;
+                ESP_LOGI(TAG, "Avg Temperature: %.1f°C, Humidity: %.1f%%", temp_float, hum_float);
+            }else{
+                band_data.external_humidity = hum_float;
+                band_data.external_temp = temp_float;
+                ESP_LOGI(TAG, "No band data, using current temperature: %.1f°C, Humidity: %.1f%%", temp_float, hum_float);
+            }
+            
+            float wbgt = calc_wbgt(temp_float, hum_float);
+            
+            // WBGT 경고 (30°C 이상).
+            if (wbgt >= 30.0f) {
+                alarm_status |= (3<<ALARM_WBGT_WARNING_POS);
+            }else if (wbgt >= 28.0f) {
+                alarm_status |= (1<<ALARM_WBGT_WARNING_POS);
             }
             
             // 허브 데이터 업데이트 (5초마다)
