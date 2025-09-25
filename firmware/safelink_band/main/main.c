@@ -48,7 +48,7 @@
 
 // ADC4 심박수 측정 설정
 #define HEART_RATE_ADC_CHANNEL      ADC1_CHANNEL_4  // GPIO4
-#define HEART_RATE_BUFFER_SIZE      1000
+#define HEART_RATE_BUFFER_SIZE      364
 #define HEART_RATE_SAMPLE_RATE_MS   10  // 10ms마다 샘플링 (100Hz)
 #define HEART_RATE_MIN_BPM          40
 #define HEART_RATE_MAX_BPM          200

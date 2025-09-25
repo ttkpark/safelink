@@ -457,26 +457,6 @@ const char* get_health_status_string(health_status_t status)
 esp_err_t warning_system_init(void)
 {
     ESP_LOGI(TAG, "Initializing warning system");
-    /*
-    // 진동 모터 GPIO 설정 (GPIO 2번 핀 사용)
-    gpio_config_t io_conf = {
-        .pin_bit_mask = (1ULL << VIBRATION_GPIO),
-        .mode = GPIO_MODE_OUTPUT,
-        .pull_up_en = GPIO_PULLUP_DISABLE,
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type = GPIO_INTR_DISABLE,
-    };
-    gpio_config(&io_conf);
-    gpio_set_level(VIBRATION_GPIO, 0); // 초기 상태: 꺼짐
-    
-    // DFPlayer 초기화 (UART1, TX: GPIO 17, RX: GPIO 16)
-    esp_err_t ret = dfplayer_init(UART_NUM_1, 17, 16, 9600);
-    if (ret != ESP_OK) {
-        ESP_LOGW(TAG, "DFPlayer initialization failed: %s", esp_err_to_name(ret));
-    } else {
-        ESP_LOGI(TAG, "DFPlayer initialized successfully");
-    }
-        */
     
     warning_system_initialized = true;
     last_warning_check = esp_timer_get_time() / 1000;
