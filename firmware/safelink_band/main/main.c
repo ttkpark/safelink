@@ -117,10 +117,6 @@ static struct sockaddr_in server_addr;
 static bool wifi_connected = false;
 static SemaphoreHandle_t wifi_semaphore = NULL;
 
-#define MAX_INTERVAL_HISTORY 20
-static uint16_t interval_history[MAX_INTERVAL_HISTORY];
-static uint8_t interval_history_index = 0;
-static bool interval_history_full = false;
 
 // I2C 및 센서 함수 원형
 static esp_err_t i2c_master_init(void);
@@ -753,11 +749,11 @@ static uint16_t calculate_heart_rate_from_buffer(void)
 
         
         peak_positions_valid[peak_count] = true;
-        if(fabsf(current) > 15000.f){
+       /*if(fabsf(current) > 32000.f){
             ESP_LOGI(TAG, "피크 높이 과다: idx=%d, 값=%f", i, current);
             peak_positions_valid[peak_count] = false;
             invalid_peak_count++;
-        }else if(fabsf(current) < 80.f){
+        }else */if(fabsf(current) < 80.f){
             ESP_LOGI(TAG, "피크 높이 과소: idx=%d, 값=%f", i, current);
             peak_positions_valid[peak_count] = false;
             invalid_peak_count++;
@@ -812,12 +808,7 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     for (uint16_t i = 0; i < valid_intervals; i++) {
         uint16_t iv = valid_intervals_array[i];
         if (fabsf(iv - K_mean) <= K_stddev * 1.5f) { // 평균 ±1.5σ 안에 있으면 정상
-            interval_history[interval_history_index++] = iv;
             K_availble_mean += iv;
-            if (interval_history_index >= MAX_INTERVAL_HISTORY) {
-                interval_history_index = 0;
-                interval_history_full = true;
-            }
         } else {
             outliers_array[outliers_count++] = i;
             ESP_LOGI(TAG, "Outlier interval=%d (mean=%.1f, std=%.1f)", iv, K_mean, K_stddev);
@@ -867,36 +858,6 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     }
     return bpm;
 }
-/*
-
-
-    // -------------------------------
-    // (6) 대표 interval = history median
-    // -------------------------------
-    uint16_t history_size = interval_history_full ? MAX_INTERVAL_HISTORY : interval_history_index;
-    if (history_size < 3) {
-        ESP_LOGI(TAG, "히스토리 부족");
-        return 0;
-    }
-
-
-    uint16_t sorted[MAX_INTERVAL_HISTORY];
-    memcpy(sorted, interval_history, history_size * sizeof(uint16_t));
-
-    // 정렬
-    for (int i = 0; i < history_size-1; i++) {
-        for (int j = i+1; j < history_size; j++) {
-            if (sorted[i] > sorted[j]) {
-                uint16_t tmp = sorted[i];
-                sorted[i] = sorted[j];
-                sorted[j] = tmp;
-            }
-        }
-    }
-
-    uint16_t median = sorted[history_size/2];
-    ESP_LOGI(TAG, "Median interval=%d (history=%d)", median, history_size);
-*/
 
 // 심박수 이동 평균 계산 함수 (4분 데이터에서 이상값 제외)
 static uint16_t calculate_moving_average_heart_rate(void)
