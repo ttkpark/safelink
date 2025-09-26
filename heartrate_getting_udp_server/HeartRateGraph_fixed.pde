@@ -23,6 +23,7 @@ float lastValidX = 0;
 float lastValidY1 = 0;
 float lastValidY2 = 0;
 boolean hasValidData = false;
+boolean acknowledged = true;
 
 // UI 관련 변수
 color backgroundColor = color(20, 20, 30);
@@ -329,23 +330,25 @@ void drawGraph() {
   // X축 범위 계산
   float xRange = maxX - minX;
   if (xRange == 0) xRange = 1; // 0으로 나누기 방지
-  float xMargin = xRange * 0.05;
-  float adjustedMinX = minX - xMargin;
-  float adjustedMaxX = maxX + xMargin;
+  float xMargin = 0;//xRange * 0.05;
+  float adjustedMinX = 0;
+  float adjustedMaxX = min(maxX + xMargin,graphWidth);
+  int adjustedMaxX_int = (int)adjustedMaxX;
+  adjustedMaxX = (float)(adjustedMaxX_int+100 - adjustedMaxX_int%100);
   
   // Y1축 범위 계산
   float y1Range = maxY1 - minY1;
   if (y1Range == 0) y1Range = 1; // 0으로 나누기 방지
-  float y1Margin = y1Range * 0.1;
-  minY1_adjusted = minY1 - y1Margin;
-  maxY1_adjusted = maxY1 + y1Margin;
+  float y1Margin = 0;//y1Range * 0.1;
+  minY1_adjusted = max(minY1 - y1Margin,0);
+  maxY1_adjusted = min(maxY1 + y1Margin,65535);
   
   // Y2축 범위 계산
   float y2Range = maxY2 - minY2;
   if (y2Range == 0) y2Range = 1; // 0으로 나누기 방지
-  float y2Margin = y2Range * 0.1;
-  minY2_adjusted = minY2 - y2Margin;
-  maxY2_adjusted = maxY2 + y2Margin;
+  float y2Margin = 0;//y2Range * 0.1;
+  minY2_adjusted = max(minY2 - y2Margin,0);
+  maxY2_adjusted = min(maxY2 + y2Margin,65535);
   
   // 그리드 그리기 (X축 범위만 사용)
   drawGrid(adjustedMinX, adjustedMaxX, minY1_adjusted, maxY1_adjusted);
@@ -508,9 +511,17 @@ void drawStatus() {
   if (lastDataTime > 0) {
     long timeSinceLastData = millis() - lastDataTime;
     text("마지막 데이터: " + (timeSinceLastData / 1000) + "초 전", 20, height - 20);
+    
+    if((timeSinceLastData%5000) < 100 && !acknowledged){
+      acknowledged = true;
+      sendMessage("start");
+    }
+    if((timeSinceLastData%5000) > 5000-100 && acknowledged)
+      acknowledged = false;
   } else {
     text("데이터 대기 중...", 20, height - 20);
   }
+  
   
   // 키보드 단축키 안내
   fill(textColor);
