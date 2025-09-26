@@ -64,7 +64,7 @@
 
 // UDP 서버 설정
 #define UDP_SERVER_IP               "211.221.184.17"
-#define UDP_SERVER_PORT             11344
+#define UDP_SERVER_PORT             8888
 #define UDP_BUFFER_SIZE             1024
 
 static const char *TAG = "NIMBLE_GATTC";
@@ -88,6 +88,10 @@ static bool heart_rate_buffer_full = false;
 static uint16_t current_heart_rate = 0;
 static bool heart_rate_available = false;
 static SemaphoreHandle_t heart_rate_mutex = NULL;
+
+uint16_t heart_rate_print_buffer[HEART_RATE_BUFFER_SIZE];
+uint16_t heart_rate_movingavg_print_buffer[HEART_RATE_BUFFER_SIZE];
+uint16_t heart_rate_print_buffer_index = 0;
 
 // ADC 관련 변수
 static uint32_t adc_max_value = 4095;  // 12-bit ADC
@@ -124,7 +128,7 @@ static void heart_rate_sampling_task(void *param);
 static uint16_t calculate_heart_rate_from_buffer(void);
 static void start_heart_rate_sampling(void);
 static uint16_t calculate_moving_average_heart_rate(void);
-// static void print_heart_rate_buffer(void);  // 디버깅용 함수
+static void print_heart_rate_buffer(void);  // 디버깅용 함수
 
 // 광고만 사용
 static void start_sensor_beacon(void);
@@ -137,7 +141,9 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t e
 static esp_err_t wifi_init_sta(void);
 static esp_err_t udp_client_init(void);
 static void udp_send_heart_rate_data(uint16_t heart_rate);
+static void udp_send_heart_rate_buffer(void);
 static void wifi_udp_task(void *param);
+static void udp_send_heart_peak_data(uint16_t *peak_positions, uint16_t peak_count, uint16_t *valid_intervals_array, uint16_t valid_intervals, uint16_t calculated_hr, uint16_t moving_avg_hr);
 
 
 // NimBLE 초기화
@@ -358,7 +364,7 @@ static void sensor_beacon_task(void *param)
             }
         }
         
-        ESP_LOGI(TAG, "heart_rate_bpm: %d", heart_rate_bpm);
+        //ESP_LOGI(TAG, "heart_rate_bpm: %d", heart_rate_bpm);
         // 산소포화도는 0으로 고정 (MAX3010x 제거됨)
         spo2_percent = 0;
         
@@ -562,6 +568,10 @@ static esp_err_t heart_rate_adc_init(void)
     return ESP_OK;
 }
 
+uint16_t peak_positions[50]; // 최대 50개 피크 위치 저장
+uint16_t peak_count = 0;
+uint16_t valid_intervals = 0;
+uint16_t valid_intervals_array[50] = {0};
 static void heart_rate_sampling_task(void *param)
 {
     ESP_LOGI(TAG, "심박수 샘플링 태스크 시작");
@@ -600,8 +610,12 @@ static void heart_rate_sampling_task(void *param)
         
         // 주기적으로 심박수 계산 및 이동 평균 업데이트
         uint32_t current_time = esp_timer_get_time() / 1000; // ms 단위
-        if (current_time - last_calculation_time >= calculation_interval_ms) {
+        if (heart_rate_buffer_full){//(current_time - last_calculation_time) >= calculation_interval_ms) {
             // 심박수 계산
+            uint16_t heart_rate_buffer_index_val = heart_rate_buffer_index;
+            static uint16_t heart_rate_buffer_index_pre;
+
+            uint16_t buffer_size = heart_rate_buffer_full ? HEART_RATE_BUFFER_SIZE : heart_rate_buffer_index;
             uint16_t calculated_hr = calculate_heart_rate_from_buffer();
             
             // 이동 평균 버퍼에 저장 (유효한 값이든 아니든 모두 저장)
@@ -621,26 +635,35 @@ static void heart_rate_sampling_task(void *param)
             //moving_avg_hr = 75;
             // 현재 심박수 업데이트 (이동 평균값 사용)
             if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-                current_heart_rate = moving_avg_hr;
+                current_heart_rate = calculated_hr;//moving_avg_hr;
                 xSemaphoreGive(heart_rate_mutex);
             }
             
             ESP_LOGI(TAG, "심박수: %ld BPM (현재), 이동평균: %ld BPM (1분)", (long)calculated_hr, (long)moving_avg_hr);
             
-            // 10초마다 버퍼 내용 출력 (디버깅용)
-            /*static uint32_t last_buffer_print_time = 0;
-            if (current_time - last_buffer_print_time >= 5000) { // 10초
-                print_heart_rate_buffer();
-                last_buffer_print_time = current_time;
-            }*/
             
+            for(uint16_t i = 0; i < buffer_size; i++) {
+                heart_rate_print_buffer[i] = heart_rate_buffer[i];
+                heart_rate_movingavg_print_buffer[i] = heart_rate_movingavg_buffer[i];
+            }
+            heart_rate_print_buffer_index = buffer_size;
+            
+            ESP_LOGI(TAG, "이전 Idx : %d, 현재 Idx : %d, diff : %d", heart_rate_buffer_index_pre, heart_rate_buffer_index_val, heart_rate_buffer_index_val - heart_rate_buffer_index_pre);
+            heart_rate_buffer_index_pre = heart_rate_buffer_index_val;
+            //print_heart_rate_buffer();
+            udp_send_heart_rate_buffer();
+            
+            udp_send_heart_peak_data(peak_positions,peak_count,valid_intervals_array,valid_intervals, calculated_hr, moving_avg_hr);
+    
+
             last_calculation_time = current_time;
+
+            heart_rate_buffer_full = false;
         }
         
         vTaskDelay(pdMS_TO_TICKS(HEART_RATE_SAMPLE_RATE_MS));
     }
 }
-
 static uint16_t calculate_heart_rate_from_buffer(void)
 {
     if (!heart_rate_buffer_full && heart_rate_buffer_index < 100) {
@@ -648,8 +671,12 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     }
     
     uint16_t buffer_size = heart_rate_buffer_full ? HEART_RATE_BUFFER_SIZE : heart_rate_buffer_index;
-    uint16_t peak_positions[50]; // 최대 50개 피크 위치 저장
-    uint16_t peak_count = 0;
+
+    memset(peak_positions, 0, sizeof(peak_positions));
+    memset(valid_intervals_array, 0, sizeof(valid_intervals_array));
+    peak_count = 0;
+    valid_intervals = 0;
+
 
     // 이동 평균 버퍼에 저장 (16비트)
     #define HEART_RATE_VALUE_MOVAVG_BUFFER_SIZE 30
@@ -714,7 +741,6 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     
     // 피크 간 간격 계산 (이동평균 버퍼 기준)
     uint32_t total_intervals = 0;
-    uint16_t valid_intervals = 0;
     
     for (uint16_t i = 1; i < peak_count; i++) {
         uint16_t interval = peak_positions[i] - peak_positions[i-1];
@@ -723,6 +749,7 @@ static uint16_t calculate_heart_rate_from_buffer(void)
         // 2초 간격 샘플링에서: 3-15 샘플 간격이 유효 (2초*1.5 ~ 2초*7.5)
         if (interval >= 25 && interval <= 200) {
             total_intervals += interval;
+            valid_intervals_array[valid_intervals] = interval;
             valid_intervals++;
             ESP_LOGI(TAG, "유효한 피크 간격: %ld", (long)interval);
         }
@@ -739,7 +766,8 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     uint32_t avg_interval = total_intervals / valid_intervals;
     
     // BPM 계산: 2초 간격 샘플링에서 60초(30 샘플) / 평균간격
-    uint16_t bpm = (uint16_t)(100.0f / avg_interval * 60.0f);
+    uint16_t bpm = (uint16_t)(100.0f / avg_interval * 60.0f * 0.9f);
+    // 6000/간격 =
     
     ESP_LOGI(TAG, "평균 피크 간격: %lu, 계산된 BPM: %ld", (unsigned long)avg_interval, (long)bpm);
     
@@ -750,6 +778,7 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     }
     
     ESP_LOGI(TAG, "최종 BPM: %ld", (long)bpm);
+    
     return bpm;
 }
 
@@ -784,18 +813,18 @@ static uint16_t calculate_moving_average_heart_rate(void)
 }
 
 // 심박수 버퍼 내용을 인덱스별로 출력하는 함수 (디버깅용)
-/*
+
 static void print_heart_rate_buffer(void)
 {
     if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
-        uint16_t buffer_size = heart_rate_buffer_full ? HEART_RATE_BUFFER_SIZE : heart_rate_buffer_index;
+        uint16_t buffer_size = heart_rate_print_buffer_index;
         
         ESP_LOGI(TAG, "=== 심박수 버퍼 출력 (크기: %ld) ===", (long)buffer_size);
         
         // 한 열로 출력
         ESP_LOGI(TAG, "심박수 버퍼: `");
-        for (uint16_t i = 0; i < buffer_size/2; i++) {
-            ESP_LOGI(TAG, "IR 버퍼   %4d,   %5d, %5d", i, heart_rate_buffer[i],heart_rate_movingavg_buffer[i]);
+        for (uint16_t i = 0; i < buffer_size; i++) {
+            ESP_LOGI(TAG, "IR 버퍼   %4d,   %5d, %5d", i, heart_rate_print_buffer[i],heart_rate_movingavg_print_buffer[i]);
 
             if((i%0x1F) == 0)
                 vTaskDelay(pdMS_TO_TICKS(1));
@@ -805,7 +834,7 @@ static void print_heart_rate_buffer(void)
         xSemaphoreGive(heart_rate_mutex);
     }
 }
-*/
+
 
 static void start_heart_rate_sampling(void)
 {
@@ -914,6 +943,45 @@ static esp_err_t udp_client_init(void)
     ESP_LOGI(UDP_TAG, "UDP 클라이언트 초기화 완료 - 서버: %s:%d", UDP_SERVER_IP, UDP_SERVER_PORT);
     return ESP_OK;
 }
+static void udp_send_heart_peak_data(uint16_t *peak_positions, uint16_t peak_count, uint16_t *valid_intervals_array, uint16_t valid_intervals, uint16_t calculated_hr, uint16_t moving_avg_hr)
+{
+    if (udp_socket < 0 || !wifi_connected) {
+        return;
+    }
+    
+    // JSON 형태로 심박 버퍼 데이터 구성
+    char udp_data[1024];
+    char temp_buffer[64];
+    
+    // JSON 시작
+    snprintf(udp_data, sizeof(udp_data), "\np\npeak_count : %d,\ncalculated_hr : %d,\nmoving_avg_hr : %d\n",peak_count, calculated_hr, moving_avg_hr);
+    int idx = strlen(udp_data);
+
+    for(int i=0;i<peak_count;i++){
+        snprintf(temp_buffer, sizeof(temp_buffer),"peak %d : idx=%d\n",i,peak_positions[i]);
+        strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
+        idx += strlen(temp_buffer);
+    }
+    snprintf(temp_buffer, sizeof(temp_buffer),"valid_intervals %d\n",valid_intervals);
+    strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
+    idx += strlen(temp_buffer);
+
+    for(int i=0;i<peak_count;i++){
+        snprintf(temp_buffer, sizeof(temp_buffer),"valid_intervals %d : idx=%d\n",i,valid_intervals_array[i]);
+        strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
+        idx += strlen(temp_buffer);
+    }
+
+
+    int err = sendto(udp_socket, udp_data, idx, 0,
+        (struct sockaddr *)&server_addr, sizeof(server_addr));
+    if (err < 0) {
+    ESP_LOGE(UDP_TAG, "심박 피크 버퍼 UDP 전송 실패: errno %d", errno);
+    }else{
+    //ESP_LOGI(UDP_TAG, "심박 피크 버퍼 데이터 전송 완료 (크기: %d, 전송 바이트: %d)", 
+    //         buffer_size, idx);
+    }
+}
 
 static void udp_send_heart_rate_data(uint16_t heart_rate)
 {
@@ -935,6 +1003,52 @@ static void udp_send_heart_rate_data(uint16_t heart_rate)
         ESP_LOGE(UDP_TAG, "UDP 전송 실패: errno %d", errno);
     } else {
         ESP_LOGI(UDP_TAG, "심박 데이터 전송: %s", json_data);
+    }
+}
+
+static void udp_send_heart_rate_buffer(void)
+{
+    if (udp_socket < 0 || !wifi_connected) {
+        return;
+    }
+    
+    uint16_t buffer_size = heart_rate_print_buffer_index;
+        
+    // JSON 형태로 심박 버퍼 데이터 구성
+    char udp_data[1024];
+    char temp_buffer[64];
+    
+    // JSON 시작
+    snprintf(udp_data, sizeof(udp_data), 
+             "{\"device_id\":\"%s\",\"timestamp\":%lld,\"buffer_size\":%d\n",
+             ADV_DEVICE_NAME, esp_timer_get_time() / 1000, buffer_size);
+    int idx = strlen(udp_data);
+    // 버퍼 데이터 추가 (buffer_size/2까지만, 원본 함수와 동일)
+    for (uint16_t i = 0; i < buffer_size; i++) {
+
+        snprintf(temp_buffer, sizeof(temp_buffer), 
+                 "%3d,%5d,%5d\n",
+                 i, heart_rate_print_buffer[i], heart_rate_movingavg_print_buffer[i]);
+        strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
+        idx += strlen(temp_buffer);
+        
+        if((i%0x1F) == 0)
+            vTaskDelay(pdMS_TO_TICKS(1));
+
+
+        if(idx >= sizeof(udp_data)-16 || i == buffer_size-1){
+            vTaskDelay(pdMS_TO_TICKS(1));
+            int err = sendto(udp_socket, udp_data, idx, 0,
+                             (struct sockaddr *)&server_addr, sizeof(server_addr));
+            if (err < 0) {
+                ESP_LOGE(UDP_TAG, "심박 버퍼 UDP 전송 실패: errno %d", errno);
+            }else{
+                //ESP_LOGI(UDP_TAG, "심박 버퍼 데이터 전송 완료 (크기: %d, 전송 바이트: %d)", 
+                //         buffer_size, idx);
+            }
+
+            idx = 0;
+        }
     }
 }
 
@@ -969,6 +1083,8 @@ static void wifi_udp_task(void *param)
             
             if (current_hr > 0) {
                 udp_send_heart_rate_data(current_hr);
+                //udp_send_heart_rate_buffer();
+                
             }
         }
         
