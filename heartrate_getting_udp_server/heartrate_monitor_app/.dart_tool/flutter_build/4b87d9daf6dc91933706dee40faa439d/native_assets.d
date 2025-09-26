@@ -1,0 +1,1 @@
+ C:\\Users\\parkg\\Desktop\\safelink\\heartrate_getting_udp_server\\heartrate_monitor_app\\.dart_tool\\flutter_build\\4b87d9daf6dc91933706dee40faa439d\\native_assets.yaml: 

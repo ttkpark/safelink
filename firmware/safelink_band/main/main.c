@@ -47,9 +47,9 @@
 #define MCP9808_REG_CONFIG          0x01
 
 // ADC4 심박수 측정 설정
-#define HEART_RATE_ADC_CHANNEL      ADC1_CHANNEL_4  // GPIO4
-#define HEART_RATE_BUFFER_SIZE      364
-#define HEART_RATE_SAMPLE_RATE_MS   10  // 10ms마다 샘플링 (100Hz)
+#define HEART_RATE_ADC_CHANNEL      ADC1_CHANNEL_3  // GPIO4
+#define HEART_RATE_BUFFER_SIZE      390
+#define HEART_RATE_SAMPLE_RATE_MS   10  // 10ms마다 샘플링 (50Hz)
 #define HEART_RATE_MIN_BPM          40
 #define HEART_RATE_MAX_BPM          200
 #define ADC_THRESHOLD_PERCENT       50  // 50% 임계값
@@ -61,6 +61,9 @@
 #define WIFI_SSID                   "Smart Meeting"        // WiFi SSID를 여기에 입력하세요
 #define WIFI_PASS                   "12345678"    // WiFi 비밀번호를 여기에 입력하세요
 #define WIFI_MAXIMUM_RETRY          5
+#define WIFI_SSID1                  "junespark-zone2"        // WiFi SSID를 여기에 입력하세요
+#define WIFI_PASS1                  "moon6412"    // WiFi 비밀번호를 여기에 입력하세요
+#define WIFI_MAXIMUM_RETRY2         5
 
 // UDP 서버 설정
 #define UDP_SERVER_IP               "211.221.184.17"
@@ -82,7 +85,8 @@ static bool mcp9808_available = false;
 
 // ADC4 심박수 측정 변수
 static uint16_t heart_rate_buffer[HEART_RATE_BUFFER_SIZE];
-static uint16_t heart_rate_movingavg_buffer[HEART_RATE_BUFFER_SIZE];
+static uint16_t heart_rate_1step_buffer[HEART_RATE_BUFFER_SIZE];
+static float heart_rate_movingavg_buffer[HEART_RATE_BUFFER_SIZE];
 static uint16_t heart_rate_buffer_index = 0;
 static bool heart_rate_buffer_full = false;
 static uint16_t current_heart_rate = 0;
@@ -112,6 +116,11 @@ static int udp_socket = -1;
 static struct sockaddr_in server_addr;
 static bool wifi_connected = false;
 static SemaphoreHandle_t wifi_semaphore = NULL;
+
+#define MAX_INTERVAL_HISTORY 20
+static uint16_t interval_history[MAX_INTERVAL_HISTORY];
+static uint8_t interval_history_index = 0;
+static bool interval_history_full = false;
 
 // I2C 및 센서 함수 원형
 static esp_err_t i2c_master_init(void);
@@ -531,7 +540,7 @@ static esp_err_t heart_rate_adc_init(void)
         return ret;
     }
     
-    ret = adc1_config_channel_atten(HEART_RATE_ADC_CHANNEL, ADC_ATTEN_DB_11);
+    ret = adc1_config_channel_atten(HEART_RATE_ADC_CHANNEL, ADC_ATTEN_DB_12);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "ADC1 channel attenuation 설정 실패: %s", esp_err_to_name(ret));
         return ret;
@@ -569,9 +578,13 @@ static esp_err_t heart_rate_adc_init(void)
 }
 
 uint16_t peak_positions[50]; // 최대 50개 피크 위치 저장
+bool peak_positions_valid[50]; // 최대 50개 피크 위치 저장
 uint16_t peak_count = 0;
+uint16_t invalid_peak_count = 0;
 uint16_t valid_intervals = 0;
 uint16_t valid_intervals_array[50] = {0};
+uint16_t outliers_count = 0;
+uint16_t outliers_array[50] = {0};
 static void heart_rate_sampling_task(void *param)
 {
     ESP_LOGI(TAG, "심박수 샘플링 태스크 시작");
@@ -644,7 +657,7 @@ static void heart_rate_sampling_task(void *param)
             
             for(uint16_t i = 0; i < buffer_size; i++) {
                 heart_rate_print_buffer[i] = heart_rate_buffer[i];
-                heart_rate_movingavg_print_buffer[i] = heart_rate_movingavg_buffer[i];
+                heart_rate_movingavg_print_buffer[i] = (uint16_t)heart_rate_movingavg_buffer[i];
             }
             heart_rate_print_buffer_index = buffer_size;
             
@@ -664,123 +677,226 @@ static void heart_rate_sampling_task(void *param)
         vTaskDelay(pdMS_TO_TICKS(HEART_RATE_SAMPLE_RATE_MS));
     }
 }
+float K_mean = 0;
+float K_stddev = 0;
 static uint16_t calculate_heart_rate_from_buffer(void)
 {
-    if (!heart_rate_buffer_full && heart_rate_buffer_index < 100) {
-        return 0; // 충분한 데이터가 없음
+    if (!heart_rate_buffer_full && heart_rate_buffer_index < 150) {
+        return 0; // 최소 데이터 확보 필요
     }
-    
+
     uint16_t buffer_size = heart_rate_buffer_full ? HEART_RATE_BUFFER_SIZE : heart_rate_buffer_index;
 
     memset(peak_positions, 0, sizeof(peak_positions));
-    memset(valid_intervals_array, 0, sizeof(valid_intervals_array));
     peak_count = 0;
-    valid_intervals = 0;
+
+    // -------------------------------
+    // (1) Baseline 제거
+    // -------------------------------
+    uint16_t *filtered_buffer1 = heart_rate_1step_buffer;
+    uint16_t baseline_win = 15; // 0.15초
+    for (uint16_t i = 0; i < buffer_size; i++) {
+        float sum = 0;
+        uint16_t count = 0;
+        for (int j = -(baseline_win/2); j <= (baseline_win/2); j++) {
+            int idx = i + j;
+            if (idx >= 0 && idx < buffer_size) {
+                sum += heart_rate_buffer[idx];
+                count++;
+            }
+        }
+        float mean = sum / count;
+        filtered_buffer1[i] = (float)(mean);
+    }
+    memcpy(heart_rate_buffer, heart_rate_1step_buffer, buffer_size * sizeof(uint16_t));
+
+    // -------------------------------
+    // (1) Baseline 제거
+    // -------------------------------
+    float *filtered_buffer = heart_rate_movingavg_buffer;
+    baseline_win = 150; // 1.5초
+    for (uint16_t i = 0; i < buffer_size; i++) {
+        float sum = 0;
+        uint16_t count = 0;
+        for (int j = -(baseline_win/2); j <= (baseline_win/2); j++) {
+            int idx = i + j;
+            if (idx >= 0 && idx < buffer_size) {
+                sum += filtered_buffer1[idx];
+                count++;
+            }
+        }
+        float mean = sum / count;
+        filtered_buffer[i] = (float)(filtered_buffer1[i]-mean);
+    }
+
+    // -------------------------------
+    // (2) 피크 검출
+    // -------------------------------
+    const uint16_t min_distance = 25; // 최소 간격 240BPM    
+    const uint16_t window_size  = 10;
+    invalid_peak_count = 0;
+
+    for (uint16_t i = window_size; i < buffer_size - window_size && peak_count < 50; i++) {
+        float current = filtered_buffer[i];
+
+        // local max 조건
+        bool is_peak = true;
+        for (int j = -window_size; j <= window_size; j++) {
+            if (j == 0) continue;
+            if (filtered_buffer[i+j] > current || filtered_buffer[i+j] < 0.f) { is_peak = false; break; }
+        }
+
+        if (!is_peak) continue;
+        // refractory check
+        if (peak_count > 0 && (i - peak_positions[peak_count-1]) < min_distance)continue;
 
 
-    // 이동 평균 버퍼에 저장 (16비트)
-    #define HEART_RATE_VALUE_MOVAVG_BUFFER_SIZE 30
-    uint32_t sum = 0;
-    for(uint16_t i = 0; i < buffer_size; i++) {
-        if(i<HEART_RATE_VALUE_MOVAVG_BUFFER_SIZE){
-            sum += heart_rate_buffer[i];
-            heart_rate_movingavg_buffer[i] = (uint16_t)(sum/(i+1));
+        
+        peak_positions_valid[peak_count] = true;
+        if(fabsf(current) > 15000.f){
+            ESP_LOGI(TAG, "피크 높이 과다: idx=%d, 값=%f", i, current);
+            peak_positions_valid[peak_count] = false;
+            invalid_peak_count++;
+        }else if(fabsf(current) < 80.f){
+            ESP_LOGI(TAG, "피크 높이 과소: idx=%d, 값=%f", i, current);
+            peak_positions_valid[peak_count] = false;
+            invalid_peak_count++;
         }
-        else{
-            sum += heart_rate_buffer[i];
-            sum -= heart_rate_buffer[i-HEART_RATE_VALUE_MOVAVG_BUFFER_SIZE];
-            heart_rate_movingavg_buffer[i] = (uint16_t)(sum/(HEART_RATE_VALUE_MOVAVG_BUFFER_SIZE));
-        }
+        peak_positions[peak_count++] = i;
+
+        ESP_LOGI(TAG, "피크 발견: idx=%d, 값=%f", i, current);
+    }
+
+    if ((peak_count-invalid_peak_count) < 2) {
+        ESP_LOGI(TAG, "피크 부족");
+        return 0;
     }
     
+    // -------------------------------
+    // (3) interval 계산 (이번 측정만)
+    // -------------------------------
+    valid_intervals = 0;
+    for (uint16_t i = 1; i < peak_count; i++) {
+        if(!peak_positions_valid[i-1])continue;
+        uint16_t interval = peak_positions[i] - peak_positions[i-1];
+        if (interval >= 25 && interval <= 240) { // 25~120 = 25~120BPM
+            valid_intervals_array[valid_intervals++] = interval;
+        }
+    }
+
+    if (valid_intervals == 0) {
+        ESP_LOGI(TAG, "이번 측정에서 유효한 interval 없음");
+        return 0;
+    }
+
+    // -------------------------------
+    // (4) Outlier 제거 (이번 측정 값 기준)
+    // -------------------------------
+    float sum = 0;
+    for (uint16_t i = 0; i < valid_intervals; i++) sum += valid_intervals_array[i];
+    K_mean = sum / valid_intervals;
+    uint16_t K_availble_mean = 0;
+
+    float var = 0;
+    for (uint16_t i = 0; i < valid_intervals; i++) {
+        float diff = valid_intervals_array[i] - K_mean;
+        var += diff * diff;
+    }
+    K_stddev = sqrtf(var / valid_intervals);
+    outliers_count=0;
+
+                
+    // -------------------------------
+    // (5) 정상 interval만 history에 저장
+    // -------------------------------
+    for (uint16_t i = 0; i < valid_intervals; i++) {
+        uint16_t iv = valid_intervals_array[i];
+        if (fabsf(iv - K_mean) <= K_stddev * 1.5f) { // 평균 ±1.5σ 안에 있으면 정상
+            interval_history[interval_history_index++] = iv;
+            K_availble_mean += iv;
+            if (interval_history_index >= MAX_INTERVAL_HISTORY) {
+                interval_history_index = 0;
+                interval_history_full = true;
+            }
+        } else {
+            outliers_array[outliers_count++] = i;
+            ESP_LOGI(TAG, "Outlier interval=%d (mean=%.1f, std=%.1f)", iv, K_mean, K_stddev);
+        }
+    }
+
     
-    // heart_rate_movingavg_buffer에서 아날로그 극대값 피크 감지
-    const uint16_t window_size = 10; // 피크 감지를 위한 윈도우 크기 (작게 설정)
-    
-    // 이동평균 버퍼 크기 확인
-    uint16_t movavg_size = buffer_size;
-    
-    for (uint16_t i = window_size; i < movavg_size - window_size && peak_count < 50; i++) {
-        uint16_t current_value = heart_rate_movingavg_buffer[i];
-        bool is_peak = true;
-        
-        // 현재 값이 주변 윈도우 내에서 최대값인지 확인
-        for (uint16_t j = i - window_size; j <= i + window_size; j++) {
-            if (j != i && heart_rate_movingavg_buffer[j] >= current_value) {
-                is_peak = false;
+    float after_var = 0; int after_valid_intervals = 0;
+    for (uint16_t i = 0; i < valid_intervals; i++) {
+        bool is_outlier = false;
+        for (uint16_t j = 0; j < outliers_count; j++) {
+            if (i == outliers_array[j]) {
+                is_outlier = true;
                 break;
             }
         }
-        
-        // 피크가 감지되고, 이전 피크와 충분한 거리가 있는지 확인
-        if (is_peak && current_value > 0) {
-            bool valid_peak = true;
-            
-            // 이전 피크와의 거리 확인 (최소 3 샘플 간격으로 줄임)
-            if (peak_count > 0) {
-                uint16_t distance = i - peak_positions[peak_count - 1];
-                if (distance < 3) {
-                    valid_peak = false;
-                }
-            }
-            
-            if (valid_peak) {
-                peak_positions[peak_count] = i;
-                peak_count++;
-                ESP_LOGI(TAG, "피크 발견: 인덱스 %ld, 값 %ld", (long)i, (long)current_value);
-            }
-        }
+        if (is_outlier) continue;
+
+        float diff = valid_intervals_array[i] - K_mean;
+        after_var += diff * diff;
+        after_valid_intervals++;
     }
-    
-    ESP_LOGI(TAG, "피크 감지 완료: %ld개 피크 발견", (long)peak_count);
-    
-    if (peak_count < 2) {
-        ESP_LOGI(TAG, "피크가 부족함 (최소 2개 필요)");
-        return 0; // 최소 2개 피크가 필요
+    for (uint16_t j = 0; j < outliers_count; j++) {
+        outliers_array[j] = valid_intervals_array[j];
     }
-    
-    // 피크 간 간격 계산 (이동평균 버퍼 기준)
-    uint32_t total_intervals = 0;
-    
-    for (uint16_t i = 1; i < peak_count; i++) {
-        uint16_t interval = peak_positions[i] - peak_positions[i-1];
-        
-        // 유효한 간격 범위 체크 (40-200 BPM에 해당하는 간격)
-        // 2초 간격 샘플링에서: 3-15 샘플 간격이 유효 (2초*1.5 ~ 2초*7.5)
-        if (interval >= 25 && interval <= 200) {
-            total_intervals += interval;
-            valid_intervals_array[valid_intervals] = interval;
-            valid_intervals++;
-            ESP_LOGI(TAG, "유효한 피크 간격: %ld", (long)interval);
-        }
-    }
-    
-    if (valid_intervals == 0) {
-        ESP_LOGI(TAG, "유효한 피크 간격이 없음");
-        return 0;
-    }
-    
-    ESP_LOGI(TAG, "유효한 피크 간격: %ld개", (long)valid_intervals);
-    
-    // 평균 피크 간격 계산
-    uint32_t avg_interval = total_intervals / valid_intervals;
-    
-    // BPM 계산: 2초 간격 샘플링에서 60초(30 샘플) / 평균간격
-    uint16_t bpm = (uint16_t)(100.0f / avg_interval * 60.0f * 0.9f);
-    // 6000/간격 =
-    
-    ESP_LOGI(TAG, "평균 피크 간격: %lu, 계산된 BPM: %ld", (unsigned long)avg_interval, (long)bpm);
-    
-    // 유효 범위 체크
+    K_stddev = sqrtf(after_var / after_valid_intervals);
+    // -------------------------------
+    // (7) BPM 계산
+    // -------------------------------
+    ESP_LOGI(TAG, "after_var: %f", after_var);
+    K_availble_mean = K_availble_mean / (valid_intervals - outliers_count);
+    uint16_t bpm = (uint16_t)(60.0f * 100.0f / K_availble_mean); // 100Hz 샘플링
+    ESP_LOGI(TAG, "최종 BPM: %d", bpm);
+
     if (bpm < HEART_RATE_MIN_BPM || bpm > HEART_RATE_MAX_BPM) {
-        ESP_LOGI(TAG, "BPM이 유효 범위를 벗어남: %ld (범위: %ld-%ld)", (long)bpm, (long)HEART_RATE_MIN_BPM, (long)HEART_RATE_MAX_BPM);
+        ESP_LOGI(TAG, "BPM 범위 초과");
         return 0;
     }
-    
-    ESP_LOGI(TAG, "최종 BPM: %ld", (long)bpm);
-    
+
+    if (after_var < 0.1f) {
+        ESP_LOGI(TAG, "var 너무 작음");
+        return 0;
+    }
+    if (after_var > 1000.f) {
+        ESP_LOGI(TAG, "var 너무 큼");
+        return 0;
+    }
     return bpm;
 }
+/*
+
+
+    // -------------------------------
+    // (6) 대표 interval = history median
+    // -------------------------------
+    uint16_t history_size = interval_history_full ? MAX_INTERVAL_HISTORY : interval_history_index;
+    if (history_size < 3) {
+        ESP_LOGI(TAG, "히스토리 부족");
+        return 0;
+    }
+
+
+    uint16_t sorted[MAX_INTERVAL_HISTORY];
+    memcpy(sorted, interval_history, history_size * sizeof(uint16_t));
+
+    // 정렬
+    for (int i = 0; i < history_size-1; i++) {
+        for (int j = i+1; j < history_size; j++) {
+            if (sorted[i] > sorted[j]) {
+                uint16_t tmp = sorted[i];
+                sorted[i] = sorted[j];
+                sorted[j] = tmp;
+            }
+        }
+    }
+
+    uint16_t median = sorted[history_size/2];
+    ESP_LOGI(TAG, "Median interval=%d (history=%d)", median, history_size);
+*/
 
 // 심박수 이동 평균 계산 함수 (4분 데이터에서 이상값 제외)
 static uint16_t calculate_moving_average_heart_rate(void)
@@ -966,11 +1082,33 @@ static void udp_send_heart_peak_data(uint16_t *peak_positions, uint16_t peak_cou
     strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
     idx += strlen(temp_buffer);
 
-    for(int i=0;i<peak_count;i++){
+    for(int i=0;i<valid_intervals;i++){
         snprintf(temp_buffer, sizeof(temp_buffer),"valid_intervals %d : idx=%d\n",i,valid_intervals_array[i]);
         strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
         idx += strlen(temp_buffer);
     }
+
+    snprintf(temp_buffer, sizeof(temp_buffer),"outliers_count %d\n",outliers_count);
+    strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
+    idx += strlen(temp_buffer);
+
+    for(int i=0;i<outliers_count;i++){
+        snprintf(temp_buffer, sizeof(temp_buffer),"outliers_array %d : idx=%d\n",i,outliers_array[i]);
+        strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
+        idx += strlen(temp_buffer);
+    }
+
+    snprintf(temp_buffer, sizeof(temp_buffer),"interval_history_index %d\n",interval_history_index);
+    strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
+    idx += strlen(temp_buffer);
+    
+    snprintf(temp_buffer, sizeof(temp_buffer),"mean %f\n",K_mean);
+    strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
+    idx += strlen(temp_buffer);
+
+    snprintf(temp_buffer, sizeof(temp_buffer),"stddev %f\n",K_stddev);
+    strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
+    idx += strlen(temp_buffer);
 
 
     int err = sendto(udp_socket, udp_data, idx, 0,
