@@ -729,7 +729,7 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     // (2) 피크 검출
     // -------------------------------
     const uint16_t min_distance = 25; // 최소 간격 240BPM    
-    const uint16_t window_size  = 10;
+    const uint16_t window_size  = 5;
     invalid_peak_count = 0;
 
     for (uint16_t i = window_size; i < buffer_size - window_size && peak_count < 50; i++) {
@@ -744,16 +744,16 @@ static uint16_t calculate_heart_rate_from_buffer(void)
 
         if (!is_peak) continue;
         // refractory check
-        if (peak_count > 0 && (i - peak_positions[peak_count-1]) < min_distance)continue;
-
-
-        
         peak_positions_valid[peak_count] = true;
-       /*if(fabsf(current) > 32000.f){
-            ESP_LOGI(TAG, "피크 높이 과다: idx=%d, 값=%f", i, current);
+        if (peak_count > 0 && (i - peak_positions[peak_count-1]) < min_distance){
+            ESP_LOGI(TAG, "피크 간격 너무 작음: idx=%d, 값=%d", i, i - peak_positions[peak_count-1]);
             peak_positions_valid[peak_count] = false;
             invalid_peak_count++;
-        }else */if(fabsf(current) < 80.f){
+        }else if(heart_rate_buffer[i] >= 65500){
+            ESP_LOGI(TAG, "피크 높이 과다: idx=%d, 원본값=%d", i, heart_rate_buffer[i]);
+            peak_positions_valid[peak_count] = false;
+            invalid_peak_count++;
+        }else if(fabsf(current) < 80.f){
             ESP_LOGI(TAG, "피크 높이 과소: idx=%d, 값=%f", i, current);
             peak_positions_valid[peak_count] = false;
             invalid_peak_count++;
@@ -775,8 +775,12 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     for (uint16_t i = 1; i < peak_count; i++) {
         if(!peak_positions_valid[i-1])continue;
         uint16_t interval = peak_positions[i] - peak_positions[i-1];
-        if (interval >= 25 && interval <= 240) { // 25~120 = 25~120BPM
+        if (interval >= min_distance && interval <= 240) { // 25~120 = 25~120BPM
             valid_intervals_array[valid_intervals++] = interval;
+            ESP_LOGI(TAG, "valid peak start idx=%d, interval=%d", peak_positions[i-1], interval);
+        } else {
+            //outliers_array[outliers_count++] = i;
+            ESP_LOGI(TAG, "invalid peak start idx=%d, interval=%d", peak_positions[i-1], interval);
         }
     }
 
@@ -807,15 +811,19 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     // -------------------------------
     for (uint16_t i = 0; i < valid_intervals; i++) {
         uint16_t iv = valid_intervals_array[i];
-        if (fabsf(iv - K_mean) <= K_stddev * 1.5f) { // 평균 ±1.5σ 안에 있으면 정상
+        if ((K_stddev * (-0.7f) <= (iv - K_mean) && (iv - K_mean) <= K_stddev * 1.5f) 
+        || fabsf(iv - K_mean) <= 5.f) { // 평균 -0.7σ ~ +1.5σ 안에 있으면 또는 ±5BPM 이내 정상
             K_availble_mean += iv;
+
+            if(i+1 < valid_intervals)
+                ESP_LOGI(TAG, "valid interval No.%d, interval=%d", i, iv);
         } else {
             outliers_array[outliers_count++] = i;
-            ESP_LOGI(TAG, "Outlier interval=%d (mean=%.1f, std=%.1f)", iv, K_mean, K_stddev);
+            ESP_LOGI(TAG, "Outlier interval No.%d, interval=%d (%.1f%% out of stddev)", i, iv, fabsf((float)(iv - K_mean))/K_stddev*100.f);
         }
     }
 
-    
+    K_availble_mean = 0;
     float after_var = 0; int after_valid_intervals = 0;
     for (uint16_t i = 0; i < valid_intervals; i++) {
         bool is_outlier = false;
@@ -827,6 +835,7 @@ static uint16_t calculate_heart_rate_from_buffer(void)
         }
         if (is_outlier) continue;
 
+        K_availble_mean += valid_intervals_array[i];
         float diff = valid_intervals_array[i] - K_mean;
         after_var += diff * diff;
         after_valid_intervals++;
@@ -839,7 +848,8 @@ static uint16_t calculate_heart_rate_from_buffer(void)
     // (7) BPM 계산
     // -------------------------------
     ESP_LOGI(TAG, "after_var: %f", after_var);
-    K_availble_mean = K_availble_mean / (valid_intervals - outliers_count);
+    ESP_LOGI(TAG, "K_mean   : %f", K_mean);
+    K_availble_mean = K_availble_mean / after_valid_intervals;
     uint16_t bpm = (uint16_t)(60.0f * 100.0f / K_availble_mean); // 100Hz 샘플링
     ESP_LOGI(TAG, "최종 BPM: %d", bpm);
 
@@ -848,8 +858,12 @@ static uint16_t calculate_heart_rate_from_buffer(void)
         return 0;
     }
 
-    if (after_var < 0.1f) {
+    if (after_valid_intervals < 2) {
         ESP_LOGI(TAG, "var 너무 작음");
+        return 0;
+    }
+    if (after_valid_intervals == 2 && after_var > 500.f) {
+        ESP_LOGI(TAG, "var 너무 큼");
         return 0;
     }
     if (after_var > 1000.f) {
@@ -1059,10 +1073,6 @@ static void udp_send_heart_peak_data(uint16_t *peak_positions, uint16_t peak_cou
         idx += strlen(temp_buffer);
     }
 
-    snprintf(temp_buffer, sizeof(temp_buffer),"interval_history_index %d\n",interval_history_index);
-    strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
-    idx += strlen(temp_buffer);
-    
     snprintf(temp_buffer, sizeof(temp_buffer),"mean %f\n",K_mean);
     strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
     idx += strlen(temp_buffer);
