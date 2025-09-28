@@ -102,7 +102,7 @@ static uint32_t adc_max_value = 4095;  // 12-bit ADC
 static uint32_t adc_threshold_value;
 
 // 심박수 이동 평균 버퍼 (1분 = 30개 데이터, 2초 간격)
-#define HEART_RATE_MOVAVG_BUFFER_SIZE 30
+#define HEART_RATE_MOVAVG_BUFFER_SIZE 6
 static uint16_t heart_rate_movavg_buffer[HEART_RATE_MOVAVG_BUFFER_SIZE];
 static uint16_t movavg_buffer_index = 0;
 static bool movavg_buffer_full = false;
@@ -636,7 +636,7 @@ static void heart_rate_sampling_task(void *param)
                 movavg_buffer_full = true;
             }
             
-            // 4분 데이터에서 이동 평균 계산
+            //이동 평균 계산
             uint16_t moving_avg_hr_val = calculate_moving_average_heart_rate();
             static uint16_t moving_avg_hr = 0;
             if(moving_avg_hr_val > 0)moving_avg_hr = moving_avg_hr_val;
@@ -644,7 +644,7 @@ static void heart_rate_sampling_task(void *param)
             //moving_avg_hr = 75;
             // 현재 심박수 업데이트 (이동 평균값 사용)
             if (xSemaphoreTake(heart_rate_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-                current_heart_rate = calculated_hr;//moving_avg_hr;
+                current_heart_rate = moving_avg_hr;//calculated_hr;
                 xSemaphoreGive(heart_rate_mutex);
             }
             
@@ -1049,16 +1049,24 @@ static void udp_send_heart_peak_data(uint16_t *peak_positions, uint16_t peak_cou
     int idx = strlen(udp_data);
 
     for(int i=0;i<peak_count;i++){
-        snprintf(temp_buffer, sizeof(temp_buffer),"peak %d : idx=%d\n",i,peak_positions[i]);
+        int interval = 0;
+        if(i > 0)
+            interval = peak_positions[i] - peak_positions[i-1];
+        if(peak_positions_valid[i]){
+            snprintf(temp_buffer, sizeof(temp_buffer),"valid   peak No.%d : start=%2d, interval=%d\n",i,peak_positions[i],interval);
+        }else{
+            snprintf(temp_buffer, sizeof(temp_buffer),"invalid peak No.%d : start=%2d, interval=%d\n",i,peak_positions[i],interval);
+
+        }
         strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
         idx += strlen(temp_buffer);
     }
-    snprintf(temp_buffer, sizeof(temp_buffer),"valid_intervals %d\n",valid_intervals);
+    snprintf(temp_buffer, sizeof(temp_buffer),"Number of valid_intervals %d\n",valid_intervals);
     strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
     idx += strlen(temp_buffer);
 
     for(int i=0;i<valid_intervals;i++){
-        snprintf(temp_buffer, sizeof(temp_buffer),"valid_intervals %d : idx=%d\n",i,valid_intervals_array[i]);
+        snprintf(temp_buffer, sizeof(temp_buffer),"valid_intervals %d : end=%2d, interval=%d\n",i,peak_positions[i],valid_intervals_array[i]);
         strncpy(udp_data+idx, temp_buffer, strlen(temp_buffer));
         idx += strlen(temp_buffer);
     }
