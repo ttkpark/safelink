@@ -61,9 +61,6 @@
 #define WIFI_SSID                   "Smart Meeting"        // WiFi SSID를 여기에 입력하세요
 #define WIFI_PASS                   "12345678"    // WiFi 비밀번호를 여기에 입력하세요
 #define WIFI_MAXIMUM_RETRY          5
-#define WIFI_SSID1                  "junespark-zone2"        // WiFi SSID를 여기에 입력하세요
-#define WIFI_PASS1                  "moon6412"    // WiFi 비밀번호를 여기에 입력하세요
-#define WIFI_MAXIMUM_RETRY2         5
 
 // UDP 서버 설정
 #define UDP_SERVER_IP               "211.221.184.17"
@@ -753,7 +750,7 @@ static uint16_t calculate_heart_rate_from_buffer(void)
             ESP_LOGI(TAG, "피크 높이 과다: idx=%d, 원본값=%d", i, heart_rate_buffer[i]);
             peak_positions_valid[peak_count] = false;
             invalid_peak_count++;
-        }else if(fabsf(current) < 80.f){
+        }else if(fabsf(current) < 30.f){
             ESP_LOGI(TAG, "피크 높이 과소: idx=%d, 값=%f", i, current);
             peak_positions_valid[peak_count] = false;
             invalid_peak_count++;
