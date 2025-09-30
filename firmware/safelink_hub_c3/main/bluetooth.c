@@ -994,7 +994,7 @@ static bool parse_mfg_and_update_band(const uint8_t *mfg, uint8_t payload_len)
     band_data_t band = {0};
     band.external_temp = ((float)ext_temp_centi) / 100.0f;
     band.external_humidity = ((float)rh_centi) / 100.0f;
-    band.skin_temp = ((float)body_temp_centi) / 100.0f + 2.5f;
+    band.skin_temp = ((float)body_temp_centi) / 100.0f + 2.5f; // 체온센서로부터 보정값 일괄 2.5도 상승 처리
     band.heart_rate = hr_bpm;
     band.spo2 = (float)spo2_percent; // 정수 %
     band.timestamp = esp_timer_get_time() / 1000; // ms

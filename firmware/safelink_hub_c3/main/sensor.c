@@ -151,6 +151,10 @@ void sensor_monitor_task(void *arg)
             ESP_LOGI(TAG, "Temperature: %.1f°C, Humidity: %.1f%%", temp_float, hum_float);
             // 경보 상태 결정
             uint8_t alarm_status = 0;
+            static uint32_t bpm_warning_counter = 0;
+            static uint32_t bpm_critical_counter = 0;
+            const int bpm_warning_counter_max = 2*60*15; // 15분
+            const int bpm_critical_counter_max = 2*60*15; // 15분
 
             if(avg_noise >= 120.0f){
                 alarm_status |= (3<<ALARM_NOISE_WARNING_POS);
@@ -169,9 +173,37 @@ void sensor_monitor_task(void *arg)
                     alarm_status |= (1<<ALARM_TEMP_WARNING_POS);
                 }
                 if(band_data.heart_rate != HEART_RATE_IGNORE){
-                    if (band_data.heart_rate > 160 || band_data.heart_rate < 50) {
+                    if(band_data.heart_rate > 75){
+                        if(band_data.heart_rate > 120){
+                            if(++bpm_warning_counter > bpm_warning_counter_max)
+                                bpm_warning_counter = bpm_warning_counter_max;
+                        }else{
+                            if(--bpm_warning_counter < 0)
+                                bpm_warning_counter=0;
+                        }
+
+                        
+                        if(band_data.heart_rate > 140){
+                            if(++bpm_critical_counter > bpm_critical_counter_max)
+                                bpm_critical_counter = bpm_critical_counter_max;
+                        }else{
+                            if(--bpm_critical_counter < 0)
+                                bpm_critical_counter = 0;
+                        }
+                    }else{
+                        bpm_warning_counter = 0;
+                        bpm_critical_counter = 0;
+                    }
+
+                    if(bpm_warning_counter >= 3){
                         alarm_status |= (3<<ALARM_HR_WARNING_POS);
-                    }else if (band_data.heart_rate > 150) {
+                    }else if(bpm_warning_counter >= 2){
+                        alarm_status |= (1<<ALARM_HR_WARNING_POS);
+                    }
+
+                    if(bpm_critical_counter >= 3){
+                        alarm_status |= (3<<ALARM_HR_WARNING_POS);
+                    }else if(bpm_critical_counter >= 2){
                         alarm_status |= (1<<ALARM_HR_WARNING_POS);
                     }
                 }
