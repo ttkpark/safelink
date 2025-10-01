@@ -34,21 +34,6 @@ static uint16_t check_conn_handle = 0;
 // Test characteristic value
 static char test_value[32] = "Hello NimBLE!";
 
-// Health sensor data
-static health_sensor_data_t health_data = {
-    .temperature = 2500,      // 25.00°C
-    .humidity = 5000,         // 50.00%
-    .body_temperature = 3650, // 36.50°C
-    .spo2 = 9500,            // 95.00%
-    .heart_rate = 70,        // 70 BPM
-    .noise_level = 650,      // 65.0dB
-    .timestamp = 0
-};
-
-// ADC handle for noise measurement
-static adc_oneshot_unit_handle_t adc1_handle = NULL;
-
-
 // Command buffer
 static char command_buffer[32] = {0};
 
@@ -70,8 +55,6 @@ static void check_timeout_cb(TimerHandle_t xTimer);
 static void log_adv_report(const struct ble_gap_event *event);
 static void parse_and_log_adv_fields(const uint8_t *data, uint8_t len);
 static bool parse_mfg_and_update_band(const uint8_t *mfg, uint8_t payload_len);
-static int gatt_client_discover_svc_cb(uint16_t conn_handle, const struct ble_gatt_error *error,
-                                       const struct ble_gatt_svc *service, void *arg);
 
 // GATT access callback with optimized response time
 static int gatt_svr_access_cb(uint16_t conn_handle, uint16_t attr_handle,
@@ -617,13 +600,6 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
                     xEventGroupSetBits(ble_event_group, BLUETOOTH_READY_BIT);
                 }
                 
-                // 밴드 디바이스인지 확인하고 GATT 서비스 발견 시도
-                ESP_LOGI(TAG, "Connection established - discovering GATT services");
-                int disc_rc = ble_gattc_disc_all_svcs(event->connect.conn_handle, 
-                                                    gatt_client_discover_svc_cb, NULL);
-                if (disc_rc != 0) {
-                    ESP_LOGW(TAG, "Failed to start GATT service discovery: %d", disc_rc);
-                }
                 dfplayer_play_folder(0, 23);
 
                 // 이 연결은 체크를 확인함. 5초동안 응답 없으면 연결 해제
@@ -644,10 +620,6 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
                 }
                 
                 ESP_LOGI(TAG, "Check system activated for conn_handle: %d", event->connect.conn_handle);
-
-                
-                // 연결 중에도 스캔 유지하여 광고 수집(스택이 허용하는 범위 내)
-                //start_passive_scan();
             }
             break;
             
@@ -1024,70 +996,6 @@ bluetooth_state_t bluetooth_get_state(void)
     return current_state;
 }
 
-// Send test data
-esp_err_t bluetooth_send_test_data(const char *data)
-{
-    if (current_state != BLUETOOTH_STATE_CONNECTED) {
-        return ESP_ERR_INVALID_STATE;
-    }
-    
-    if (!data) {
-        return ESP_ERR_INVALID_ARG;
-    }
-    
-    // Update test value
-    strncpy(test_value, data, sizeof(test_value) - 1);
-    test_value[sizeof(test_value) - 1] = '\0';
-    
-    // Send notification
-    ble_gatts_chr_updated(1); // attr_handle for test characteristic
-    
-    ESP_LOGI(TAG, "Test data sent: %s", data);
-    return ESP_OK;
-}
-
-// Get health sensor data
-esp_err_t bluetooth_get_health_data(health_sensor_data_t *data)
-{
-    if (!data) {
-        return ESP_ERR_INVALID_ARG;
-    }
-    
-    memcpy(data, &health_data, sizeof(health_sensor_data_t));
-    return ESP_OK;
-}
-
-// Measure noise level
-void measure_noise_level(void)
-{
-    if (adc1_handle) {
-        int adc_raw = 0;
-        esp_err_t ret = adc_oneshot_read(adc1_handle, ADC_CHANNEL_0, &adc_raw);
-        if (ret == ESP_OK) {
-            // Convert ADC reading to noise level (0.1dB units)
-            // Simple conversion: ADC 0-4095 -> 50.0dB to 90.0dB
-            uint16_t noise_level = 500 + (adc_raw * 400) / 4095; // 50.0dB to 90.0dB
-            health_data.noise_level = noise_level;
-            health_data.timestamp = esp_timer_get_time() / 1000;
-        }
-    }
-}
-
-// Check DFPlayer status
-void check_dfplayer_status(void)
-{
-    // Query current status
-    dfplayer_status_t status;
-    esp_err_t ret = dfplayer_get_status(&status);
-    if (ret == ESP_OK) {
-        ESP_LOGI(TAG, "DFPlayer Status - Playing: %s, Track: %d, Volume: %d", 
-                 status.is_playing ? "Yes" : "No", 
-                 status.current_track, 
-                 status.current_volume);
-    }
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-}
-
 // MIT App Inventor 데이터 전송 함수
 esp_err_t bluetooth_update_mit_app_inventor_data(float skin_temp, uint16_t heart_rate, 
                                                 float spo2, float external_temp, 
@@ -1161,98 +1069,6 @@ esp_err_t bluetooth_update_mit_app_inventor_data(float skin_temp, uint16_t heart
     }
 }
 
-// GATT Subscribe - 밴드로부터 데이터 수신 처리
-esp_err_t bluetooth_handle_band_data_write(const uint8_t *data, size_t len)
-{
-    if (!data || len < 20) {
-        ESP_LOGE(TAG, "Invalid band data length: %d", len);
-        return ESP_ERR_INVALID_ARG;
-    }
-    
-    // 밴드 데이터 파싱
-    band_data_t band_data = {0};
-    int offset = 0;
-    
-    // External Temperature (4 bytes, float)
-    memcpy(&band_data.external_temp, &data[offset], 4);
-    offset += 4;
-    
-    // External Humidity (4 bytes, float)
-    memcpy(&band_data.external_humidity, &data[offset], 4);
-    offset += 4;
-    
-    // Skin Temperature (4 bytes, float)
-    memcpy(&band_data.skin_temp, &data[offset], 4);
-    offset += 4;
-    
-    // Heart Rate (2 bytes, uint16_t)
-    band_data.heart_rate = (data[offset] << 8) | data[offset + 1];
-    offset += 2;
-    
-    // SpO2 (4 bytes, float)
-    memcpy(&band_data.spo2, &data[offset], 4);
-    offset += 4;
-    
-    // Timestamp (2 bytes, uint32_t)
-    band_data.timestamp = (data[offset] << 24) | (data[offset + 1] << 16) | 
-                          (data[offset + 2] << 8) | data[offset + 3];
-    offset += 4;
-    
-    band_data.is_valid = true;
-    band_data.data_source = DATA_SOURCE_CLIENT;  // 클라이언트 데이터로 표시
-    
-    // 데이터 매니저에 업데이트
-    esp_err_t ret = data_manager_update_band_data(&band_data);
-    if (ret == ESP_OK) {
-        ESP_LOGI(TAG, "Band data received and updated successfully");
-    } else {
-        ESP_LOGE(TAG, "Failed to update band data: %s", esp_err_to_name(ret));
-    }
-    
-    return ret;
-}
-
-// GATT Subscribe - 디버그 커맨드 처리
-esp_err_t bluetooth_handle_command_write(const uint8_t *data, size_t len)
-{
-    if (!data || len == 0) {
-        return ESP_ERR_INVALID_ARG;
-    }
-    
-    // 문자열로 변환
-    char command[32] = {0};
-    strncpy(command, (char*)data, len < 31 ? len : 31);
-    
-    ESP_LOGI(TAG, "Command received: %s", command);
-    
-    if (strcmp(command, "vib") == 0) {
-        // 진동 1초
-        ESP_LOGI(TAG, "Executing vibration command");
-        gpio_set_level(VIBRATION_GPIO, 1);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        gpio_set_level(VIBRATION_GPIO, 0);
-        ESP_LOGI(TAG, "Vibration completed");
-        
-    } else if (strncmp(command, "play ", 5) == 0) {
-        // play n 명령 처리
-        int track_num = atoi(command + 5);
-        if (track_num > 0 && track_num <= 3000) {
-            ESP_LOGI(TAG, "Playing track %d", track_num);
-            esp_err_t ret = dfplayer_play(track_num);
-            if (ret != ESP_OK) {
-                ESP_LOGE(TAG, "Failed to play track %d: %s", track_num, esp_err_to_name(ret));
-            }
-        } else {
-            ESP_LOGE(TAG, "Invalid track number: %d", track_num);
-        }
-        
-    } else {
-        ESP_LOGW(TAG, "Unknown command: %s", command);
-    }
-    
-    return ESP_OK;
-}
-
 // GATT Publishing - 허브 데이터 특성 업데이트
 esp_err_t bluetooth_update_hub_data_characteristics(void)
 {
@@ -1322,79 +1138,6 @@ static void check_timeout_cb(TimerHandle_t xTimer)
     }
 }
 
-// 블루투스 성능 최적화 함수들
-esp_err_t bluetooth_optimize_for_crowded_environment(void)
-{
-    ESP_LOGI(TAG, "Optimizing Bluetooth for crowded environment");
-    
-    // GATT 캐시 초기화
-    bluetooth_clear_gatt_cache();
-    
-    // 스캔 파라미터를 더 공격적으로 설정
-    bluetooth_set_scan_parameters(50, 25);  // 50ms 간격, 25ms 윈도우
-    
-    // 연결 파라미터를 더 빠르게 설정
-    bluetooth_set_connection_parameters(5, 10);  // 5-10ms 간격
-    
-    ESP_LOGI(TAG, "Bluetooth optimization completed");
-    return ESP_OK;
-}
-
-esp_err_t bluetooth_set_scan_parameters(uint16_t interval_ms, uint16_t window_ms)
-{
-    // 현재 스캔이 실행 중이면 중지
-    ble_gap_disc_cancel();
-    
-    // 새로운 파라미터로 스캔 재시작
-    struct ble_gap_disc_params disc_params = {
-        .filter_duplicates = 1,
-        .passive = 0,  // Active scan
-        .itvl = BLE_GAP_SCAN_ITVL_MS(interval_ms),
-        .window = BLE_GAP_SCAN_WIN_MS(window_ms),
-        .filter_policy = 0,  // 모든 디바이스 스캔
-        .limited = 0,
-    };
-    
-    int rc = ble_gap_disc(own_addr_type, 1000, &disc_params, gap_event_cb, NULL);
-    if (rc != 0 && rc != BLE_HS_EALREADY) {
-        ESP_LOGE(TAG, "Failed to set scan parameters; rc=%d", rc);
-        return ESP_FAIL;
-    }
-    
-    ESP_LOGI(TAG, "Scan parameters updated: interval=%dms, window=%dms", interval_ms, window_ms);
-    return ESP_OK;
-}
-
-esp_err_t bluetooth_set_connection_parameters(uint16_t min_interval_ms, uint16_t max_interval_ms)
-{
-    // 모든 활성 연결에 대해 파라미터 업데이트
-    for (uint8_t i = 0; i < num_conns; i++) {
-        struct ble_gap_upd_params conn_params = {
-            .itvl_min = BLE_GAP_CONN_ITVL_MS(min_interval_ms),
-            .itvl_max = BLE_GAP_CONN_ITVL_MS(max_interval_ms),
-            .latency = 0,
-            .supervision_timeout = BLE_GAP_SUPERVISION_TIMEOUT_MS(4000),
-        };
-        
-        int rc = ble_gap_update_params(conn_handles[i], &conn_params);
-        if (rc != 0) {
-            ESP_LOGW(TAG, "Failed to update connection parameters for handle %d; rc=%d", 
-                     conn_handles[i], rc);
-        }
-    }
-    
-    ESP_LOGI(TAG, "Connection parameters updated: min=%dms, max=%dms", min_interval_ms, max_interval_ms);
-    return ESP_OK;
-}
-
-void bluetooth_clear_gatt_cache(void)
-{
-    gatt_cache.is_valid = false;
-    gatt_cache.cache_timestamp = 0;
-    memset(gatt_cache.cached_data, 0, sizeof(gatt_cache.cached_data));
-    ESP_LOGI(TAG, "GATT cache cleared");
-}
-
 // BLE 스캔 디버깅 함수들
 esp_err_t bluetooth_force_scan_start(void)
 {
@@ -1434,29 +1177,3 @@ void bluetooth_print_scan_statistics(void)
     ESP_LOGI(TAG, "Check logs for 'Scan active' and 'BAND DEVICE FOUND' messages");
     ESP_LOGI(TAG, "=============================");
 }
-
-// GATT 클라이언트 서비스 발견 콜백
-static int gatt_client_discover_svc_cb(uint16_t conn_handle, const struct ble_gatt_error *error,
-                                       const struct ble_gatt_svc *service, void *arg)
-{
-    if (error != NULL) {
-        ESP_LOGE(TAG, "GATT service discovery failed: %d", error->status);
-        return error->status;
-    }
-    
-    if (service == NULL) {
-        ESP_LOGI(TAG, "GATT service discovery completed");
-        return 0;
-    }
-    
-    ESP_LOGI(TAG, "GATT service found: UUID=0x%04X, start_handle=%d, end_handle=%d", 
-             service->uuid.u16.value, service->start_handle, service->end_handle);
-    
-    // 센서 데이터 서비스인지 확인 (예: 0x180D Heart Rate Service)
-    if (service->uuid.u16.value == 0x180D) {
-        ESP_LOGI(TAG, "Heart Rate Service found - attempting to read characteristics");
-        // 여기서 characteristic을 발견하고 읽기 시도
-    }
-    
-    return 0;
-} 

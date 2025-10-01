@@ -21,9 +21,9 @@
 
 static const char *TAG = "MAIN";
 
-// GPIO7 deep sleep configuration
-#define GPIO7_PIN 3
-#define GPIO7_LOW_TIMEOUT_MS 1000  // 2초 동안 LOW 상태 유지되면 deep sleep 진입
+// VSLEEP deep sleep configuration
+#define VSLEEP_PIN 3
+#define VSLEEP_LOW_TIMEOUT_MS 1000  // 2초 동안 LOW 상태 유지되면 deep sleep 진입
 
 // Task handles
 static TaskHandle_t gpio_task_handle = NULL;
@@ -34,42 +34,42 @@ static TaskHandle_t terminal_task_handle = NULL;
 static EventGroupHandle_t sensor_event_group = NULL;
 #define BLUETOOTH_READY_BIT      BIT1
 
-// GPIO7 상태 모니터링 변수
-static int64_t gpio7_low_start_time = 0;
-static bool gpio7_low_detected = false;
+// VSLEEP 상태 모니터링 변수
+static int64_t vsleep_low_start_time = 0;
+static bool vsleep_low_detected = false;
 
-// GPIO7 초기화 함수
-static esp_err_t gpio7_init(void)
+// VSLEEP 초기화 함수
+static esp_err_t vsleep_init(void)
 {
     gpio_config_t io_conf = {};
     
-    // GPIO7을 입력으로 설정
+    // VSLEEP을 입력으로 설정
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_INPUT;
-    io_conf.pin_bit_mask = (1ULL << GPIO7_PIN);
+    io_conf.pin_bit_mask = (1ULL << VSLEEP_PIN);
     io_conf.pull_down_en = 1;
     io_conf.pull_up_en = 0;  // 내부 풀업 저항 활성화
     
     esp_err_t ret = gpio_config(&io_conf);
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to configure GPIO7: %s", esp_err_to_name(ret));
+        ESP_LOGE(TAG, "Failed to configure VSLEEP: %s", esp_err_to_name(ret));
         return ret;
     }
     
-    ESP_LOGI(TAG, "GPIO7 configured as input with pull-up");
+    ESP_LOGI(TAG, "VSLEEP configured as input with pull-up");
     return ESP_OK;
 }
 
 // Deep sleep 진입 함수
 static void enter_deep_sleep(void)
 {
-    ESP_LOGI(TAG, "Entering deep sleep mode - GPIO7 wake up enabled");
+    ESP_LOGI(TAG, "Entering deep sleep mode - VSLEEP wake up enabled");
     
-    // GPIO7을 wake up source로 설정 (HIGH에서 wake up)
+    // VSLEEP을 wake up source로 설정 (HIGH에서 wake up)
     // ESP32-C3에서는 ext0 wakeup 사용
     //esp_sleep_enable_gpio_wakeup();
-    //gpio_wakeup_enable(GPIO7_PIN, GPIO_INTR_HIGH_LEVEL ); // 1 = HIGH level
-    esp_deep_sleep_enable_gpio_wakeup(1<<GPIO7_PIN, ESP_GPIO_WAKEUP_GPIO_HIGH );
+    //gpio_wakeup_enable(VSLEEP_PIN, GPIO_INTR_HIGH_LEVEL ); // 1 = HIGH level
+    esp_deep_sleep_enable_gpio_wakeup(1<<VSLEEP_PIN, ESP_GPIO_WAKEUP_GPIO_HIGH );
     
     // Deep sleep 진입
     //esp_light_sleep_start();
@@ -81,40 +81,40 @@ static void gpio_task(void *arg)
 {
     ESP_LOGI(TAG, "GPIO task started");
     
-    // GPIO7 초기화
-    esp_err_t ret = gpio7_init();
+    // VSLEEP 초기화
+    esp_err_t ret = vsleep_init();
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to initialize GPIO7");
+        ESP_LOGE(TAG, "Failed to initialize VSLEEP");
         vTaskDelete(NULL);
         return;
     }
     
     while(1) {
-        // GPIO7 상태 읽기
-        int gpio7_level = gpio_get_level(GPIO7_PIN);
+        // VSLEEP 상태 읽기
+        int vsleep_level = gpio_get_level(VSLEEP_PIN);
         int64_t current_time = esp_timer_get_time() / 1000; // ms 단위로 변환
         
-        if (gpio7_level == 0) { // LOW 상태
-            if (!gpio7_low_detected) {
+        if (vsleep_level == 0) { // LOW 상태
+            if (!vsleep_low_detected) {
                 // LOW 상태 감지 시작
-                gpio7_low_detected = true;
-                gpio7_low_start_time = current_time;
-                ESP_LOGI(TAG, "GPIO7 LOW detected - starting timer");
-                //ESP_LOGI(TAG, "GPIO7 LOW for %lld ms - entering deep sleep", low_duration);
+                vsleep_low_detected = true;
+                vsleep_low_start_time = current_time;
+                ESP_LOGI(TAG, "VSLEEP LOW detected - starting timer");
+                //ESP_LOGI(TAG, "VSLEEP LOW for %lld ms - entering deep sleep", low_duration);
                 enter_deep_sleep();
             } else {
                 // LOW 상태 지속 시간 확인
-                int64_t low_duration = current_time - gpio7_low_start_time;
-                if (low_duration >= GPIO7_LOW_TIMEOUT_MS) {
-                    ESP_LOGI(TAG, "GPIO7 LOW for %lld ms - entering deep sleep", low_duration);
+                int64_t low_duration = current_time - vsleep_low_start_time;
+                if (low_duration >= VSLEEP_LOW_TIMEOUT_MS) {
+                    ESP_LOGI(TAG, "VSLEEP LOW for %lld ms - entering deep sleep", low_duration);
                     enter_deep_sleep();
                 }
             }
         } else { // HIGH 상태
-            if (gpio7_low_detected) {
+            if (vsleep_low_detected) {
                 // HIGH로 복귀 - 타이머 리셋
-                gpio7_low_detected = false;
-                ESP_LOGI(TAG, "GPIO7 HIGH - timer reset");
+                vsleep_low_detected = false;
+                ESP_LOGI(TAG, "VSLEEP HIGH - timer reset");
             }
         }
         
@@ -196,7 +196,7 @@ void app_main(void)
     esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
     switch(wakeup_reason) {
         case ESP_SLEEP_WAKEUP_EXT0:
-            ESP_LOGI(TAG, "Woke up from GPIO7 HIGH signal (ext0)");
+            ESP_LOGI(TAG, "Woke up from VSLEEP HIGH signal (ext0)");
             break;
         case ESP_SLEEP_WAKEUP_UNDEFINED:
             ESP_LOGI(TAG, "Normal boot (not from deep sleep)");

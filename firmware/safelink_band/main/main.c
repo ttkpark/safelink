@@ -14,13 +14,6 @@
 #include "nimble/nimble_port_freertos.h"
 #include "host/ble_hs.h"
 #include <inttypes.h>
-
-// WiFi and Network
-#include "esp_wifi.h"
-#include "esp_event.h"
-#include "esp_netif.h"
-#include "lwip/sockets.h"
-
 // Sensors
 #include "driver/i2c.h"
 #include "driver/adc.h"
@@ -57,6 +50,15 @@
 // 광고 디바이스 이름
 #define ADV_DEVICE_NAME             "link_band"
 
+#define UDP_SEND_ENABLE             0
+
+#if UDP_SEND_ENABLE == 1
+// WiFi and Network
+#include "esp_wifi.h"
+#include "esp_event.h"
+#include "esp_netif.h"
+#include "lwip/sockets.h"
+
 // WiFi 설정
 #define WIFI_SSID                   "Smart Meeting"        // WiFi SSID를 여기에 입력하세요
 #define WIFI_PASS                   "12345678"    // WiFi 비밀번호를 여기에 입력하세요
@@ -67,9 +69,32 @@
 #define UDP_SERVER_PORT             8888
 #define UDP_BUFFER_SIZE             1024
 
+#define UDP_send_heart_rate_data(heart_rate) udp_send_heart_rate_data(heart_rate)
+#define UDP_send_heart_rate_buffer() udp_send_heart_rate_buffer()
+#define UDP_send_heart_peak_data(peak_positions,peak_count,valid_intervals_array,valid_intervals, calculated_hr, moving_avg_hr) udp_send_heart_peak_data(peak_positions,peak_count,valid_intervals_array,valid_intervals, calculated_hr, moving_avg_hr)
+
+#else
+
+#define UDP_send_heart_rate_data(heart_rate) 
+#define UDP_send_heart_rate_buffer() 
+#define UDP_send_heart_peak_data(peak_positions,peak_count,valid_intervals_array,valid_intervals, calculated_hr, moving_avg_hr) 
+
+
+#endif
+
 static const char *TAG = "NIMBLE_GATTC";
+
+#if UDP_SEND_ENABLE == 1
 static const char *WIFI_TAG = "WIFI";
 static const char *UDP_TAG = "UDP";
+
+// WiFi 및 UDP 관련 변수
+static int s_retry_num = 0;
+static int udp_socket = -1;
+static struct sockaddr_in server_addr;
+static bool wifi_connected = false;
+static SemaphoreHandle_t wifi_semaphore = NULL;
+#endif
 
 // NimBLE GATT Client 관련 변수
 static bool gatt_client_ready = false;
@@ -107,13 +132,6 @@ static bool movavg_buffer_full = false;
 // 심박센서 펄스 감지 변수
 static uint32_t last_pulse_time = 0;           // 마지막 펄스 시간
 
-// WiFi 및 UDP 관련 변수
-static int s_retry_num = 0;
-static int udp_socket = -1;
-static struct sockaddr_in server_addr;
-static bool wifi_connected = false;
-static SemaphoreHandle_t wifi_semaphore = NULL;
-
 
 // I2C 및 센서 함수 원형
 static esp_err_t i2c_master_init(void);
@@ -138,6 +156,7 @@ static void sensor_beacon_task(void *param);
 static void ble_app_on_sync(void);
 static void ble_host_task(void *param);
 
+#if UDP_SEND_ENABLE == 1
 // WiFi 및 UDP 함수
 static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
 static esp_err_t wifi_init_sta(void);
@@ -146,7 +165,7 @@ static void udp_send_heart_rate_data(uint16_t heart_rate);
 static void udp_send_heart_rate_buffer(void);
 static void wifi_udp_task(void *param);
 static void udp_send_heart_peak_data(uint16_t *peak_positions, uint16_t peak_count, uint16_t *valid_intervals_array, uint16_t valid_intervals, uint16_t calculated_hr, uint16_t moving_avg_hr);
-
+#endif
 
 // NimBLE 초기화
 static esp_err_t nimble_init(void)
@@ -169,10 +188,6 @@ static esp_err_t nimble_init(void)
         ESP_LOGE(TAG, "nimble_port_init failed: %ld", (long)ret);
         return ESP_FAIL;
     }
-    
-
-    
-    // GAP/GATT 서비스 직접 초기화 호출 없이 광고 필드에서 이름 설정 예정
     
     // NimBLE 호스트 스택 초기화
     ble_hs_cfg.sync_cb = ble_app_on_sync;
@@ -238,15 +253,6 @@ static void ble_host_task(void *param)
     nimble_port_run();
 }
 
-// 스캔 및 연결 함수
-// (스캔 및 연결 함수 제거)
-
-// 서비스 및 특성 탐색
-// (서비스 및 특성 탐색 제거)
-
-// 스캔 취소 후 폴백 연결 태스크 (DISC_COMPLETE 미수신 대비)
-// (연결 폴백 태스크 제거)
-
 void app_main(void)
 {
     ESP_LOGI(TAG, "ESP32-C3 Sensor Beacon 시작");
@@ -260,9 +266,11 @@ void app_main(void)
     
     ESP_LOGI(TAG, "NimBLE 초기화 완료. Advertising 비콘을 시작합니다...");
     
+    #if UDP_SEND_ENABLE == 1
     // WiFi UDP 태스크 시작
     xTaskCreate(wifi_udp_task, "wifi_udp_task", 8192, NULL, 5, NULL);
     ESP_LOGI(TAG, "WiFi UDP 태스크 시작됨");
+    #endif
     
     // 무한 루프로 상태 모니터링
     while (1) {
@@ -657,9 +665,9 @@ static void heart_rate_sampling_task(void *param)
             ESP_LOGI(TAG, "이전 Idx : %d, 현재 Idx : %d, diff : %d", heart_rate_buffer_index_pre, heart_rate_buffer_index_val, heart_rate_buffer_index_val - heart_rate_buffer_index_pre);
             heart_rate_buffer_index_pre = heart_rate_buffer_index_val;
             //print_heart_rate_buffer();
-            udp_send_heart_rate_buffer();
+            UDP_send_heart_rate_buffer();
             
-            udp_send_heart_peak_data(peak_positions,peak_count,valid_intervals_array,valid_intervals, calculated_hr, moving_avg_hr);
+            UDP_send_heart_peak_data(peak_positions,peak_count,valid_intervals_array,valid_intervals, calculated_hr, moving_avg_hr);
     
 
             last_calculation_time = current_time;
@@ -930,6 +938,7 @@ static void start_heart_rate_sampling(void)
     ESP_LOGI(TAG, "심박수 샘플링 태스크 시작됨");
 }
 
+#if UDP_SEND_ENABLE == 1
 // ===== WiFi 및 UDP 함수들 =====
 
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
@@ -1206,3 +1215,4 @@ static void wifi_udp_task(void *param)
         vTaskDelay(5000 / portTICK_PERIOD_MS);
     }
 }
+#endif

@@ -53,7 +53,7 @@ typedef enum {
 } bluetooth_state_t;
 
 // Event group bits
-#define BLUETOOTH_READY_BIT       BIT0
+#define BLUETOOTH_READY_BIT       BIT1
 
 // Health sensor data structure
 typedef struct {
@@ -70,10 +70,6 @@ typedef struct {
 esp_err_t bluetooth_init(void);
 esp_err_t bluetooth_deinit(void);
 bluetooth_state_t bluetooth_get_state(void);
-esp_err_t bluetooth_send_test_data(const char *data);
-esp_err_t bluetooth_get_health_data(health_sensor_data_t *data);
-void measure_noise_level(void);
-void check_dfplayer_status(void);
 
 // MIT App Inventor 데이터 전송 함수
 esp_err_t bluetooth_update_mit_app_inventor_data(float skin_temp, uint16_t heart_rate, 
@@ -81,18 +77,9 @@ esp_err_t bluetooth_update_mit_app_inventor_data(float skin_temp, uint16_t heart
                                                 float external_humidity, float avg_noise, 
                                                 float wbgt, uint8_t alarm_status);
 
-// GATT Subscribe (밴드로부터 데이터 수신) 함수
-esp_err_t bluetooth_handle_band_data_write(const uint8_t *data, size_t len);
-esp_err_t bluetooth_handle_command_write(const uint8_t *data, size_t len);
 
 // GATT Publishing (허브 데이터 전송) 함수
 esp_err_t bluetooth_update_hub_data_characteristics(void);
-
-// 블루투스 성능 최적화 함수들
-esp_err_t bluetooth_optimize_for_crowded_environment(void);
-esp_err_t bluetooth_set_scan_parameters(uint16_t interval_ms, uint16_t window_ms);
-esp_err_t bluetooth_set_connection_parameters(uint16_t min_interval_ms, uint16_t max_interval_ms);
-void bluetooth_clear_gatt_cache(void);
 
 // BLE 스캔 디버깅 함수들
 esp_err_t bluetooth_force_scan_start(void);

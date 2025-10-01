@@ -29,20 +29,6 @@ typedef struct {
     bool is_valid;           // 데이터 유효성
 } hub_data_t;
 
-// 경보상태 비트 정의
-/*#define ALARM_WBGT_WARNING_FLAG    0x03    // WBGT 경고
-#define ALARM_TEMP_WARNING_FLAG    0x0C    // 체온 경고
-#define ALARM_HR_WARNING_FLAG      0x30    // 심박수 경고
-#define ALARM_NOISE_WARNING_FLAG   0xC0    // 소음 경고
-#define ALARM_WBGT_WARNING_POS     0
-#define ALARM_TEMP_WARNING_POS     2
-#define ALARM_HR_WARNING_POS       4
-#define ALARM_NOISE_WARNING_POS    6
-#define ALARM_WBGT_WARNING(x)      (x << ALARM_WBGT_WARNING_POS)
-#define ALARM_TEMP_WARNING(x)      (x << ALARM_TEMP_WARNING_POS)
-#define ALARM_HR_WARNING(x)        (x << ALARM_HR_WARNING_POS)
-#define ALARM_NOISE_WARNING(x)     (x << ALARM_NOISE_WARNING_POS)*/
-
 #define ALARM_WBGT_WARNING_FLAG    0x03    // WBGT 경고
 #define ALARM_TEMP_WARNING_FLAG    0x0C    // 체온 경고
 #define ALARM_HR_WARNING_FLAG      0x30    // 심박수 경고

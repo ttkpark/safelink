@@ -75,21 +75,12 @@ void temp_humidity_task(void *arg)
             current_extended_data.external_humidity = humidity;       // 외부 습도
             current_extended_data.timestamp = esp_timer_get_time() / 1000; // ms 단위
             
-            // 건강 상태 분석
-            current_sensor_data.health_status = analyze_health_status(
-                current_sensor_data.heart_rate,
-                current_sensor_data.temperature,
-                current_sensor_data.humidity
-            );
-            
-            // 확장된 건강 상태 분석
-            current_extended_data.health_status = analyze_extended_health_status(&current_extended_data);
             
             float temp_float = (float)temperature / 10.0f;
             float hum_float = (float)humidity / 10.0f;
             
-            ESP_LOGI(TAG, "Temperature: %.1f°C, Humidity: %.1f%%, Status: %s", 
-                    temp_float, hum_float, get_health_status_string(current_sensor_data.health_status));
+            ESP_LOGI(TAG, "Temperature: %.1f°C, Humidity: %.1f%%", 
+                    temp_float, hum_float);
             
             // 센서 데이터 준비 이벤트 설정
             if (sensor_event_group) {
@@ -97,10 +88,6 @@ void temp_humidity_task(void *arg)
             }
         } else {
             ESP_LOGW(TAG, "Failed to read temperature/humidity sensor: %s", esp_err_to_name(ret));
-            // 실패 시 기본값 설정
-            //current_sensor_data.temperature = 2500; // 25.0°C
-            //current_sensor_data.humidity = 5000;    // 50.0%
-            //current_sensor_data.health_status = HEALTH_STATUS_NORMAL;
         }
         
         // 5초마다 측정 (watchdog 타이머보다 짧게)
@@ -155,13 +142,55 @@ void sensor_monitor_task(void *arg)
             static uint32_t bpm_critical_counter = 0;
             const int bpm_warning_counter_max = 2*60*15; // 15분
             const int bpm_critical_counter_max = 2*60*15; // 15분
+            
+            static uint32_t wbgt_warning_counter = 0;
+            static uint32_t wbgt_critical_counter = 0;
+            const int wbgt_warning_counter_max = 2*60*15; // 15분
+            const int wbgt_critical_counter_max = 2*60*15; // 15분
+            
+            static uint32_t noise_warning_counter = 0;
+            static uint32_t noise_danger_counter = 0;
+            static uint32_t noise_critical_counter = 0;
+            const int noise_warning_counter_max = 2*60*15; // 15분
+            const int noise_danger_counter_max = 2*60*15; // 15분
+            const int noise_critical_counter_max = 2*60*15; // 15분
+            
+            if(avg_noise > 65){
+                if(avg_noise > 90){
+                    if(++noise_warning_counter > noise_warning_counter_max)
+                        noise_warning_counter = noise_warning_counter_max;
+                }else{
+                    if(--noise_warning_counter < 0)
+                        noise_warning_counter=0;
+                }
 
-            if(avg_noise >= 120.0f){
+                if(avg_noise > 100){
+                    if(++noise_danger_counter > noise_danger_counter_max)
+                        noise_danger_counter = noise_danger_counter_max;
+                }else{
+                    if(--noise_danger_counter < 0)
+                        noise_danger_counter=0;
+                }
+                
+                if(avg_noise > 110){
+                    if(++noise_critical_counter > noise_critical_counter_max)
+                        noise_critical_counter = noise_critical_counter_max;
+                }else{
+                    if(--noise_critical_counter < 0)
+                        noise_critical_counter = 0;
+                }
+            }else{
+                noise_warning_counter = 0;
+                noise_danger_counter = 0;
+                noise_critical_counter = 0;
+            }
+
+            if(noise_critical_counter >= noise_critical_counter_max){
                 alarm_status |= (3<<ALARM_NOISE_WARNING_POS);
-            }else if(avg_noise >= 110.0f){
+            }else if(noise_danger_counter >= noise_danger_counter_max){
                 alarm_status |= (2<<ALARM_NOISE_WARNING_POS);
-            }else if(avg_noise >= 95.0f){
-                alarm_status |= (1<<ALARM_NOISE_WARNING_POS);
+            }else if(noise_warning_counter >= noise_warning_counter_max){
+                alarm_status |= (3<<ALARM_NOISE_WARNING_POS);
             }
             
             // 체온 경고 (밴드 데이터에서 확인)
@@ -212,13 +241,33 @@ void sensor_monitor_task(void *arg)
             
             float wbgt = calc_wbgt(temp_float, hum_float);
             
-            // WBGT 경고 (30°C 이상).
-            if (wbgt >= 30.0f) {
+            if(wbgt > 25){
+                if(wbgt > 28){
+                    if(++wbgt_warning_counter > wbgt_warning_counter_max)
+                        wbgt_warning_counter = wbgt_warning_counter_max;
+                }else{
+                    if(--wbgt_warning_counter < 0)
+                        wbgt_warning_counter=0;
+                }
+                
+                if(wbgt > 30){
+                    if(++wbgt_critical_counter > wbgt_critical_counter_max)
+                        wbgt_critical_counter = wbgt_critical_counter_max;
+                }else{
+                    if(--wbgt_critical_counter < 0)
+                        wbgt_critical_counter = 0;
+                }
+            }else{
+                wbgt_warning_counter = 0;
+                wbgt_critical_counter = 0;
+            }
+
+            if(wbgt_critical_counter >= wbgt_critical_counter_max){
                 alarm_status |= (3<<ALARM_WBGT_WARNING_POS);
-            }else if (wbgt >= 28.0f) {
+            }else if(wbgt_warning_counter >= wbgt_warning_counter_max){
                 alarm_status |= (1<<ALARM_WBGT_WARNING_POS);
             }
-            
+
             // 허브 데이터 업데이트 (5초마다)
             uint32_t current_time = esp_timer_get_time() / 1000;
             if (current_time - last_hub_update >= 5000) {
@@ -283,7 +332,6 @@ esp_err_t sensor_init(void)
     current_sensor_data.heart_rate = 00;
     current_sensor_data.temperature = 0000; // 25.0°C
     current_sensor_data.humidity = 0000;    // 50.0%
-    current_sensor_data.health_status = HEALTH_STATUS_NORMAL;
     
     // 확장된 센서 데이터 기본값 설정
     current_extended_data.heart_rate = 00;
@@ -292,7 +340,6 @@ esp_err_t sensor_init(void)
     current_extended_data.external_temperature = 0000; // 25.00°C
     current_extended_data.external_humidity = 0000;    // 50.00%
     current_extended_data.noise_level = 000;     // 65.0dB
-    current_extended_data.health_status = HEALTH_STATUS_NORMAL;
     
     // 경고 시스템 초기화
     esp_err_t warning_ret = warning_system_init();
@@ -357,17 +404,6 @@ esp_err_t sensor_get_extended_data(extended_sensor_data_t *data)
     return ESP_OK;
 }
 
-// Update health status
-esp_err_t sensor_update_health_status(void)
-{
-    current_sensor_data.health_status = analyze_health_status(
-        current_sensor_data.heart_rate,
-        current_sensor_data.temperature,
-        current_sensor_data.humidity
-    );
-    
-    return ESP_OK;
-}
 
 // Create sensor tasks
 esp_err_t sensor_create_tasks(EventGroupHandle_t event_group)
@@ -417,27 +453,6 @@ esp_err_t sensor_create_tasks(EventGroupHandle_t event_group)
     
     ESP_LOGI(TAG, "All sensor tasks created successfully");
     return ESP_OK;
-}
-
-// Health analysis functions
-health_status_t analyze_health_status(uint16_t heart_rate, uint16_t temperature, uint16_t humidity)
-{
-    // 간단한 건강 상태 분석
-    if (heart_rate > 120 || heart_rate < 50) {
-        return HEALTH_STATUS_ELEVATED_HR;
-    }
-    
-    float temp_float = (float)temperature / 100.0f;
-    if (temp_float > 35.0f || temp_float < 15.0f) {
-        return HEALTH_STATUS_HIGH_TEMP;
-    }
-    
-    float hum_float = (float)humidity / 100.0f;
-    if (hum_float < 20.0f || hum_float > 90.0f) {
-        return HEALTH_STATUS_LOW_HUMIDITY;
-    }
-    
-    return HEALTH_STATUS_NORMAL;
 }
 
 health_status_t analyze_extended_health_status(const extended_sensor_data_t *data)

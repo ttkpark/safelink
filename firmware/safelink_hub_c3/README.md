@@ -73,7 +73,6 @@ typedef struct {
     uint16_t temperature;     // 온도 (×100, 0.01°C 단위)
     uint16_t humidity;        // 습도 (×100, 0.01% 단위)
     uint32_t timestamp;       // 타임스탬프 (ms)
-    health_status_t health_status; // 건강 상태
 } sensor_data_t;
 ```
 

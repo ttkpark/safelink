@@ -57,7 +57,6 @@ typedef struct {
     uint16_t heart_rate;      // 심박수 (BPM)
     uint16_t temperature;     // 온도 (0.01°C 단위)
     uint16_t humidity;        // 습도 (0.01% 단위)
-    health_status_t health_status; // 건강 상태
     uint32_t timestamp;       // 타임스탬프
 } sensor_data_t;
 
@@ -69,18 +68,12 @@ typedef struct {
     uint16_t external_temperature; // 외부 온도 (0.01°C 단위)
     uint16_t external_humidity;    // 외부 습도 (0.01% 단위)
     uint16_t noise_level;     // 소음 레벨 (0.1dB 단위)
-    health_status_t health_status; // 건강 상태
     uint32_t timestamp;       // 타임스탬프
 } extended_sensor_data_t;
 
 // Function declarations
 esp_err_t sensor_init(void);
 esp_err_t sensor_deinit(void);
-
-// Health analysis functions
-health_status_t analyze_health_status(uint16_t heart_rate, uint16_t temperature, uint16_t humidity);
-health_status_t analyze_extended_health_status(const extended_sensor_data_t *data);
-const char* get_health_status_string(health_status_t status);
 
 // AM2320 sensor functions
 esp_err_t AM2320_read(uint16_t *temperature, uint16_t *humidity);
@@ -93,7 +86,6 @@ void sensor_monitor_task(void *arg);
 // Sensor data management
 esp_err_t sensor_get_current_data(sensor_data_t *data);
 esp_err_t sensor_get_extended_data(extended_sensor_data_t *data);
-esp_err_t sensor_update_health_status(void);
 
 // Task creation functions
 esp_err_t sensor_create_tasks(EventGroupHandle_t event_group);
@@ -115,19 +107,6 @@ esp_err_t sensor_create_tasks(EventGroupHandle_t event_group);
 #define VOICE_HR_CAUTION        17  // 심박수 주의: 심박수가 높습니다
 #define VOICE_HR_DANGER         18  // 심박수 경고: 휴식을 취하세요
 #define VOICE_HR_CRITICAL       19  // 심박수 위험: 즉시 중단하고 관리자에게 연락하세요
-
-/*
-#define VOICE_WBGT_CAUTION      10  // WBGT 주의 (28-30°C)
-#define VOICE_WBGT_DANGER       11  // WBGT 위험 (30°C 이상)
-#define VOICE_TEMP_CAUTION      12  // 체온 주의 (37.5-38°C)
-#define VOICE_TEMP_DANGER       13  // 체온 위험 (38°C 이상)
-#define VOICE_HR_CAUTION        14  // 심박수 주의 (100-120 BPM)
-#define VOICE_HR_DANGER         15  // 심박수 위험 (120 BPM 이상)
-#define VOICE_NOISE_CAUTION     16  // 소음 주의 (95-110 dB)
-#define VOICE_NOISE_DANGER      17  // 소음 위험 (110 dB 이상)
-#define VOICE_SPO2_CAUTION      18  // 산소포화도 주의 (90-95%)
-#define VOICE_SPO2_DANGER       19  // 산소포화도 위험 (90% 미만)
-*/
 
 // 경고 메시지 구조체
 typedef struct {
