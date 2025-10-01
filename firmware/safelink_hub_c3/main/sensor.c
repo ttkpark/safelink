@@ -195,15 +195,9 @@ void sensor_monitor_task(void *arg)
                         bpm_critical_counter = 0;
                     }
 
-                    if(bpm_warning_counter >= 3){
+                    if(bpm_critical_counter >= bpm_critical_counter_max){
                         alarm_status |= (3<<ALARM_HR_WARNING_POS);
-                    }else if(bpm_warning_counter >= 2){
-                        alarm_status |= (1<<ALARM_HR_WARNING_POS);
-                    }
-
-                    if(bpm_critical_counter >= 3){
-                        alarm_status |= (3<<ALARM_HR_WARNING_POS);
-                    }else if(bpm_critical_counter >= 2){
+                    }else if(bpm_warning_counter >= bpm_warning_counter_max){
                         alarm_status |= (1<<ALARM_HR_WARNING_POS);
                     }
                 }
