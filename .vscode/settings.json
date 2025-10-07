@@ -8,7 +8,9 @@
     "idf.pythonInstallPath": "C:\\Espressif\\tools\\idf-python\\3.11.2\\python.exe",
     "files.associations": {
         "sensor_manager.h": "c",
-        "i2c.h": "c"
+        "i2c.h": "c",
+        "bluetooth.h": "c",
+        "data_manager.h": "c"
     },
     "cmake.sourceDirectory": "C:/Users/GH/Desktop/safelink/firmware/safelink_band"
 }

@@ -138,22 +138,27 @@ void sensor_monitor_task(void *arg)
             ESP_LOGI(TAG, "Temperature: %.1f°C, Humidity: %.1f%%", temp_float, hum_float);
             // 경보 상태 결정
             uint8_t alarm_status = 0;
-            static uint32_t bpm_warning_counter = 0;
-            static uint32_t bpm_critical_counter = 0;
+            static int32_t bpm_warning_counter = 0;
+            static int32_t bpm_critical_counter = 0;
             const int bpm_warning_counter_max = 2*60*15; // 15분
             const int bpm_critical_counter_max = 2*60*15; // 15분
             
-            static uint32_t wbgt_warning_counter = 0;
-            static uint32_t wbgt_critical_counter = 0;
+            static int32_t wbgt_warning_counter = 0;
+            static int32_t wbgt_critical_counter = 0;
             const int wbgt_warning_counter_max = 2*60*15; // 15분
             const int wbgt_critical_counter_max = 2*60*15; // 15분
             
-            static uint32_t noise_warning_counter = 0;
-            static uint32_t noise_danger_counter = 0;
-            static uint32_t noise_critical_counter = 0;
+            static int32_t noise_warning_counter = 0;
+            static int32_t noise_danger_counter = 0;
+            static int32_t noise_critical_counter = 0;
             const int noise_warning_counter_max = 2*60*15; // 15분
             const int noise_danger_counter_max = 2*60*15; // 15분
             const int noise_critical_counter_max = 2*60*15; // 15분
+            
+            ESP_LOGI(TAG, "Counters BPM : %ld %ld", bpm_warning_counter, bpm_critical_counter);
+            ESP_LOGI(TAG, "Counters WBGT : %ld %ld", wbgt_warning_counter, wbgt_critical_counter);
+            ESP_LOGI(TAG, "Counters Noise : %ld %ld %ld", noise_warning_counter, noise_danger_counter, noise_critical_counter);
+            
             
             if(avg_noise > 65){
                 if(avg_noise > 90){

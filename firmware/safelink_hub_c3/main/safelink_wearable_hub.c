@@ -47,7 +47,7 @@ static esp_err_t vsleep_init(void)
     io_conf.intr_type = GPIO_INTR_DISABLE;
     io_conf.mode = GPIO_MODE_INPUT;
     io_conf.pin_bit_mask = (1ULL << VSLEEP_PIN);
-    io_conf.pull_down_en = 1;
+    io_conf.pull_down_en = 0;
     io_conf.pull_up_en = 0;  // 내부 풀업 저항 활성화
     
     esp_err_t ret = gpio_config(&io_conf);
@@ -60,19 +60,59 @@ static esp_err_t vsleep_init(void)
     return ESP_OK;
 }
 
+// 모든 GPIO를 open state(고임피던스)로 설정하는 함수
+static void set_all_gpio_open_state(void)
+{
+    ESP_LOGI(TAG, "Setting all GPIO pins to open state (high impedance) for sleep mode");
+    
+    // DFPlayer 전원 끄기 (Hi-Z 상태로 설정)
+    dfplayer_power_off();
+    
+    // GPIO 설정 구조체 - 입력 모드로 설정하여 고임피던스 상태로 만듦
+    gpio_config_t io_conf = {
+        .intr_type = GPIO_INTR_DISABLE,
+        .mode = GPIO_MODE_INPUT,
+        .pull_down_en = 0,
+        .pull_up_en = 0  // 풀업/풀다운 저항도 비활성화하여 완전한 고임피던스 상태
+    };
+    
+    // I2C 핀들 (SDA, SCL) - 입력 모드로 설정하여 고임피던스 상태
+    io_conf.pin_bit_mask = (1ULL << 8) | (1ULL << 9);
+    gpio_config(&io_conf);
+    
+    // I2S 마이크 핀들 - 입력 모드로 설정하여 고임피던스 상태
+    io_conf.pin_bit_mask = (1ULL << 4) | (1ULL << 5) | (1ULL << 6);
+    gpio_config(&io_conf);
+    
+    // DFPlayer UART TX 핀 - 입력 모드로 설정하여 고임피던스 상태
+    io_conf.pin_bit_mask = (1ULL << 2);
+    gpio_config(&io_conf);
+    
+    // 기타 사용 가능한 GPIO 핀들도 입력 모드로 설정하여 고임피던스 상태 (안전을 위해)
+    for (int i = 0; i < 22; i++) {
+        if (i != VSLEEP_PIN) {  // VSLEEP 핀과 DFPlayer 전원 핀은 제외
+            io_conf.pin_bit_mask = (1ULL << i);
+            gpio_config(&io_conf);
+        }
+    }
+    
+    ESP_LOGI(TAG, "All GPIO pins set to open state (high impedance)");
+}
+
 // Deep sleep 진입 함수
 static void enter_deep_sleep(void)
 {
     ESP_LOGI(TAG, "Entering deep sleep mode - VSLEEP wake up enabled");
     
+    // 모든 GPIO를 open state(고임피던스)로 설정
+    set_all_gpio_open_state();
+    
     // VSLEEP을 wake up source로 설정 (HIGH에서 wake up)
     // ESP32-C3에서는 ext0 wakeup 사용
-    //esp_sleep_enable_gpio_wakeup();
     //gpio_wakeup_enable(VSLEEP_PIN, GPIO_INTR_HIGH_LEVEL ); // 1 = HIGH level
-    esp_deep_sleep_enable_gpio_wakeup(1<<VSLEEP_PIN, ESP_GPIO_WAKEUP_GPIO_HIGH );
+    esp_deep_sleep_enable_gpio_wakeup(1<<VSLEEP_PIN, ESP_GPIO_WAKEUP_GPIO_HIGH);
     
     // Deep sleep 진입
-    //esp_light_sleep_start();
     esp_deep_sleep_start();
 }
 
@@ -100,8 +140,6 @@ static void gpio_task(void *arg)
                 vsleep_low_detected = true;
                 vsleep_low_start_time = current_time;
                 ESP_LOGI(TAG, "VSLEEP LOW detected - starting timer");
-                //ESP_LOGI(TAG, "VSLEEP LOW for %lld ms - entering deep sleep", low_duration);
-                enter_deep_sleep();
             } else {
                 // LOW 상태 지속 시간 확인
                 int64_t low_duration = current_time - vsleep_low_start_time;
@@ -197,6 +235,7 @@ void app_main(void)
     switch(wakeup_reason) {
         case ESP_SLEEP_WAKEUP_EXT0:
             ESP_LOGI(TAG, "Woke up from VSLEEP HIGH signal (ext0)");
+            // Deep sleep에서 깨어났으므로 GPIO 복원이 필요하지 않음 (시스템 리셋됨)
             break;
         case ESP_SLEEP_WAKEUP_UNDEFINED:
             ESP_LOGI(TAG, "Normal boot (not from deep sleep)");
@@ -206,8 +245,10 @@ void app_main(void)
             break;
     }
     
+    esp_err_t ret;
+
     // NVS 초기화
-    esp_err_t ret = nvs_flash_init();
+    ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
@@ -265,9 +306,6 @@ void app_main(void)
     
     // Terminal 태스크 생성
     xTaskCreate(terminal_task, "terminal_task", 4096, NULL, 3, &terminal_task_handle);
-    
-    // 테스트 시뮬레이터 비활성화 (실센서 사용)
-    // test_simulator_start_periodic_data();
     
     ESP_LOGI(TAG, "All tasks created successfully");
     ESP_LOGI(TAG, "Use nRF Connect app to scan and connect to '%s'", BLE_DEVICE_NAME);

@@ -53,13 +53,8 @@ SafeLink Wearable Hub는 작업복 부착형 환경 센서 및 알림 장치로,
 ## 빌드 및 실행
 
 ```bash
-# 프로젝트 디렉토리로 이동
+C:\Users\parkg\esp\v5.4.2\esp-idf\export.ps1
 cd firmware/safelink_wearable_hub
-
-# 빌드
-idf.py build
-
-# 플래시 및 모니터
 idf.py flash monitor
 ```
 
@@ -75,23 +70,3 @@ idf.py flash monitor
 2. **건강 상태 분석**: 측정된 데이터를 바탕으로 건강 상태 판단
 3. **Bluetooth 통신**: 모바일 앱과 센서 데이터 공유
 4. **실시간 모니터링**: 센서 데이터 실시간 로깅 및 경고
-
-## 센서 데이터 형식
-
-```c
-typedef struct {
-    uint16_t heart_rate;      // 심박수 (BPM)
-    uint16_t temperature;     // 온도 (×100, 0.01°C 단위)
-    uint16_t humidity;        // 습도 (×100, 0.01% 단위)
-    uint32_t timestamp;       // 타임스탬프 (ms)
-} sensor_data_t;
-```
-
-## 건강 상태 분류
-
-- `HEALTH_STATUS_NORMAL`: 정상
-- `HEALTH_STATUS_ELEVATED_HR`: 심박수 상승
-- `HEALTH_STATUS_HIGH_TEMP`: 온도 이상
-- `HEALTH_STATUS_LOW_HUMIDITY`: 습도 이상
-- `HEALTH_STATUS_WARNING`: 다중 이상
-- `HEALTH_STATUS_CRITICAL`: 위험 상태 

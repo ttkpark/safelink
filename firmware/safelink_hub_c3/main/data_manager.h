@@ -20,7 +20,7 @@ typedef struct {
     uint8_t data_source;     // 데이터 소스 (DATA_SOURCE_*)
 } band_data_t;
 
-// 허브에서 자체 수집하는 데이터 (GATT Publishing)
+// 허브에서 자체 수집하는 데이터 (BLE Advertisement)
 typedef struct {
     float avg_noise;         // 평균소음 (dB)
     float wbgt;              // WBGT(건구습구온도 추정치) (°C)
@@ -43,7 +43,7 @@ typedef struct {
 #define SKIN_TEMP_MAX         40.0f
 #define HEART_RATE_IGNORE     0
 #define HEART_RATE_MIN        20
-#define HEART_RATE_MAX        160
+#define HEART_RATE_MAX        200
 #define SPO2_MIN              80.0f
 #define SPO2_MAX              99.9f
 
@@ -55,7 +55,7 @@ typedef struct {
 esp_err_t data_manager_init(void);
 esp_err_t data_manager_deinit(void);
 
-// 밴드 데이터 관리 (GATT Subscribe)
+// 밴드 데이터 관리 (BLE Advertisement)
 esp_err_t data_manager_update_band_data(const band_data_t *data);
 esp_err_t data_manager_get_band_data(band_data_t *data);
 bool data_manager_validate_band_data(const band_data_t *data);

@@ -178,41 +178,41 @@ void data_manager_print_all_data(void)
     if (data_manager_get_band_data(&band_data) == ESP_OK &&
         data_manager_get_hub_data(&hub_data) == ESP_OK) {
         
-        ESP_LOGI(TAG, "\n=== SafeLink Wearable Hub Data ===\n");
-        ESP_LOGI(TAG, "Timestamp: %lu ms\n", current_time);
+        ESP_LOGI(TAG, "\n=== SafeLink Wearable Hub Data ===");
+        ESP_LOGI(TAG, "Timestamp: %lu ms", current_time);
         
         // 밴드 데이터 출력
-        ESP_LOGI(TAG, "\n[Band Data] %s\n", band_data.is_valid ? "VALID" : "INVALID");
+        ESP_LOGI(TAG, "\n[Band Data] %s", band_data.is_valid ? "VALID" : "INVALID");
         if (band_data.is_valid) {
-            ESP_LOGI(TAG, "  External Temp: %.1f°C\n", band_data.external_temp);
-            ESP_LOGI(TAG, "  External Humidity: %.1f%%\n", band_data.external_humidity);
-            ESP_LOGI(TAG, "  Skin Temperature: %.1f°C\n", band_data.skin_temp);
-            ESP_LOGI(TAG, "  Heart Rate: %d BPM\n", band_data.heart_rate);
-            ESP_LOGI(TAG, "  SpO2: %.1f%%\n", band_data.spo2);
-            ESP_LOGI(TAG, "  Band Timestamp: %lu ms\n", band_data.timestamp);
-            ESP_LOGI(TAG, "  Data Source: %s\n", 
+            ESP_LOGI(TAG, "  External Temp: %.1f°C", band_data.external_temp);
+            ESP_LOGI(TAG, "  External Humidity: %.1f%%", band_data.external_humidity);
+            ESP_LOGI(TAG, "  Skin Temperature: %.1f°C", band_data.skin_temp);
+            ESP_LOGI(TAG, "  Heart Rate: %d BPM", band_data.heart_rate);
+            ESP_LOGI(TAG, "  SpO2: %.1f%%", band_data.spo2);
+            ESP_LOGI(TAG, "  Band Timestamp: %lu ms", band_data.timestamp);
+            ESP_LOGI(TAG, "  Data Source: %s", 
                    (band_data.data_source == DATA_SOURCE_CLIENT) ? "CLIENT" : "SIMULATOR");
         }
         
         // 허브 데이터 출력
-        ESP_LOGI(TAG, "\n[Hub Data] %s\n", hub_data.is_valid ? "VALID" : "INVALID");
+        ESP_LOGI(TAG, "[Hub Data] %s", hub_data.is_valid ? "VALID" : "INVALID");
         if (hub_data.is_valid) {
-            ESP_LOGI(TAG, "  Average Noise: %.1f dB\n", hub_data.avg_noise);
-            ESP_LOGI(TAG, "  WBGT: %.1f°C\n", hub_data.wbgt);
-            ESP_LOGE(TAG, "  Alarm Status: 0x%02X", hub_data.alarm_status);
+            ESP_LOGI(TAG, "  Average Noise: %.1f dB", hub_data.avg_noise);
+            ESP_LOGI(TAG, "  WBGT: %.1f°C", hub_data.wbgt);
+            printf("  Alarm Status: 0x%02X", hub_data.alarm_status);
             
             // 경보 상태 상세 출력
             if (hub_data.alarm_status & ALARM_WBGT_WARNING_FLAG) printf(" (WBGT)");
             if (hub_data.alarm_status & ALARM_TEMP_WARNING_FLAG) ESP_LOGI(TAG, " (TEMP)");
             if (hub_data.alarm_status & ALARM_HR_WARNING_FLAG) ESP_LOGI(TAG, " (HR)");
             if (hub_data.alarm_status & ALARM_NOISE_WARNING_FLAG) ESP_LOGI(TAG, " (NOISE)");
-            ESP_LOGI(TAG, "\n");
+            printf(TAG, "\n");
             
-            ESP_LOGI(TAG, "  Hub Timestamp: %lu ms\n", hub_data.timestamp);
+            ESP_LOGI(TAG, "  Hub Timestamp: %lu ms", hub_data.timestamp);
         }
         
         // 클라이언트 데이터 상태 출력
-        ESP_LOGI(TAG, "\n[System Status]\n");
+        ESP_LOGI(TAG, "[System Status]");
         ESP_LOGI(TAG, "  Client Data Active: %s\n", g_has_client_data ? "YES" : "NO");
         
         ESP_LOGI(TAG, "================================\n\n");

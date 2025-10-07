@@ -442,12 +442,6 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
             }
             total_adv_count++;
             
-            // RSSI 필터링: 너무 약한 신호는 무시
-            /*if (event->disc.rssi < -100) {
-                ESP_LOGD(TAG, "Weak signal ignored: RSSI=%d", event->disc.rssi);
-                break;
-            }*/
-            
             // 주기적으로 스캔 상태 로그
             if (total_adv_count % 1000 == 0) {
                 ESP_LOGI(TAG, "Scan active: %u advertisements received, RSSI=%d", 
